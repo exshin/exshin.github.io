@@ -10,8 +10,16 @@ class DeveloperComponent extends React.Component {
   render() {
     return (
       <div className="container">
-        <h5>Backend Software Engineer</h5>
-        <ul>
+        <div className="row work-title-row">
+          <div className="col-8">
+            <p className="work-title">Backend Software Engineer</p>
+          </div>
+          <div className="col-4 align-right">
+            <i>December 2015 – Present</i>
+          </div>
+        </div>
+
+        <ul className="row resume-line">
           <li>Collaborated with Product, Data Science, and DevOps to build and release an entity resolution service from the ground up</li>
           <li>Integrated resolution services with asynchronous workers via Sidekiq to manage job resolution status</li>
           <li>Built ETL data pipeline, integrating information from third party data providers using Redis ElastiCache</li>

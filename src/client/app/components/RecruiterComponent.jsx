@@ -10,10 +10,18 @@ class RecruiterComponent extends React.Component {
   render() {
     return (
       <div className="container">
-        <h5>Technical Recruiter</h5>
-        <ul>
+        <div className="row work-title-row">
+          <div className="col-8">
+            <p className="work-title">Technical Recruiter</p>
+          </div>
+          <div className="col-4 align-right">
+            <i>June 2010 – February 2012</i>
+          </div>
+        </div>
+
+        <ul className="row resume-line">
           <li>One of two top sourcers, establishing best practices for the role and training every new recruiter</li>
-          <li>o	Managed and supported up to 10 clients at any given time</li>
+          <li>Managed and supported up to 10 clients at any given time</li>
         </ul>
       </div>
     )

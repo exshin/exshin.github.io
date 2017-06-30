@@ -1,0 +1,28 @@
+.resume-line {
+  font-size: 14px;
+}
+.big-brand {
+  font-size: 30px;
+}
+.content-view {
+  margin-top: 20px;
+}
+.nav-content {
+  margin-bottom: 25px;
+}
+.company-logo {
+  width: 30px;
+  margin-right: 5px;
+}
+.work-title {
+  font-size: 18px;
+}
+.work-title-row {
+  height: 32px;
+}
+.align-right {
+  text-align: right;
+}
+.education-container {
+  margin-top: 20px;
+}

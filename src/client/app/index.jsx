@@ -31,17 +31,25 @@ class App extends React.Component {
     return (
       <div className="container-fluid">
 
-        <ul className="nav justify-content-end">
-          <li className="nav-item">
-            <a className="nav-link" href="#" data-content="About" onClick={ this.toContent.bind(this, "About") }>About</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#" data-content="Resume" onClick={ this.toContent.bind(this, "Resume") }>Resume</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#" data-content="Contact" onClick={ this.toContent.bind(this, "Contact") }>Contact</a>
-          </li>
-        </ul>
+        <nav className="navbar navbar-toggleable-md navbar-light nav-content">
+          <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <a className="navbar-brand big-brand">Eugene Chinveeraphan</a>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className={this.state.currentView === "About" ? "nav-item active" : "nav-item"}>
+                <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "About") }>About</a>
+              </li>
+              <li className={this.state.currentView === "Resume" ? "nav-item active" : "nav-item"}>
+                <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "Resume") }>Experience</a>
+              </li>
+              <li className={this.state.currentView === "Contact" ? "nav-item active" : "nav-item"}>
+                <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "Contact") }>Contact</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
 
         <div className="container">
           { contentView }

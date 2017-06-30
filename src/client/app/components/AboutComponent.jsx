@@ -16,7 +16,6 @@ class AboutComponent extends React.Component {
   render() {
     return (
       <div className="container">
-        <h3>About</h3>
         <div className="container">
           <img src="./img/portrait.png"></img>
           <div>

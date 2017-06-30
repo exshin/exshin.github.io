@@ -7,7 +7,7 @@ class ResumeComponent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { workerLevel: "Recruiter" }
+    this.state = { workerLevel: "Developer" }
     this.toWorker = this.toWorker.bind(this)
   }
 
@@ -28,24 +28,32 @@ class ResumeComponent extends React.Component {
     }
 
     return (
-      <div className="container">
-        <h3>Resume</h3>
-
-        <ul className="nav justify-content-end">
-          <li className="nav-item">
-            <a className="nav-link" href="#" data-content="About" onClick={ this.toWorker.bind(this, "Recruiter") }>Technical Recruiter</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#" data-content="Resume" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#" data-content="Contact" onClick={ this.toWorker.bind(this, "Developer") }>Backend Software Engineer</a>
-          </li>
-        </ul>
-
+      <div>
         <div className="container">
-          { contentView }
+          <div className="row">
+            <div className="col-4">
+              <a className="navbar-brand"><img className="img-circle company-logo" src="./img/RivieraLogo.png"></img>Riviera Partners</a>
+            </div>
+            <div className="col-8">
+              <ul className="nav justify-content-end">
+                <li className="nav-item">
+                  <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Developer") }>Backend Software Engineer</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Recruiter") }>Technical Recruiter</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="row container">
+            { contentView }
+          </div>
         </div>
+
       </div>
     )
   }

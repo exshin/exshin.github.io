@@ -16,7 +16,7 @@ class ContactComponent extends React.Component {
   render() {
     return (
       <div className="container">
-        <h3>Contact</h3>
+        
       </div>
     )
   }

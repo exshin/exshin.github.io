@@ -4,19 +4,29 @@ class ContactComponent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { likesCount : 0 }
-    this.onLike = this.onLike.bind(this)
-  }
-
-  onLike () {
-    let newLikesCount = this.state.likesCount + 1
-    this.setState({ likesCount: newLikesCount })
   }
 
   render() {
     return (
       <div className="container">
-        
+        <div className="row">
+          <div className="col-4">
+            <img className="portrait" src="./img/portrait.png"></img>
+          </div>
+          <div className="col-8">
+            <div className="row">
+              Linkedin
+            </div>
+            <div className="row">
+              Twitter
+            </div>
+            <div className="row">
+              Email
+            </div>
+          </div>
+        </div>
+
+
       </div>
     )
   }

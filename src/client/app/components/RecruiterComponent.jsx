@@ -11,10 +11,10 @@ class RecruiterComponent extends React.Component {
     return (
       <div className="container">
         <div className="row work-title-row">
-          <div className="col-8">
+          <div className="col-6">
             <p className="work-title">Technical Recruiter</p>
           </div>
-          <div className="col-4 align-right">
+          <div className="col-6 align-right date-ranges">
             <i>June 2010 – February 2012</i>
           </div>
         </div>

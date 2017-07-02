@@ -29,28 +29,24 @@ class ResumeComponent extends React.Component {
 
     return (
       <div>
-        <div className="container">
-          <div className="row">
-            <div className="col-4">
-              <a className="navbar-brand"><img className="img-circle company-logo" src="./img/RivieraLogo.png"></img>Riviera Partners</a>
+        <div className="row container">
+
+          <div className="col-4">
+            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./img/RivieraLogo.png"></img>Riviera Partners</a>
+            <div className="row">
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Developer") }>Backend Software Engineer</a>
             </div>
-            <div className="col-8">
-              <ul className="nav justify-content-end">
-                <li className="nav-item">
-                  <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Developer") }>Backend Software Engineer</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Recruiter") }>Technical Recruiter</a>
-                </li>
-              </ul>
+            <div className="row">
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>
+            </div>
+            <div className="row">
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Recruiter") }>Technical Recruiter</a>
             </div>
           </div>
-
-          <div className="row container">
-            { contentView }
+          <div className="col-8">
+            <div className="row container">
+              { contentView }
+            </div>
           </div>
         </div>
 

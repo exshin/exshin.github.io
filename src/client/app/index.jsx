@@ -1,6 +1,6 @@
 import AboutComponent from './components/AboutComponent.jsx'
 import ResumeComponent from './components/ResumeComponent.jsx'
-import ContactComponent from './components/ContactComponent.jsx'
+import PlaygroundComponent from './components/PlaygroundComponent.jsx'
 
 import React from 'react'
 import {render} from 'react-dom'
@@ -25,31 +25,55 @@ class App extends React.Component {
     } else if (this.state.currentView === "Contact") {
       contentView = <ContactComponent/>
     } else {
-      contentView = <AboutComponent/>
+      contentView = <PlaygroundComponent/>
     }
 
     return (
-      <div className="container-fluid">
-
-        <nav className="navbar navbar-toggleable-md navbar-light nav-content">
-          <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <a className="navbar-brand big-brand">Eugene Chinveeraphan</a>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav">
-              <li className={this.state.currentView === "About" ? "nav-item active" : "nav-item"}>
-                <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "About") }>About</a>
-              </li>
-              <li className={this.state.currentView === "Resume" ? "nav-item active" : "nav-item"}>
-                <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "Resume") }>Experience</a>
-              </li>
-              <li className={this.state.currentView === "Contact" ? "nav-item active" : "nav-item"}>
-                <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "Contact") }>Contact</a>
-              </li>
-            </ul>
+      <div className="row container-fluid">
+        <div className="col-7">
+          <div className="big-brand">
+            <p>EUGENE CHINVEERAPHAN</p>
           </div>
-        </nav>
+        </div>
+
+        <div className="col-5">
+          <nav className="navbar navbar-toggleable-md navbar-light nav-content">
+            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+
+            <div className="collapse navbar-collapse" id="navbarNav">
+
+                <ul className="navbar-nav float-md-right">
+                  <li className={this.state.currentView === "About" ? "nav-item active underline" : "nav-item"}>
+                    <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "About") }>About</a>
+                  </li>
+                  <li className={this.state.currentView === "Resume" ? "nav-item active underline" : "nav-item"}>
+                    <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "Resume") }>Experience</a>
+                  </li>
+                  <li className={this.state.currentView === "Playground" ? "nav-item active underline" : "nav-item"}>
+                    <a className="nav-item nav-link" href="#" onClick={ this.toContent.bind(this, "Playground") }>Playground</a>
+                  </li>
+                  <li className="nav-item vertical-line"></li>
+                  <li className="nav-item">
+                    <a className="nav-item nav-link nav-icon" href="https://www.linkedin.com/in/eugenechinveeraphan/"><i className="fa fa-linkedin-square" aria-hidden="true"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-item nav-link nav-icon" href="https://twitter.com/"><i className="fa fa-twitter-square" aria-hidden="true"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-item nav-link nav-icon" href="https://github.com/exshin"><i className="fa fa-github-square" aria-hidden="true"></i></a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-item nav-link nav-icon" href="https://www.twitch.tv/exshin"><i className="fa fa-twitch" aria-hidden="true"></i></a>
+                  </li>
+                </ul>
+              </div>
+            
+          </nav>
+        </div>
+
 
         <div className="container">
           { contentView }

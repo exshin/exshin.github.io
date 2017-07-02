@@ -11,10 +11,10 @@ class AnalystComponent extends React.Component {
     return (
       <div className="container">
         <div className="row work-title-row">
-          <div className="col-8">
+          <div className="col-6">
             <p className="work-title">Senior Analyst</p>
           </div>
-          <div className="col-4 align-right">
+          <div className="col-6 align-right date-ranges">
             <i>February 2012 – December 2015</i>
           </div>
         </div>

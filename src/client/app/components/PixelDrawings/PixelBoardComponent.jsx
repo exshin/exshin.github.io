@@ -2,7 +2,7 @@ import React from 'react'
 import PictComponent from './PictComponent.jsx'
 import LoadListComponent from './LoadListComponent.jsx'
 
-class BoardComponent extends React.Component {
+class PixelBoardComponent extends React.Component {
 
   constructor(props) {
     super(props)
@@ -131,4 +131,4 @@ class BoardComponent extends React.Component {
 
 }
 
-export default BoardComponent
+export default PixelBoardComponent

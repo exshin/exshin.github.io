@@ -1,5 +1,4 @@
 import React from 'react'
-import './PictComponent.jsx'
 
 class PictComponent extends React.Component {
 

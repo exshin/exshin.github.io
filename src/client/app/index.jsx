@@ -30,13 +30,13 @@ class App extends React.Component {
 
     return (
       <div className="row container-fluid">
-        <div className="col-7">
+        <div className="col-7 top-bar">
           <div className="big-brand">
             <p>EUGENE CHINVEERAPHAN</p>
           </div>
         </div>
 
-        <div className="col-5">
+        <div className="col-5 top-bar">
           <nav className="navbar navbar-toggleable-md navbar-light nav-content">
             <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
@@ -70,7 +70,7 @@ class App extends React.Component {
                   </li>
                 </ul>
               </div>
-            
+
           </nav>
         </div>
 

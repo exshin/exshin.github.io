@@ -32,7 +32,7 @@ class ResumeComponent extends React.Component {
         <div className="row container">
 
           <div className="col-4">
-            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./img/RivieraLogo.png"></img>Riviera Partners</a>
+            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/RivieraLogo.png"></img>Riviera Partners</a>
             <div className="row">
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Developer") }>Backend Software Engineer</a>
             </div>

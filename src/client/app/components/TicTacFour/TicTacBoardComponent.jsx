@@ -17,16 +17,18 @@ class TicTacBoardComponent extends React.Component {
     this.aiTurn = this.aiTurn.bind(this)
     this.checkLines = this.checkLines.bind(this)
     this.win = this.win.bind(this)
+    this.startNewGame = this.startNewGame.bind(this)
   }
 
   clickAdd(position) {
     let currentBoard = this.state.playerMoves
-    let index = currentBoard.indexOf(position)
+    let totalBoard = currentBoard.concat(this.state.aiMoves)
+    let index = totalBoard.indexOf(position)
 
-    if (index === -1) {
+    if (index === -1 && winner === "") {
       currentBoard.push(position)
       this.setState({ playerMoves: currentBoard }, function() {
-        this.aiTurn(0.3)
+        this.aiTurn(0.9)
       })
     }
   }
@@ -35,7 +37,6 @@ class TicTacBoardComponent extends React.Component {
     let currentAiBoard = this.state.aiMoves
     let currentPlayerBoard = this.state.playerMoves
     var nextAiMove = ""
-    let lineData = {"right": 1, "leftDiagnal": 9, "diagnal": 11, "down": 10}
     var message = ""
 
     // unfilled are all the potential next moves for the AI
@@ -46,7 +47,11 @@ class TicTacBoardComponent extends React.Component {
     let { potentialLines: playerPotentialLines, win: playerWin } = this.checkLines(currentPlayerBoard, currentAiBoard, "player")
     let { potentialLines: aiPotentialLines, win: aiWin } = this.checkLines(currentAiBoard, currentPlayerBoard, "ai")
 
-    if (Math.random() < difficultyLevel) {
+    if (aiWin) {
+      nextAiMove = String(aiPotentialLines[0].line[0])
+      message = `AI makes it's move! ${nextAiMove}`
+      console.log(aiPotentialLines)
+    } else if (Math.random() < difficultyLevel) {
       for (var p = 0; p < 2; p++ ) {
         let potentialLines = [playerPotentialLines, aiPotentialLines][p]
 
@@ -61,21 +66,28 @@ class TicTacBoardComponent extends React.Component {
 
     if (nextAiMove === "") {
       nextAiMove = String(unfilled[Math.floor(Math.random() * unfilled.length)])
+      message = `AI makes it's move! ${nextAiMove}`
     }
 
     if (playerWin) {
+      message = "Congratulations! You Win!"
       this.win("player")
-    } else if (unfilled.length === 0) {
+    } else  {
       // Tie. End Game
-      message = "It's a tie!"
-      this.setState({ message })
-    } else {
-      currentAiBoard.push(nextAiMove)
-      this.setState({ aiMoves: currentAiBoard })
-      this.setState({ message })
+      if (unfilled.length <= 1) {
+        message = "It's a tie!"
+        this.win("tie")
+      }
       if (aiWin) {
+        message = "AI Wins!"
         this.win("ai")
       }
+      currentAiBoard.push(nextAiMove)
+      console.log(nextAiMove)
+      this.setState({ aiMoves: currentAiBoard }, function() {
+        this.setState({ message })
+      })
+
     }
   }
 
@@ -125,11 +137,13 @@ class TicTacBoardComponent extends React.Component {
       if (markCount === 4 && player === "player") {
         // Tic Tac Four! Declare player winner
         win = true
-      } else if (markCount >= 3 && player === "ai") {
+      } else if (markCount >= 3 && otherCount === 0 && player === "ai") {
         // Declare AI winner
         win = true
+        potentialLines = [{ line: potentialLine, count: markCount }]
+        console.log(potentialLine)
       } else {
-        if (markCount > maxLength && otherCount === 0) {
+        if (markCount > maxLength && otherCount === 0 && win === false) {
           maxLength = markCount
           potentialLines = [{ line: potentialLine, count: markCount }]
         } else if (markCount > 0 && markCount === maxLength && otherCount === 0) {
@@ -142,13 +156,29 @@ class TicTacBoardComponent extends React.Component {
   }
 
   win(winner) {
-    this.setState({ winner, message: "Winner is: " + winner })
+    // Game ends
+    this.setState({ winner })
     console.log(`WINNER! ${winner} !!!`)
   }
 
+  startNewGame() {
+    this.setState({
+      playerMoves: [],
+      aiMoves: [],
+      winner: "",
+      message: ""
+    })
+  }
+
   render() {
+    let gameEnd = this.state.winner === "" ? false : true
     return (
       <div className="container-fluid">
+        {gameEnd === true &&
+          <div className="container-fluid">
+            <button className="btn btn-outline-primary btn-sm" onClick={ this.startNewGame }>Start New Game</button>
+          </div>
+        }
         <div className="tictac-outer-board container-fluid border">
           <div className="tictac-board container-fluid">
             {this.state.rows.map((row, i) =>

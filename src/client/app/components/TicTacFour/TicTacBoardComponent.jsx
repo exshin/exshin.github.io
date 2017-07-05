@@ -25,7 +25,7 @@ class TicTacBoardComponent extends React.Component {
     let totalBoard = currentBoard.concat(this.state.aiMoves)
     let index = totalBoard.indexOf(position)
 
-    if (index === -1 && winner === "") {
+    if (index === -1 && this.state.winner === "") {
       currentBoard.push(position)
       this.setState({ playerMoves: currentBoard }, function() {
         this.aiTurn(0.9)

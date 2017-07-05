@@ -17,17 +17,20 @@ class TicTacComponent extends React.Component {
 
   render() {
     let moveMark
+    let markerClass
     if (this.props.player > -1) {
       moveMark =  "O"
+      markerClass = "container tic-tac-move-marker color-steelblue"
     } else if (this.props.ai > -1) {
       moveMark = "X"
+      markerClass = "container tic-tac-move-marker color-indianred"
     } else {
       moveMark = ""
     }
 
     return (
       <div className="empty-square" onClick={ this.playerMove }>
-        <div className="tic-tac-move-marker">
+        <div className={ markerClass }>
           { moveMark }
         </div>
       </div>

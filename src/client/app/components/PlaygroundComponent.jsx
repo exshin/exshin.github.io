@@ -1,6 +1,7 @@
 import React from 'react'
 import PixelBoardComponent from './PixelDrawings/PixelBoardComponent.jsx'
 import TicTacBoardComponent from './TicTacFour/TicTacBoardComponent.jsx'
+import PokePuzzlerComponent from './PokePuzzler/PokePuzzlerComponent.jsx'
 
 class PlaygroundComponent extends React.Component {
 
@@ -22,10 +23,8 @@ class PlaygroundComponent extends React.Component {
       contentView = <PixelBoardComponent/>
     } else if (this.state.contentView === "TicTacFour") {
       contentView = <TicTacBoardComponent/>
-    } else if (this.state.contentView === "Developer") {
-      contentView = <DeveloperComponent/>
-    } else {
-      contentView = <RecruiterComponent/>
+    } else if (this.state.contentView === "PokePuzzler") {
+      contentView = <PokePuzzlerComponent/>
     }
 
     return (
@@ -43,12 +42,12 @@ class PlaygroundComponent extends React.Component {
                 <a className={this.state.contentView === "TicTacFour" ? "nav-link active underline" : "nav-link"} href="#" onClick={ this.switchContentView.bind(this, "TicTacFour") }>TicTacFour Game</a>
               </li>
               <li className="nav-item">
-                <a className={this.state.contentView === "Developer" ? "nav-link active underline" : "nav-link"} href="#" onClick={ this.switchContentView.bind(this, "Developer") }>Link</a>
+                <a className={this.state.contentView === "PokePuzzler" ? "nav-link active underline" : "nav-link"} href="#" onClick={ this.switchContentView.bind(this, "PokePuzzler") }>Poke Puzzler</a>
               </li>
             </ul>
           </div>
           <div className="row">
-            <div className="story-image">
+            <div className="col col align-self-center story-image">
               { contentView }
             </div>
           </div>

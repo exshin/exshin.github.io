@@ -128,8 +128,9 @@ div.white-square {
   width: 280px;
   padding: 0px;
 }
-.outer-tictac-board {
-  width: 280px;
+.tictac-outer-board {
+  width: 344px;
+  margin-left: 136px;
 }
 .tictac-board-col {
   padding-left: 0px;
@@ -145,8 +146,20 @@ div.empty-square {
   background: white;
 }
 .tic-tac-move-marker {
-  font-size: 63px;
+  font-size: 68px;
   text-align: center;
+  bottom: 13px;
+}
+.color-steelblue {
+  color: steelblue;
+}
+.color-indianred {
+  color: indianred;
+}
+.tic-tac-message {
+  font-size: 26px;
+  font-family: cursive;
+  margin-top: 10px;
 }
 
 html {

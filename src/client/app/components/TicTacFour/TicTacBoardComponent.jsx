@@ -11,13 +11,17 @@ class TicTacBoardComponent extends React.Component {
       playerMoves: [],
       aiMoves: [],
       winner: "",
-      message: ""
+      newGame: true,
+      message: "",
+      difficultyLevel: 0.0, // 0.1 is easiest mode. 1.0 is impossible mode
+      difficultyText: ""
     }
     this.clickAdd = this.clickAdd.bind(this)
     this.aiTurn = this.aiTurn.bind(this)
     this.checkLines = this.checkLines.bind(this)
     this.win = this.win.bind(this)
     this.startNewGame = this.startNewGame.bind(this)
+    this.setDifficultyLevel = this.setDifficultyLevel.bind(this)
   }
 
   clickAdd(position) {
@@ -28,7 +32,7 @@ class TicTacBoardComponent extends React.Component {
     if (index === -1 && this.state.winner === "") {
       currentBoard.push(position)
       this.setState({ playerMoves: currentBoard }, function() {
-        this.aiTurn(0.9)
+        this.aiTurn(this.state.difficultyLevel)
       })
     }
   }
@@ -49,8 +53,6 @@ class TicTacBoardComponent extends React.Component {
 
     if (aiWin) {
       nextAiMove = String(aiPotentialLines[0].line[0])
-      message = `AI makes it's move! ${nextAiMove}`
-      console.log(aiPotentialLines)
     } else if (Math.random() < difficultyLevel) {
       for (var p = 0; p < 2; p++ ) {
         let potentialLines = [playerPotentialLines, aiPotentialLines][p]
@@ -58,7 +60,6 @@ class TicTacBoardComponent extends React.Component {
         if (potentialLines.length > 0) {
           var { line, count } = potentialLines[Math.floor(Math.random() * potentialLines.length)]
           nextAiMove = String(line[Math.floor(Math.random() * line.length)])
-          message = `AI makes it's move! ${nextAiMove}`
           break
         }
       }
@@ -66,12 +67,13 @@ class TicTacBoardComponent extends React.Component {
 
     if (nextAiMove === "") {
       nextAiMove = String(unfilled[Math.floor(Math.random() * unfilled.length)])
-      message = `AI makes it's move! ${nextAiMove}`
     }
 
     if (playerWin) {
       message = "Congratulations! You Win!"
-      this.win("player")
+      this.setState({ message }, function() {
+        this.win("player")
+      })
     } else  {
       // Tie. End Game
       if (unfilled.length <= 1) {
@@ -157,42 +159,73 @@ class TicTacBoardComponent extends React.Component {
 
   win(winner) {
     // Game ends
-    this.setState({ winner })
-    console.log(`WINNER! ${winner} !!!`)
+    this.setState({ winner, newGame: true })
   }
 
   startNewGame() {
-    this.setState({
-      playerMoves: [],
-      aiMoves: [],
-      winner: "",
-      message: ""
-    })
+    if (this.state.difficultyLevel > 0.0) {
+      this.setState({
+        playerMoves: [],
+        aiMoves: [],
+        winner: "",
+        message: "",
+        newGame: false
+      })
+    }
+  }
+
+  setDifficultyLevel(difficultyLevel, target) {
+    var text = ""
+    if (difficultyLevel === 0.2) {
+      text = "Easy"
+    } else if (difficultyLevel === 0.7) {
+      text = "Hard"
+    } else {
+      text = "Impossible"
+    }
+    this.setState({ difficultyLevel, difficultyText: text })
   }
 
   render() {
-    let gameEnd = this.state.winner === "" ? false : true
+    let btnStart = this.state.difficultyLevel > 0.0 ? "btn btn-outline-primary btn-sm" : "btn btn-outline-primary btn-sm disabled"
+    let difficultySelectText = this.state.difficultyLevel > 0.0 ? this.state.difficultyText : "Select AI Difficulty"
     return (
-      <div className="container-fluid">
-        {gameEnd === true &&
-          <div className="container-fluid">
-            <button className="btn btn-outline-primary btn-sm" onClick={ this.startNewGame }>Start New Game</button>
+      <div className="tictac-outer-board container-fluid">
+
+        {this.state.newGame === true &&
+          <div className="container-fluid margin-bottom">
+            <div className="dropdown float-left">
+              <button className="btn btn-outline-info btn-sm dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                { difficultySelectText }
+              </button>
+              <div className="dropdown-menu" aria-labelledby="dropdownMenu">
+                <button className="dropdown-item" type="button" onClick={ this.setDifficultyLevel.bind(this, 0.2) }>Easy: The AI has no idea what is going on.</button>
+                <button className="dropdown-item" type="button" onClick={ this.setDifficultyLevel.bind(this, 0.7) }>Hard: The AI is pretty dang smart.</button>
+                <button className="dropdown-item" type="button" onClick={ this.setDifficultyLevel.bind(this, 0.9) }>Impossible: Nope.</button>
+              </div>
+            </div>
+            <button type="button float-right" className={ btnStart } onClick={ this.startNewGame }>Start New Game</button>
           </div>
         }
-        <div className="tictac-outer-board container-fluid border">
-          <div className="tictac-board container-fluid">
-            {this.state.rows.map((row, i) =>
-              <div className="row tictac-board-row" key={ i } id={ String(i) }>
-                {this.state.cols.map((col, j) =>
-                  <div className="col tictac-board-col" key={ j } id={ String(j) }>
-                    <TicTacComponent player={ this.state.playerMoves.indexOf(String(row)+String(col)) } ai={ this.state.aiMoves.indexOf(String(row)+String(col)) } clickAdd={ this.clickAdd } i={ row } j={ col }/>
-                  </div>
-                )}
-              </div>
-            )}
+
+        {this.state.newGame === false &&
+          <div className="container-fluid border">
+            <div className="tictac-board container-fluid">
+              {this.state.rows.map((row, i) =>
+                <div className="row tictac-board-row" key={ i } id={ String(i) }>
+                  {this.state.cols.map((col, j) =>
+                    <div className="col tictac-board-col" key={ j } id={ String(j) }>
+                      <TicTacComponent player={ this.state.playerMoves.indexOf(String(row)+String(col)) } ai={ this.state.aiMoves.indexOf(String(row)+String(col)) } clickAdd={ this.clickAdd } i={ row } j={ col }/>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        <p>{ this.state.message }</p>
+        }
+
+        <div className="tic-tac-message">{ this.state.message }</div>
+
       </div>
     )
   }

@@ -30,10 +30,11 @@
   margin-right: 8px;
 }
 .portrait {
-  width: 45px;
-  height: 45px;
+  width: 33px;
+  height: 33px;
   margin-top: 10px;
   margin-top: 10px;
+  margin-right: 7px;
 }
 .work-title {
   font-size: 18px;
@@ -160,6 +161,16 @@ div.empty-square {
   font-size: 26px;
   font-family: cursive;
   margin-top: 10px;
+}
+.content-description {
+  font-size: 12px;
+}
+.tech-tag {
+  font-size: 10px;
+  padding-bottom: 10px;
+}
+.padding-bottom-30 {
+  padding-bottom: 30px;
 }
 
 html {

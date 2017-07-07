@@ -27,9 +27,12 @@ class AboutComponent extends React.Component {
       <div className="row container justify-content-md-center">
         <div className="col col-md-auto">
           <div className="row">
-            <div>
-              <p>Hello there!</p>
-              <p>My name is Eugene Chinveeraphan, and I'm a Software Engineer in the SF Bay Area.</p>
+            <div className="col col-8">
+              <img src="./src/client/img/hike_sunrise_dust.jpg" className="img-fluid rounded"></img>
+            </div>
+            <div className="col col-4">
+              <p><strong>Hello there!</strong></p>
+              <p>My name is Eugene Chinveeraphan, and I'm currently a Software Engineer in SF.</p>
               <p>Feel free to check out my Resume and Playground!</p>
             </div>
           </div>

@@ -32,6 +32,7 @@ class App extends React.Component {
       <div className="row container-fluid">
         <div className="col-7 top-bar">
           <div className="big-brand">
+            <img className="portrait float-left rounded" src="./src/client/img/hummingbird_focus.jpg"></img>
             <p>EUGENE CHINVEERAPHAN</p>
           </div>
         </div>

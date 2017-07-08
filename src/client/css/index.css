@@ -172,6 +172,15 @@ div.empty-square {
 .padding-bottom-30 {
   padding-bottom: 30px;
 }
+.pokepuzzler-img {
+  width: 180px;
+  margin-right: 10px;
+  margin-bottom: 40px;
+  font-size: 12px;
+}
+.pp-img {
+  margin-top: 8px;
+}
 
 html {
   background: url(./../img/white_background.png) no-repeat center center fixed;

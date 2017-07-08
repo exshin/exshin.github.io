@@ -61,7 +61,7 @@ class App extends React.Component {
                     <a className="nav-item nav-link nav-icon" href="https://www.linkedin.com/in/eugenechinveeraphan/"><i className="fa fa-linkedin-square" aria-hidden="true"></i></a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-item nav-link nav-icon" href="https://twitter.com/"><i className="fa fa-twitter-square" aria-hidden="true"></i></a>
+                    <a className="nav-item nav-link nav-icon" href="https://twitter.com/echinveeraphan"><i className="fa fa-twitter-square" aria-hidden="true"></i></a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-item nav-link nav-icon" href="https://github.com/exshin"><i className="fa fa-github-square" aria-hidden="true"></i></a>

@@ -172,14 +172,22 @@ div.empty-square {
 .padding-bottom-30 {
   padding-bottom: 30px;
 }
-.pokepuzzler-img {
-  width: 180px;
-  margin-right: 10px;
-  margin-bottom: 40px;
-  font-size: 12px;
+.pp-card {
+  background: whitesmoke;
 }
 .pp-img {
-  margin-top: 8px;
+  height: 350px;
+}
+.pp-text-block {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.pp-text {
+  font-size: 12px;
+}
+.pp-col {
+  padding-right: 3px;
+  padding-left: 3px;
 }
 
 html {

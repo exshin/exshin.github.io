@@ -34,6 +34,9 @@ class AboutComponent extends React.Component {
               <p><strong>Hello there!</strong></p>
               <p>My name is Eugene Chinveeraphan, and I'm currently a Software Engineer in SF.</p>
               <p>Feel free to check out my Resume and Playground!</p>
+              <div className="row">
+                
+              </div>
             </div>
           </div>
         </div>

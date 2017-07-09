@@ -174,9 +174,10 @@ div.empty-square {
 }
 .pp-card {
   background: whitesmoke;
+  width: 280px;
 }
 .pp-img {
-  height: 350px;
+  height: 500px;
 }
 .pp-text-block {
   padding-left: 10px;
@@ -188,6 +189,12 @@ div.empty-square {
 .pp-col {
   padding-right: 3px;
   padding-left: 3px;
+}
+.interest-img-slice {
+  height: 80px;
+}
+.about-img {
+  height: 450px;
 }
 
 html {

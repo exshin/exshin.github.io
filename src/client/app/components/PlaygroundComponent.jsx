@@ -29,7 +29,7 @@ class PlaygroundComponent extends React.Component {
       techTag = "Built via React.js"
     } else if (this.state.contentView === "PokePuzzler") {
       contentView = <PokePuzzlerComponent/>
-        contentDescription = "I'm currently still working on this one. I love match-3 games and was really into Pokemon growing up. Figured it would be fun and educational to try and build a Pokemon Match-3 game from scratch. I've gotten the base game play down (with a few of the iOS animations) and still have a ton more ideas to build!"
+        contentDescription = "I'm currently still working on this iOS app. I love match-3 games and was really into Pokemon growing up. Figured it would be fun and educational to try and build a Pokemon Match-3 game from scratch. I've gotten the base game play down (with a few of the iOS animations) and still have a ton more ideas to build!"
         techTag = "Built via Swift3"
     }
 

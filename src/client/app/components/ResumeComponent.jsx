@@ -1,7 +1,8 @@
 import React from 'react'
-import DeveloperComponent from './DeveloperComponent.jsx'
-import AnalystComponent from './AnalystComponent.jsx'
-import RecruiterComponent from './RecruiterComponent.jsx'
+import RiviDeveloperComponent from './Resume/RiviDeveloperComponent.jsx'
+import AnalystComponent from './Resume/AnalystComponent.jsx'
+import RecruiterComponent from './Resume/RecruiterComponent.jsx'
+import ZenDeveloperComponent from './Resume/ZenDeveloperComponent.jsx'
 
 class ResumeComponent extends React.Component {
 
@@ -21,8 +22,10 @@ class ResumeComponent extends React.Component {
       contentView = <RecruiterComponent/>
     } else if (this.state.workerLevel === "Analyst") {
       contentView = <AnalystComponent/>
-    } else if (this.state.workerLevel === "Developer") {
-      contentView = <DeveloperComponent/>
+    } else if (this.state.workerLevel === "RiviDeveloper") {
+      contentView = <RiviDeveloperComponent/>
+    } else if (this.state.workerLevel === "ZenDeveloper") {
+      contentView = <ZenDeveloperComponent/>
     } else {
       contentView = <RecruiterComponent/>
     }
@@ -32,9 +35,14 @@ class ResumeComponent extends React.Component {
         <div className="row container">
 
           <div className="col-4">
+            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/zendesk-logo.png"></img>Zendesk</a>
+            <div className="row">
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenDeveloper") }>Software Engineer</a>
+            </div>
+
             <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/RivieraLogo.png"></img>Riviera Partners</a>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Developer") }>Backend Software Engineer</a>
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "RiviDeveloper") }>Software Engineer</a>
             </div>
             <div className="row">
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>

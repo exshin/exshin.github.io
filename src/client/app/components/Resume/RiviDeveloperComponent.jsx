@@ -1,6 +1,6 @@
 import React from 'react'
 
-class DeveloperComponent extends React.Component {
+class RiviDeveloperComponent extends React.Component {
 
   constructor(props) {
     super(props)
@@ -12,10 +12,10 @@ class DeveloperComponent extends React.Component {
       <div className="container">
         <div className="row work-title-row">
           <div className="col-6">
-            <p className="work-title">Backend Software Engineer</p>
+            <p className="work-title">Software Engineer</p>
           </div>
           <div className="col-6 align-right date-ranges">
-            <i>December 2015 – Present</i>
+            <i>December 2015 – July 2017</i>
           </div>
         </div>
 
@@ -37,4 +37,4 @@ class DeveloperComponent extends React.Component {
 
 }
 
-export default DeveloperComponent
+export default RiviDeveloperComponent

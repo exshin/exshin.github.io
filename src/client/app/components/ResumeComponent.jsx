@@ -8,7 +8,7 @@ class ResumeComponent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { workerLevel: "Developer" }
+    this.state = { workerLevel: "ZenDeveloper" }
     this.toWorker = this.toWorker.bind(this)
   }
 

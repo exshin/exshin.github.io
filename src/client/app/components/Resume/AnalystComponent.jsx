@@ -12,7 +12,7 @@ class AnalystComponent extends React.Component {
       <div className="container">
         <div className="row work-title-row">
           <div className="col-6">
-            <p className="work-title">Senior Analyst</p>
+            <p className="work-title">Senior Data Analyst</p>
           </div>
           <div className="col-6 align-right date-ranges">
             <i>February 2012 – December 2015</i>

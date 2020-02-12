@@ -3,12 +3,13 @@ import RiviDeveloperComponent from './Resume/RiviDeveloperComponent.jsx'
 import AnalystComponent from './Resume/AnalystComponent.jsx'
 import RecruiterComponent from './Resume/RecruiterComponent.jsx'
 import ZenDeveloperComponent from './Resume/ZenDeveloperComponent.jsx'
+import ZenBillingDeveloperComponent from './Resume/ZenBillingDeveloperComponent.jsx'
 
 class ResumeComponent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { workerLevel: "ZenDeveloper" }
+    this.state = { workerLevel: "ZenBillingDeveloper" }
     this.toWorker = this.toWorker.bind(this)
   }
 
@@ -26,6 +27,8 @@ class ResumeComponent extends React.Component {
       contentView = <RiviDeveloperComponent/>
     } else if (this.state.workerLevel === "ZenDeveloper") {
       contentView = <ZenDeveloperComponent/>
+    } else if (this.state.workerLevel === "ZenBillingDeveloper") {
+      contentView = <ZenBillingDeveloperComponent/>
     } else {
       contentView = <RecruiterComponent/>
     }
@@ -37,7 +40,10 @@ class ResumeComponent extends React.Component {
           <div className="col-4">
             <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/zendesk-logo.png"></img>Zendesk</a>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenDeveloper") }>Software Engineer</a>
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenBillingDeveloper") }>Software Engineer - Billing, Growth & Monetization</a>
+            </div>
+            <div className="row">
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenDeveloper") }>Software Engineer - Core Services Tools</a>
             </div>
 
             <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/RivieraLogo.png"></img>Riviera Partners</a>

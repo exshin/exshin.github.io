@@ -38,7 +38,7 @@ class ResumeComponent extends React.Component {
         <div className="row container">
 
           <div className="col-4">
-            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/zendesk_logo.png"></img>Zendesk</a>
+            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/zendesk_logo2.png"></img>Zendesk</a>
             <div className="row">
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenBillingDeveloper") }>Software Engineer - Billing, Growth & Monetization</a>
             </div>

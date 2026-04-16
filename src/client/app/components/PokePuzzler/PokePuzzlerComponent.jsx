@@ -5,7 +5,7 @@ class PokePuzzlerComponent extends React.Component {
     super(props)
     this.state = {
       contentView: "Poke Puzzler",
-      pp_src_string: "./src/client/img/",
+      pp_src_string: "./img/",
       pp_images: ["pp_select.PNG", "pp_battle_start.PNG", "pp_moved.PNG", "pp_your_turn.PNG", "pp_ember.PNG", "pp_battle_won.PNG"],
       pp_texts: [
         "Select your Pokemon. This screen is a placeholder for when I finish the 'Your Pokemon' Collections view.",

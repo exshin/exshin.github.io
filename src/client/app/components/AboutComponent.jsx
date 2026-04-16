@@ -28,7 +28,7 @@ class AboutComponent extends React.Component {
         <div className="col col-md-auto">
           <div className="row">
             <div className="col col-8">
-              <img src="./src/client/img/hike_sunrise_dust.jpg" className="img-fluid rounded"></img>
+              <img src="./img/hike_sunrise_dust.jpg" className="img-fluid rounded"></img>
             </div>
             <div className="col col-4">
               <p><strong>Hello there!</strong></p>

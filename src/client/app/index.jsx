@@ -29,7 +29,8 @@ class App extends React.Component {
     }
 
     return (
-      <div className="row container-fluid">
+      <div className="container-fluid">
+        <div className="sticky-header row">
         <div className="col-7 top-bar">
           <div className="big-brand">
             <img className="portrait float-left rounded" src="./img/hummingbird_focus.jpg"></img>
@@ -74,7 +75,7 @@ class App extends React.Component {
 
           </nav>
         </div>
-
+        </div>
 
         <div className="container">
           { contentView }

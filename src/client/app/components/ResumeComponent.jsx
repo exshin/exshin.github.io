@@ -10,7 +10,7 @@ class ResumeComponent extends React.Component {
 
   constructor(props) {
     super(props)
-    this.state = { workerLevel: "ZenBillingDeveloper" }
+    this.state = { workerLevel: "ZenSrBillingDeveloper" }
     this.toWorker = this.toWorker.bind(this)
   }
 
@@ -43,24 +43,24 @@ class ResumeComponent extends React.Component {
           <div className="col-4">
             <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./img/zendesk_logo2.png"></img>Zendesk</a>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenSrBillingDeveloper") }>Senior Software Engineer - Product Led Growth</a>
+              <a className={this.state.workerLevel === "ZenSrBillingDeveloper" ? "nav-link resume-nav-active" : "nav-link"} href="#" onClick={ this.toWorker.bind(this, "ZenSrBillingDeveloper") }>Senior Software Engineer - Product Led Growth</a>
             </div>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenBillingDeveloper") }>Software Engineer - Billing, Growth & Monetization</a>
+              <a className={this.state.workerLevel === "ZenBillingDeveloper" ? "nav-link resume-nav-active" : "nav-link"} href="#" onClick={ this.toWorker.bind(this, "ZenBillingDeveloper") }>Software Engineer - Billing, Growth & Monetization</a>
             </div>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenDeveloper") }>Software Engineer - Core Services Tools</a>
+              <a className={this.state.workerLevel === "ZenDeveloper" ? "nav-link resume-nav-active" : "nav-link"} href="#" onClick={ this.toWorker.bind(this, "ZenDeveloper") }>Software Engineer - Core Services Tools</a>
             </div>
 
             <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./img/RivieraLogo.png"></img>Riviera Partners</a>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "RiviDeveloper") }>Software Engineer</a>
+              <a className={this.state.workerLevel === "RiviDeveloper" ? "nav-link resume-nav-active" : "nav-link"} href="#" onClick={ this.toWorker.bind(this, "RiviDeveloper") }>Software Engineer</a>
             </div>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>
+              <a className={this.state.workerLevel === "Analyst" ? "nav-link resume-nav-active" : "nav-link"} href="#" onClick={ this.toWorker.bind(this, "Analyst") }>Senior Analyst</a>
             </div>
             <div className="row">
-              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "Recruiter") }>Technical Recruiter</a>
+              <a className={this.state.workerLevel === "Recruiter" ? "nav-link resume-nav-active" : "nav-link"} href="#" onClick={ this.toWorker.bind(this, "Recruiter") }>Technical Recruiter</a>
             </div>
           </div>
           <div className="col-8">

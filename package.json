@@ -4,6 +4,7 @@
   "description": "Personal Website",
   "main": "index.js",
   "scripts": {
+    "start": "webpack-dev-server --content-base src/client --open",
     "dev": "webpack -d --watch",
     "build": "webpack -p",
     "predeploy": "npm run build",
@@ -28,5 +29,8 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "webpack": "^3.0.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^2.11.5"
   }
 }

@@ -48,9 +48,6 @@
 .education-container {
   margin-top: 20px;
 }
-.underline {
-  text-decoration: underline;
-}
 .story-yes-button {
   margin-right: 10px;
 }
@@ -201,4 +198,59 @@ html {
   -o-background-size: cover;
   background-size: cover;
 }
-body { background-color: transparent; }
+body {
+  background-color: transparent;
+  font-family: 'DM Sans', sans-serif;
+}
+
+:root {
+  --accent: #4a90d9;
+  --accent-light: #e8f2fb;
+}
+
+a {
+  color: var(--accent);
+}
+a:hover {
+  color: #2f6fad;
+}
+
+.nav-link.active,
+.nav-item.active .nav-link {
+  color: var(--accent) !important;
+}
+
+.underline {
+  text-decoration: underline;
+  color: var(--accent) !important;
+}
+
+.company-brand {
+  font-size: 24px;
+  color: #333;
+}
+
+.playground-card {
+  border-left: 4px solid var(--project-color, var(--accent));
+  background: #fff;
+  border-radius: 4px;
+  padding: 16px 20px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  margin-bottom: 16px;
+}
+.playground-card h4 {
+  font-weight: 500;
+  color: var(--project-color, var(--accent));
+  margin-bottom: 8px;
+}
+.playground-card .content-description {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 6px;
+}
+.playground-card .tech-tag {
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}

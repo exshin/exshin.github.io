@@ -208,7 +208,7 @@ class TicTacBoardComponent extends React.Component {
           </div>
         }
 
-        {this.state.newGame === false &&
+        {(this.state.newGame === false || this.state.winner !== "") &&
           <div className="container-fluid border">
             <div className="tictac-board container-fluid">
               {this.state.rows.map((row, i) =>

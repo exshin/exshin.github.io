@@ -24,21 +24,12 @@ class AboutComponent extends React.Component {
 
   render() {
     return (
-      <div className="row container justify-content-md-center">
-        <div className="col col-md-auto">
-          <div className="row">
-            <div className="col col-8">
-              <img src="./img/hike_sunrise_dust.jpg" className="img-fluid rounded"></img>
-            </div>
-            <div className="col col-4">
-              <p><strong>Hello there!</strong></p>
-              <p>My name is Eugene Chinveeraphan, and I'm currently a Software Engineer in SF.</p>
-              <p>Feel free to check out my Resume and Playground!</p>
-              <div className="row">
-                
-              </div>
-            </div>
-          </div>
+      <div className="about-hero">
+        <img src="./img/hike_sunrise_dust.jpg" className="about-hero-img"></img>
+        <div className="about-content">
+          <h1 className="about-name">Eugene Chinveeraphan</h1>
+          <p className="about-role">Senior Software Engineer · San Francisco</p>
+          <p className="about-bio">Feel free to check out my Experience and Playground!</p>
         </div>
       </div>
     )

@@ -3,8 +3,7 @@ Personal Website
 
 
 ## Running locally
-To run: `npm run dev`
-To build: `npm run build`
+To run: `npm start`
 
 
 ----------

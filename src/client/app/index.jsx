@@ -77,7 +77,7 @@ class App extends React.Component {
         </div>
         </div>
 
-        <div className="container">
+        <div className="container content-area">
           { contentView }
         </div>
 

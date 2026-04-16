@@ -206,6 +206,10 @@ body {
   font-family: 'DM Sans', sans-serif;
 }
 
+.content-area {
+  padding-top: 32px;
+}
+
 .sticky-header {
   position: sticky;
   top: 0;

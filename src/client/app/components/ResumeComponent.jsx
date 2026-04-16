@@ -4,6 +4,7 @@ import AnalystComponent from './Resume/AnalystComponent.jsx'
 import RecruiterComponent from './Resume/RecruiterComponent.jsx'
 import ZenDeveloperComponent from './Resume/ZenDeveloperComponent.jsx'
 import ZenBillingDeveloperComponent from './Resume/ZenBillingDeveloperComponent.jsx'
+import ZenSrBillingDeveloperComponent from './Resume/ZenSrBillingDeveloperComponent.jsx'
 
 class ResumeComponent extends React.Component {
 
@@ -29,6 +30,8 @@ class ResumeComponent extends React.Component {
       contentView = <ZenDeveloperComponent/>
     } else if (this.state.workerLevel === "ZenBillingDeveloper") {
       contentView = <ZenBillingDeveloperComponent/>
+    } else if (this.state.workerLevel === "ZenSrBillingDeveloper") {
+      contentView = <ZenSrBillingDeveloperComponent/>
     } else {
       contentView = <RecruiterComponent/>
     }
@@ -39,6 +42,9 @@ class ResumeComponent extends React.Component {
 
           <div className="col-4">
             <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/zendesk_logo2.png"></img>Zendesk</a>
+            <div className="row">
+              <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenSrBillingDeveloper") }>Senior Software Engineer - Product Led Growth</a>
+            </div>
             <div className="row">
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenBillingDeveloper") }>Software Engineer - Billing, Growth & Monetization</a>
             </div>

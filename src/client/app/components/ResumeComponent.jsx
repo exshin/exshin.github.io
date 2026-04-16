@@ -41,7 +41,7 @@ class ResumeComponent extends React.Component {
         <div className="row container">
 
           <div className="col-4">
-            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/zendesk_logo2.png"></img>Zendesk</a>
+            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./img/zendesk_logo2.png"></img>Zendesk</a>
             <div className="row">
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenSrBillingDeveloper") }>Senior Software Engineer - Product Led Growth</a>
             </div>
@@ -52,7 +52,7 @@ class ResumeComponent extends React.Component {
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "ZenDeveloper") }>Software Engineer - Core Services Tools</a>
             </div>
 
-            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./src/client/img/RivieraLogo.png"></img>Riviera Partners</a>
+            <a className="navbar-brand company-brand"><img className="img-circle company-logo" src="./img/RivieraLogo.png"></img>Riviera Partners</a>
             <div className="row">
               <a className="nav-link" href="#" onClick={ this.toWorker.bind(this, "RiviDeveloper") }>Software Engineer</a>
             </div>

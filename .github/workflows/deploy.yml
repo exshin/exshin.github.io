@@ -35,10 +35,11 @@ jobs:
 
       - name: Prepare deploy directory
         run: |
-          mkdir -p _site/public _site/css
+          mkdir -p _site/public _site/css _site/img
           cp src/client/index.html _site/
           cp src/client/public/bundle.js _site/public/
           cp -r src/client/css/. _site/css/
+          cp -r src/client/img/. _site/img/
 
       - uses: actions/configure-pages@v4
 

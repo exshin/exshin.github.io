@@ -15,7 +15,7 @@ class ZenBillingDeveloperComponent extends React.Component {
                         <p className="work-title">Software Engineer - Billing, Growth & Monetization</p>
                     </div>
                     <div className="col-6 align-right date-ranges">
-                        <i>July 2019 – September 2021</i>
+                        <i>July 2019 – Present</i>
                     </div>
                 </div>
 

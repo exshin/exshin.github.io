@@ -289,6 +289,346 @@ a:hover {
   box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   margin-bottom: 16px;
 }
+/* Architecture Diagram */
+.arch-password-gate {
+  max-width: 340px;
+  margin: 80px auto;
+  text-align: center;
+}
+.arch-password-heading {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.arch-password-prompt {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+.arch-password-form {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.arch-password-input {
+  max-width: 160px;
+}
+.arch-password-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+.arch-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+.arch-heading {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.arch-subheading {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 20px;
+}
+.arch-layout {
+  align-items: flex-start;
+}
+.arch-svg {
+  display: block;
+  width: 100%;
+}
+
+/* Slide navigation */
+.arch-slide-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-top: 24px;
+}
+.arch-slide-pill {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  transition: all 0.1s;
+  font-family: 'DM Sans', sans-serif;
+}
+.arch-slide-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.arch-slide-pill--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.arch-slide-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.arch-slide-title {
+  font-weight: 500;
+  margin: 0;
+}
+.arch-slide-counter {
+  font-size: 12px;
+  color: #aaa;
+}
+.arch-slide-body {
+  min-height: 460px;
+}
+.arch-slide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+.arch-nav-btn {
+  font-size: 13px;
+  padding: 5px 14px;
+}
+.arch-nav-hint {
+  font-size: 12px;
+  color: #bbb;
+}
+.arch-diagram-hint {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+/* Decision slides */
+.arch-decision-row2 {
+  margin-top: 12px;
+}
+.arch-decision-block {
+  background: #f8f8f8;
+  border-radius: 6px;
+  padding: 14px 16px;
+  height: 100%;
+}
+.arch-decision-block--considered {
+  background: #f5f5f5;
+  border-left: 3px solid #ccc;
+}
+.arch-decision-block--picked {
+  background: var(--accent-light);
+  border-left: 3px solid var(--accent);
+}
+.arch-decision-block--why {
+  background: #f3faf7;
+  border-left: 3px solid #0F6E56;
+}
+.arch-decision-block--cost {
+  background: #fdf8f3;
+  border-left: 3px solid #854F0B;
+}
+.arch-decision-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #999;
+  margin-bottom: 10px;
+}
+.arch-decision-list {
+  list-style: disc;
+  padding-left: 16px;
+  margin: 0;
+  font-size: 13px;
+  color: #444;
+  line-height: 1.65;
+}
+.arch-decision-list li {
+  margin-bottom: 6px;
+}
+.arch-decision-list li:last-child {
+  margin-bottom: 0;
+}
+.arch-decision-picked-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin: 0;
+  line-height: 1.5;
+}
+.arch-decision-note {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: #fafafa;
+  border-radius: 4px;
+  border: 1px solid #eee;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.6;
+}
+.arch-decision-note-label {
+  font-weight: 600;
+  color: #444;
+}
+
+/* Sections slides */
+.arch-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.arch-sections-grid {
+  margin-top: 0;
+}
+.arch-section-col {
+  margin-bottom: 14px;
+}
+.arch-section {
+  padding-bottom: 4px;
+}
+.arch-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+.arch-section-list {
+  list-style: disc;
+  padding-left: 18px;
+  margin: 0;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.65;
+}
+.arch-section-list li {
+  margin-bottom: 5px;
+}
+.arch-section-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Thanks slide */
+.arch-thanks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 420px;
+  padding: 60px 20px;
+}
+.arch-thanks-headline {
+  font-size: 42px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 18px;
+}
+.arch-thanks-question {
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--accent);
+  margin: 0;
+}
+
+.arch-note-panel {
+  background: #fff;
+  border-left: 4px solid #ddd;
+  border-radius: 4px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  min-height: 120px;
+  transition: border-color 0.15s;
+}
+.arch-note-panel--active {
+  border-left-color: var(--accent);
+}
+.arch-note-title {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+.arch-note-body {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.65;
+  margin: 0;
+}
+.arch-note-empty {
+  font-size: 13px;
+  color: #aaa;
+  font-style: italic;
+  margin: 0;
+}
+
+/* SVG elements */
+.arch-g {
+  cursor: pointer;
+}
+.arch-g:focus {
+  outline: none;
+}
+.arch-g rect {
+  stroke-width: 0.5;
+  transition: opacity 0.1s;
+}
+.arch-g:hover rect,
+.arch-g:focus rect {
+  opacity: 0.8;
+}
+.arch-g--selected rect {
+  stroke-width: 2;
+}
+
+.arch-component-external rect { fill: #F1EFE8; stroke: #5F5E5A; }
+.arch-component-external .arch-text-title { fill: #2C2C2A; }
+.arch-component-external .arch-text-sub { fill: #5F5E5A; }
+
+.arch-component-internal rect { fill: #EEEDFE; stroke: #534AB7; }
+.arch-component-internal .arch-text-title { fill: #26215C; }
+.arch-component-internal .arch-text-sub { fill: #534AB7; }
+
+.arch-component-datastore rect { fill: #E1F5EE; stroke: #0F6E56; }
+.arch-component-datastore .arch-text-title { fill: #04342C; }
+.arch-component-datastore .arch-text-sub { fill: #0F6E56; }
+
+.arch-component-warning rect { fill: #FAEEDA; stroke: #854F0B; }
+.arch-component-warning .arch-text-title { fill: #412402; }
+.arch-component-warning .arch-text-sub { fill: #854F0B; }
+
+.arch-text-title {
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+}
+.arch-text-sub {
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+}
+.arch-annotation {
+  font-size: 11px;
+  fill: #aaa;
+  font-style: italic;
+  font-family: 'DM Sans', sans-serif;
+}
+.arch-arrow {
+  stroke: #aaa;
+  stroke-width: 0.5;
+  fill: none;
+}
+.arch-arrow--dashed {
+  stroke-dasharray: 4 3;
+}
+
 .playground-card h4 {
   font-weight: 500;
   color: var(--project-color, var(--accent));

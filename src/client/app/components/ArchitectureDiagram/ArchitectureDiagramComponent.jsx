@@ -37,6 +37,80 @@ const NOTES = {
 
 const SLIDES = [
   {
+    id: 'problem',
+    title: 'Problem Context',
+    type: 'sections',
+    sections: [
+      {
+        label: 'What we were solving',
+        items: [
+          'Sales reps submitted customer orders in a CRM/CPQ system. Each order had to provision the customer in an external subscription billing platform and unlock product access in our internal entitlements service.',
+          "End-to-end: a click in sales tooling needed to result in a billed, provisioned customer — reliably."
+        ]
+      },
+      {
+        label: 'Why it mattered',
+        items: [
+          'Direct revenue path. Lost or stuck orders meant lost revenue, manual recovery work, and customer trust damage.',
+          'Sales, finance, support, and customers all depended on this loop closing predictably.'
+        ]
+      },
+      {
+        label: 'What was painful before',
+        items: [
+          'The prior integration coupled sales-side submit directly to the external billing platform.',
+          "When the platform had hiccups (and it did), reps saw timeouts and ambiguous errors at submit time. Some orders were lost; others were duplicated by retries.",
+          'No durable record of order intent independent of the external platform — recovery was guesswork.'
+        ]
+      },
+      {
+        label: 'Shape of the work',
+        items: [
+          'Tech lead + IC on a 3-person team. ~2–3 months from design to production rollout.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'constraints',
+    title: 'Constraints & Goals',
+    type: 'sections',
+    sections: [
+      {
+        label: 'Hard constraints',
+        items: [
+          'External billing platform is the source of truth for subscription state — we cannot replace it, only integrate with it.',
+          'It is a flaky synchronous dependency — outages and elevated latencies are expected.',
+          'PCI scope must stay entirely with the external platform. We never handle raw card data.',
+          'Order intent must be durable from the moment of submit — never lost to a downstream outage.'
+        ]
+      },
+      {
+        label: 'Idempotency requirement',
+        items: [
+          'CRM-side retries are common and unavoidable.',
+          'The same logical order must not be processed twice — duplicate provisioning is a real customer-impact failure.'
+        ]
+      },
+      {
+        label: 'Targets',
+        items: [
+          'Throughput: 1,000+ orders per minute.',
+          'End-to-end latency: sub-5 seconds on the happy path.',
+          'Data accuracy: 99.9% — divergence between our state, the platform, and entitlements should be vanishingly rare.',
+          'Honest framing: these were defined post-launch against actual Datadog measurements, not as aspirational targets at design time.'
+        ]
+      },
+      {
+        label: 'Compliance and audit',
+        items: [
+          'Every order intent the system received must be durably recorded — including ones that never reached the platform.',
+          'Status of every order must be queryable for support, finance, and on-call.'
+        ]
+      }
+    ]
+  },
+  {
     id: 'architecture',
     title: 'Architecture Overview',
     type: 'diagram'
@@ -182,7 +256,7 @@ const SLIDES = [
         items: [
           'SQS visibility timeout returns the message to the queue — another worker picks it up.',
           'The dangerous case: billing platform succeeded, worker died before writing back to MySQL.',
-          'On retry: idempotency key prevents double-creation; worker re-reads platform state to reconcile MySQL. Worth dwelling on — signals the system has been run in production.'
+          'On retry: idempotency key prevents double-creation; worker re-reads platform state to reconcile MySQL.'
         ]
       },
       {
@@ -210,8 +284,7 @@ const SLIDES = [
         items: [
           'Backpressure on SQS — visibility timeouts cause redelivery, orders pile up.',
           'SQS scales fine: 1,000/min for an hour = 60K messages, trivial.',
-          'Monitoring alerts on sustained queue depth and DLQ depth.',
-          'Distinguishing "platform is down" vs. "we have a bug" via external health checks and dominant error code in worker logs.'
+          'Monitoring alerts on sustained queue depth and DLQ depth.'
         ]
       },
       {
@@ -252,7 +325,7 @@ const SLIDES = [
         items: [
           "Reps submit and get a 200 immediately. No immediate provisioning confirmation — that's the async trade-off.",
           'Failed orders surfaced via dashboards and DLQ depth alerts to support and customer success.',
-          'Rollout via feature flag with phased customer rollout. Previous code path stayed in place as fallback during initial rollout.'
+          'Rollout via feature flag with gradual customer enablement. Previous code path stayed in place as fallback during initial rollout.'
         ]
       },
       {
@@ -300,6 +373,38 @@ const SLIDES = [
           'Tech lead, IC, and de facto project manager on a 3-person team.',
           'Owned the design doc and architecture flow charts.',
           'Sought review from the lead group architect. Drove stakeholder approval across engineering, product, and security.'
+        ]
+      }
+    ]
+  },
+  {
+    id: 'outcomes',
+    title: 'Outcomes',
+    type: 'sections',
+    sections: [
+      {
+        label: 'Headline numbers',
+        items: [
+          'Sub-5-second end-to-end order creation on the happy path.',
+          '99.9% data accuracy in steady state — measured by reconciliation between our state, the platform, and entitlements.',
+          'Throughput target of 1,000+ orders per minute met with significant headroom.',
+          'SLOs defined post-launch from real Datadog measurements, not from aspirational targets at design time.'
+        ]
+      },
+      {
+        label: 'What shipped',
+        items: [
+          'Shipped to production, owned end-to-end by a 3-person team in ~2–3 months from design to rollout.',
+          'Idempotency end-to-end: working under real retry traffic from CRM, with the MySQL unique constraint as the last line of defense.',
+          'Documented runbook for DLQ recovery and platform-outage triage; on-call ownership in place.'
+        ]
+      },
+      {
+        label: 'What it bought us',
+        items: [
+          'External platform outages are absorbed by the queue, not propagated to reps at submit time.',
+          'Recovery is mechanical — replay from MySQL audit log, manual triage from DLQ — not investigative archaeology.',
+          'Latency is now an SLO that holds in steady state; the system optimizes for correctness, with latency as a secondary contract.'
         ]
       }
     ]

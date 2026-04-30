@@ -1,6 +1,7 @@
 import AboutComponent from './components/AboutComponent.jsx'
 import ResumeComponent from './components/ResumeComponent.jsx'
 import PlaygroundComponent from './components/PlaygroundComponent.jsx'
+import ArchitectureDiagramComponent from './components/ArchitectureDiagram/ArchitectureDiagramComponent.jsx'
 
 import React from 'react'
 import {render} from 'react-dom'
@@ -8,7 +9,9 @@ import {render} from 'react-dom'
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { currentView: "About" }
+    const hash = window.location.hash.replace(/^#\/?/, '')
+    const initialView = hash === 'authorium' ? 'Authorium' : 'About'
+    this.state = { currentView: initialView }
     this.toContent = this.toContent.bind(this)
   }
 
@@ -24,6 +27,8 @@ class App extends React.Component {
       contentView = <ResumeComponent/>
     } else if (this.state.currentView === "Contact") {
       contentView = <ContactComponent/>
+    } else if (this.state.currentView === 'Authorium') {
+      contentView = <ArchitectureDiagramComponent/>
     } else {
       contentView = <PlaygroundComponent/>
     }

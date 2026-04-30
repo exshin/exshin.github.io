@@ -97,8 +97,7 @@ const SLIDES = [
         items: [
           'Throughput: 1,000+ orders per minute.',
           'End-to-end latency: sub-5 seconds on the happy path.',
-          'Data accuracy: 99.9% — divergence between our state, the platform, and entitlements should be vanishingly rare.',
-          'Honest framing: these were defined post-launch against actual Datadog measurements, not as aspirational targets at design time.'
+          'Data accuracy: 99.9% — divergence between our state, the platform, and entitlements should be vanishingly rare.'
         ]
       },
       {
@@ -387,8 +386,7 @@ const SLIDES = [
         items: [
           'Sub-5-second end-to-end order creation on the happy path.',
           '99.9% data accuracy in steady state — measured by reconciliation between our state, the platform, and entitlements.',
-          'Throughput target of 1,000+ orders per minute met with significant headroom.',
-          'SLOs defined post-launch from real Datadog measurements, not from aspirational targets at design time.'
+          'Throughput target of 1,000+ orders per minute met with significant headroom.'
         ]
       },
       {

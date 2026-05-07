@@ -10,7 +10,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     const hash = window.location.hash.replace(/^#\/?/, '')
-    const initialView = hash === 'authorium' ? 'Authorium' : 'About'
+    const initialView = hash === 'system_design' ? 'SystemDesign' : 'About'
     this.state = { currentView: initialView }
     this.toContent = this.toContent.bind(this)
   }
@@ -27,7 +27,7 @@ class App extends React.Component {
       contentView = <ResumeComponent/>
     } else if (this.state.currentView === "Contact") {
       contentView = <ContactComponent/>
-    } else if (this.state.currentView === 'Authorium') {
+    } else if (this.state.currentView === 'SystemDesign') {
       contentView = <ArchitectureDiagramComponent/>
     } else {
       contentView = <PlaygroundComponent/>

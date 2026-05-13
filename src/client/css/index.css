@@ -991,3 +991,545 @@ a:hover {
     font-size: 26px;
   }
 }
+
+/* ============================================================
+   Somnia playground section
+   ============================================================ */
+.somnia {
+  --somnia-purple: #7a5cd6;
+  --somnia-ink: #1a1a1a;
+  --somnia-ink-dim: #555;
+  --somnia-ink-muted: #888;
+  --somnia-border: #ececec;
+  --somnia-panel: #fff;
+  --section-accent: var(--somnia-purple);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* Hero strip */
+.somnia-hero {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0a0814;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.somnia-hero-trigger {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  display: block;
+}
+.somnia-hero-trigger:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -4px;
+}
+.somnia-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+.somnia-hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 32px;
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0) 40%,
+    rgba(0,0,0,0.55) 100%);
+  color: #fff;
+  pointer-events: none;
+}
+.somnia-hero-quote {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-style: italic;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  line-height: 1.2;
+}
+.somnia-hero-sub {
+  font-size: 14px;
+  margin-top: 6px;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+}
+
+/* Generic section panel */
+.somnia-section {
+  background: var(--somnia-panel);
+  border: 1px solid var(--somnia-border);
+  border-radius: 8px;
+  padding: 24px 26px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: grid;
+  gap: 24px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.somnia-section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--section-accent);
+  opacity: 0.85;
+}
+.somnia-section:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+}
+.somnia-section--single-left {
+  grid-template-columns: minmax(220px, 320px) 1fr;
+}
+.somnia-section--single-left .somnia-section-images { order: 0; }
+.somnia-section--single-left .somnia-section-text { order: 1; }
+.somnia-section--single-right {
+  grid-template-columns: 1fr minmax(220px, 320px);
+}
+.somnia-section--dual {
+  grid-template-columns: 1fr;
+}
+.somnia-section--dual .somnia-section-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.somnia-section--cast {
+  grid-template-columns: 1fr;
+}
+.somnia-section--reveries {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: stretch;
+}
+.somnia-reveries-top {
+  display: grid;
+  grid-template-columns: 1fr minmax(220px, 320px);
+  gap: 24px;
+  align-items: center;
+}
+
+.somnia-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--section-accent);
+  margin-bottom: 8px;
+}
+.somnia-section-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--somnia-ink);
+  margin: 0;
+  line-height: 1.25;
+}
+.somnia-section-divider {
+  height: 1px;
+  background: var(--section-accent);
+  opacity: 0.3;
+  margin: 12px 0 14px;
+  width: 60px;
+}
+.somnia-section-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--somnia-ink-dim);
+  margin: 0;
+}
+.somnia-section-body em {
+  color: var(--section-accent);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Element legend */
+.somnia-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--somnia-border);
+}
+.somnia-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.somnia-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.somnia-legend-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--somnia-ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Phone screenshots */
+.somnia-section-images {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.somnia-shot {
+  position: relative;
+  background: #14101d;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: zoom-in;
+  width: 100%;
+}
+.somnia-shot:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 12px 32px rgba(0, 0, 0, 0.16);
+}
+.somnia-shot:focus-visible {
+  outline: 2px solid var(--section-accent, var(--somnia-purple));
+  outline-offset: 2px;
+}
+.somnia-shot img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.somnia-shot-caption {
+  font-size: 11px;
+  color: var(--somnia-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 1px solid var(--somnia-border);
+  text-align: center;
+}
+
+/* Cast grid */
+.somnia-cast-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.somnia-cast-card {
+  background: #fafafa;
+  border: 1px solid var(--somnia-border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: zoom-in;
+  width: 100%;
+}
+.somnia-cast-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  border-color: #d8d8d8;
+}
+.somnia-cast-card:focus-visible {
+  outline: 2px solid var(--section-accent, var(--somnia-purple));
+  outline-offset: 2px;
+}
+.somnia-cast-img-wrap {
+  background: #0a0814;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  position: relative;
+}
+.somnia-cast-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+}
+.somnia-cast-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+}
+.somnia-cast-meta {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.somnia-cast-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--somnia-ink);
+  letter-spacing: 0.02em;
+}
+.somnia-cast-role {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--section-accent);
+  font-weight: 600;
+}
+.somnia-cast-quote {
+  font-size: 12px;
+  color: var(--somnia-ink-dim);
+  line-height: 1.5;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Reverie gallery */
+.somnia-reverie-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.somnia-reverie-card {
+  background: #fafafa;
+  border: 1px solid var(--somnia-border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: zoom-in;
+  width: 100%;
+}
+.somnia-reverie-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  border-color: #d8d8d8;
+}
+.somnia-reverie-card:focus-visible {
+  outline: 2px solid var(--section-accent, var(--somnia-purple));
+  outline-offset: 2px;
+}
+.somnia-reverie-img-wrap {
+  background: #14101d;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  position: relative;
+}
+.somnia-reverie-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.somnia-reverie-meta {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.somnia-reverie-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--somnia-ink);
+  letter-spacing: 0.02em;
+}
+.somnia-reverie-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--somnia-ink-muted);
+  font-weight: 600;
+}
+.somnia-reverie-quote {
+  font-size: 11px;
+  color: var(--somnia-ink-dim);
+  line-height: 1.5;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .somnia-hero { height: 220px; }
+  .somnia-hero-overlay { padding: 22px 20px; }
+  .somnia-hero-quote { font-size: 22px; }
+
+  .somnia-section {
+    padding: 20px 18px;
+    gap: 18px;
+  }
+  .somnia-section--single-left,
+  .somnia-section--single-right {
+    grid-template-columns: 1fr;
+  }
+  .somnia-section--single-left .somnia-section-images,
+  .somnia-section--single-right .somnia-section-images {
+    max-width: 280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .somnia-section--single-left .somnia-section-text { order: 0; }
+  .somnia-section--single-left .somnia-section-images { order: 1; }
+
+  .somnia-cast-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .somnia-cast-img-wrap {
+    aspect-ratio: 16 / 10;
+  }
+  .somnia-cast-img-wrap img {
+    object-position: center 25%;
+  }
+
+  .somnia-reveries-top {
+    grid-template-columns: 1fr;
+  }
+  .somnia-reveries-top .somnia-section-images {
+    max-width: 280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .somnia-reverie-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 460px) {
+  .somnia-reverie-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Lightbox */
+.somnia-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(8, 6, 16, 0.86);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px 60px;
+  cursor: zoom-out;
+  animation: somnia-lightbox-fade 0.18s ease-out;
+}
+@keyframes somnia-lightbox-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.somnia-lightbox-img {
+  max-width: 100%;
+  max-height: calc(100vh - 120px);
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  cursor: default;
+  display: block;
+}
+.somnia-lightbox-caption {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  background: rgba(0,0,0,0.4);
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: default;
+  max-width: 80vw;
+  text-align: center;
+}
+.somnia-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.4);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.somnia-lightbox-close:hover {
+  background: rgba(0,0,0,0.6);
+  border-color: rgba(255,255,255,0.4);
+  transform: scale(1.05);
+}
+.somnia-lightbox-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 460px) {
+  .somnia-lightbox { padding: 28px 12px 50px; }
+  .somnia-lightbox-img { max-height: calc(100vh - 100px); border-radius: 10px; }
+  .somnia-lightbox-close { top: 10px; right: 10px; width: 36px; height: 36px; }
+  .somnia-lightbox-caption { font-size: 11px; bottom: 12px; }
+}

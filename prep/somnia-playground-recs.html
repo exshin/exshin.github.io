@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Somnia Playground — Improvement Recommendations</title>
+<style>
+  :root {
+    --bg: #0f0d18;
+    --panel: #1a1726;
+    --panel-2: #221d33;
+    --ink: #ece8f5;
+    --ink-dim: #b3acc7;
+    --ink-muted: #8a839c;
+    --accent: #b89aff;        /* Somnia purple */
+    --accent-2: #f2c14e;      /* light/sun */
+    --accent-3: #6ad6c1;      /* wind */
+    --accent-4: #ff8a5b;      /* fire */
+    --accent-5: #6da3ff;      /* water */
+    --good: #66dd99;
+    --warn: #f3b05a;
+    --bad: #ff6f7a;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.55;
+  }
+  body {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 28px 96px;
+  }
+  header.page-head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 38px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    color: var(--ink-dim);
+    font-size: 16px;
+    max-width: 720px;
+  }
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 56px 0 16px;
+    letter-spacing: -0.005em;
+    border-left: 3px solid var(--accent);
+    padding-left: 14px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 28px 0 10px;
+    color: var(--ink);
+  }
+  h4 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin: 20px 0 8px;
+  }
+  p { margin: 0 0 12px; color: var(--ink-dim); }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: rgba(255,255,255,0.06);
+    color: #f5e9c7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: #0a0814;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #d8d2ee;
+  }
+  ul, ol { color: var(--ink-dim); padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  a { color: var(--accent); }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin: 14px 0;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 720px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .pill.must { background: rgba(255,111,122,0.15); color: var(--bad); border: 1px solid rgba(255,111,122,0.4); }
+  .pill.should { background: rgba(243,176,90,0.15); color: var(--warn); border: 1px solid rgba(243,176,90,0.4); }
+  .pill.nice { background: rgba(102,221,153,0.15); color: var(--good); border: 1px solid rgba(102,221,153,0.4); }
+
+  .screenshot-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .screenshot-card .meta {
+    padding: 12px 14px 14px;
+  }
+  .screenshot-card .filename {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+  .screenshot-card .title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .screenshot-card .desc {
+    font-size: 12px;
+    color: var(--ink-dim);
+    line-height: 1.45;
+  }
+  .placeholder-image {
+    aspect-ratio: 9/19.5;
+    background:
+      linear-gradient(135deg, rgba(184,154,255,0.18), rgba(255,138,91,0.12)),
+      #0a0814;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+    font-size: 11px;
+    text-align: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--ink-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  td { color: var(--ink-dim); }
+  td code { font-size: 12px; }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    background: rgba(184,154,255,0.06);
+    padding: 14px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .callout.warn {
+    border-left-color: var(--warn);
+    background: rgba(243,176,90,0.07);
+  }
+
+  .mock {
+    background: #0a0814;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    color: #cdc6e3;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .toc {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+  }
+  .toc h4 { margin-top: 0; }
+  .toc ol { margin: 8px 0 0; padding-left: 22px; }
+  .toc a { color: var(--ink); text-decoration: none; }
+  .toc a:hover { color: var(--accent); }
+
+  .feature-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(184,154,255,0.18);
+    color: var(--accent);
+    margin-right: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <div class="eyebrow">Playground · Somnia</div>
+  <h1>Improvement Recommendations</h1>
+  <p class="lede">
+    The current Somnia section uses a 4-image carousel with a single "Next" button. The new
+    screenshots reveal layers of the game (training mode, Bond mechanic, narrative beats, NPC
+    dialogue, multi-element battles) that the playground does not currently surface. This doc
+    is a structural redesign brief: what to add, how to lay it out, and what to swap for what.
+  </p>
+</header>
+
+<div class="toc">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#diagnosis">Diagnosis: why the section feels lacking</a></li>
+    <li><a href="#screenshots">New screenshot inventory</a></li>
+    <li><a href="#structure">Proposed structure</a></li>
+    <li><a href="#layout">Layout mock</a></li>
+    <li><a href="#copy">Copy &amp; microcopy</a></li>
+    <li><a href="#assets">Asset checklist &amp; naming</a></li>
+    <li><a href="#implementation">Implementation phases</a></li>
+    <li><a href="#stretch">Stretch ideas</a></li>
+  </ol>
+</div>
+
+<!-- ========================== 1. DIAGNOSIS ========================== -->
+<h2 id="diagnosis">1. Diagnosis — why the current Somnia section feels lacking</h2>
+
+<div class="panel">
+  <h4>What's there now</h4>
+  <ul>
+    <li>4 screenshots cycled with a single "Next" button (battle, Veilith, map, Sable)</li>
+    <li>One short paragraph per image — captions are fine but disposable</li>
+    <li>No way to see a specific feature on demand — visitors must click through linearly</li>
+    <li>No representation of: Bond mechanic, Training/Tutorial mode, Dream Surge, NPC dialogue, the broader world (atmospheric/cinematic shots), or the breadth of element types</li>
+  </ul>
+
+  <h4>Why this underwhelms</h4>
+  <ul>
+    <li><strong>Single board image ≠ "match-3 RPG."</strong> A casual visitor sees one screenshot of tiles and doesn't grasp the systems on top: bonding, timed challenges, surges, multi-step combat.</li>
+    <li><strong>The art is a feature.</strong> The game's painterly forest/stone backgrounds and watercolor character art are a clear style differentiator. None of that voice comes through in the current 4-shot carousel.</li>
+    <li><strong>The narrative voice is a feature.</strong> Thea's dialogue ("I thought Reveries were just vibes"), the atmospheric cards ("The trees thin...") show the game has real writing personality. Right now the page just describes the genre.</li>
+    <li><strong>No depth gradient.</strong> Visitors who want a quick "what is this?" get the same flow as visitors who want to dig in. There's no tl;dr and no deeper layer.</li>
+  </ul>
+</div>
+
+<!-- ========================== 2. SCREENSHOT INVENTORY ========================== -->
+<h2 id="screenshots">2. New screenshot inventory</h2>
+
+<p>
+  Seven new screenshots are available in <code>~/Downloads/</code>. Below is each one's
+  recommended role in the redesigned section, suggested filename when copied into
+  <code>src/client/img/</code>, and the feature it best showcases.
+</p>
+
+<div class="grid-3">
+  <div class="screenshot-card">
+    <div class="placeholder-image">IMG_4363<br/>Battle vs. Gloomite (Lv.1)<br/>multi-element + lightning + Dream Surge</div>
+    <div class="meta">
+      <div class="filename">→ somnia_battle_dreamsurge.png</div>
+      <div class="title">Battle: full element suite</div>
+      <div class="desc">Best "this is what combat looks like at depth" shot. Shows all six element tiles, the lightning skill tile, and the Dream Surge UI banner.</div>
+    </div>
+  </div>
+
+  <div class="screenshot-card">
+    <div class="placeholder-image">IMG_4368<br/>Bond charged with Veilith<br/>"Tap the Bond button..."</div>
+    <div class="meta">
+      <div class="filename">→ somnia_bond_charged.png</div>
+      <div class="title">Bond mechanic</div>
+      <div class="desc">Captures a unique system the current page doesn't mention at all — the Bond meter, hand tiles, and the bonding moment with an enemy.</div>
+    </div>
+  </div>
+
+  <div class="screenshot-card">
+    <div class="placeholder-image">IMG_4369<br/>Timed challenge<br/>"Match the marked elements... 60 seconds"</div>
+    <div class="meta">
+      <div class="filename">→ somnia_training_timed.png</div>
+      <div class="title">Training / timed mode</div>
+      <div class="desc">Shows there's more than story-mode combat — there's a free-to-retry training system and a different goal structure.</div>
+    </div>
+  </div>
+
+  <div class="screenshot-card">
+    <div class="placeholder-image">IMG_4370<br/>Puzzle goal screen<br/>Wind 8/30, Dusk 13/30</div>
+    <div class="meta">
+      <div class="filename">→ somnia_puzzle_goals.png</div>
+      <div class="title">Puzzle objectives view</div>
+      <div class="desc">Pure-puzzle framing with element goal tracking and a special skill tile. Good "rules of the puzzle" anchor shot.</div>
+    </div>
+  </div>
+
+  <div class="screenshot-card">
+    <div class="placeholder-image">IMG_4365 / IMG_4366<br/>Thea (NPC, watercolor)<br/>"...nobody told me about battles"</div>
+    <div class="meta">
+      <div class="filename">→ somnia_thea_dialogue.png</div>
+      <div class="title">NPC dialogue / writing voice</div>
+      <div class="desc">Pick one of the two Thea shots. The "I thought Reveries were just vibes" caption is the stronger pull-quote — funnier and more characterful.</div>
+    </div>
+  </div>
+
+  <div class="screenshot-card">
+    <div class="placeholder-image">IMG_4367<br/>Atmospheric forest interior<br/>"The trees thin..."</div>
+    <div class="meta">
+      <div class="filename">→ somnia_atmosphere_forest.png</div>
+      <div class="title">World / atmosphere card</div>
+      <div class="desc">Establishes mood. Use as the section's hero/backdrop or as a transition card between mechanics and narrative.</div>
+    </div>
+  </div>
+</div>
+
+<div class="callout">
+  <strong>Recommendation:</strong> drop the second Thea shot (IMG_4366) and keep one — they're
+  visually identical. Pick the line that lands harder. If you want both, pair them as a
+  before/after dialogue beat ("you walked up... two weeks here..." → "...there has to be a
+  discord") inside a small dialogue carousel.
+</div>
+
+<!-- ========================== 3. STRUCTURE ========================== -->
+<h2 id="structure">3. Proposed structure</h2>
+
+<p>
+  Replace the single linear carousel with a <strong>feature-segmented gallery</strong>. Each
+  segment showcases one pillar of the game with 1–3 screenshots and a tight caption. Visitors
+  scan vertically and stop on what interests them.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:18%">Section</th>
+      <th style="width:14%">Screenshots</th>
+      <th>Purpose</th>
+      <th style="width:14%">Priority</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Hero / atmosphere</strong></td>
+      <td>somnia_atmosphere_forest</td>
+      <td>Set tone before mechanics. One full-bleed image with one line of evocative copy. No UI chrome visible — pure mood.</td>
+      <td><span class="pill must">Must</span></td>
+    </tr>
+    <tr>
+      <td><strong>Combat: the puzzle layer</strong></td>
+      <td>somnia_puzzle_goals + somnia_battle_dreamsurge</td>
+      <td>Two shots side-by-side: "objectives" and "live battle." Caption explains the loop — match elements → fuel skills → resolve turn.</td>
+      <td><span class="pill must">Must</span></td>
+    </tr>
+    <tr>
+      <td><strong>The Bond system</strong></td>
+      <td>somnia_bond_charged</td>
+      <td>The signature mechanic. One shot + 2–3 sentence explanation. This is the thing that separates Somnia from other match-3.</td>
+      <td><span class="pill must">Must</span></td>
+    </tr>
+    <tr>
+      <td><strong>Training mode</strong></td>
+      <td>somnia_training_timed</td>
+      <td>Shows the game has a learn-the-systems track. Reframes the puzzle UI under different rules.</td>
+      <td><span class="pill should">Should</span></td>
+    </tr>
+    <tr>
+      <td><strong>Cast &amp; story</strong></td>
+      <td>somnia_thea_dialogue (+ keep somnia_sable.png)</td>
+      <td>NPC art + a real pull-quote. Show the writing has voice. Caption frames Reveries as characters with arcs.</td>
+      <td><span class="pill must">Must</span></td>
+    </tr>
+    <tr>
+      <td><strong>The world / map</strong></td>
+      <td>existing somnia_map.png</td>
+      <td>Keep — but recontextualize as "areas branch into nodes" rather than just "explore."</td>
+      <td><span class="pill should">Should</span></td>
+    </tr>
+    <tr>
+      <td><strong>Reveries (companions)</strong></td>
+      <td>existing somnia_veilith.png</td>
+      <td>Move this into the Cast section, paired with the new Thea shot — group all character art.</td>
+      <td><span class="pill should">Should</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ========================== 4. LAYOUT MOCK ========================== -->
+<h2 id="layout">4. Layout mock</h2>
+
+<p>Vertical-scroll, segmented. The existing Playground hero/description stays at the top. Below it, the Somnia Component renders this stack.</p>
+
+<div class="mock">┌─────────────────────────────────────────────────────────────────────┐
+│  [ HERO STRIP — full-bleed atmosphere forest image, ~280px tall ]   │
+│   "Step into a dreamscape."                                         │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌──────── COMBAT — THE PUZZLE LAYER ────────┐
+│ ┌────────────┐  ┌────────────┐            │  Side-by-side phone shots
+│ │ goals 8/30 │  │ battle UI  │   text →   │  with caption to the right
+│ │ 13/30      │  │ Dream Surge│            │  on desktop, stacked on mobile.
+│ └────────────┘  └────────────┘            │
+└────────────────────────────────────────────┘
+
+┌──────── THE BOND ─────────────────────────┐
+│ ┌────────────┐   The signature mechanic.  │
+│ │ Bond 100%  │   Build a bond meter mid-  │
+│ │ Veilith    │   battle, then attempt to  │
+│ │            │   form a Dream Bond with   │
+│ └────────────┘   the enemy itself...      │
+└────────────────────────────────────────────┘
+
+┌──────── TRAINING MODE ────────────────────┐
+│   Caption left   ┌────────────┐           │
+│                  │ 60 sec     │           │
+│                  │ Match!     │           │
+│                  └────────────┘           │
+└────────────────────────────────────────────┘
+
+┌──────── CAST &amp; STORY ────────────────────┐
+│ ┌──────┐ ┌──────┐ ┌──────┐                │  Three-up character grid:
+│ │Thea  │ │Veil. │ │Sable │                │  Thea / Veilith / Sable
+│ │"...  │ │"Dusk │ │"...  │                │  Each with a 1-line quote
+│ │vibes"│ │debuf"│ │      │                │  or role label.
+│ └──────┘ └──────┘ └──────┘                │
+└────────────────────────────────────────────┘
+
+┌──────── THE WORLD ────────────────────────┐
+│ ┌────────────────────────┐   Areas branch │
+│ │ map / nodes screenshot │   into combat, │
+│ │                        │   dialogue,    │
+│ └────────────────────────┘   rest, hidden.│
+└────────────────────────────────────────────┘
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <h4>Why segmented over carousel</h4>
+    <ul>
+      <li>Carousels hide content behind clicks — bad for scannability</li>
+      <li>A page about a puzzle/RPG game should feel rich and dense, not slideshow-thin</li>
+      <li>Each section can be deep-linked or shared individually later</li>
+      <li>Lets you keep growing — adding a section is additive, not a rework</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h4>Where small carousels still help</h4>
+    <ul>
+      <li>The <em>Combat</em> section can use a 2-shot toggle (puzzle goals ↔ battle) if you want to call out the "objective view vs. live battle" framing</li>
+      <li>The <em>Cast &amp; story</em> section: tap a character to swap dialogue line — like a hover/tap interaction, not a forced timer</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ========================== 5. COPY ========================== -->
+<h2 id="copy">5. Copy &amp; microcopy</h2>
+
+<p>Caption drafts — short, concrete, written like marketing copy not feature lists.</p>
+
+<div class="panel">
+  <h4>Hero / atmosphere</h4>
+  <p style="color:var(--ink);"><em>"Step into a dreamscape — past the boundary of the outer reach."</em></p>
+
+  <h4>Combat — the puzzle layer</h4>
+  <p style="color:var(--ink);">
+    Combat is a turn-based puzzle. Match elemental tiles to fuel each Reverie's skills —
+    fire, water, air, light, dusk — and chain them into bigger plays. Hit the round's
+    objectives in the moves you have, or change up your team.
+  </p>
+
+  <h4>The Bond</h4>
+  <p style="color:var(--ink);">
+    The bond meter charges as you fight. Fill it, and you can attempt a <em>Dream Bond</em>
+    with the enemy you're battling — turning a fight into a recruitment. The signature
+    mechanic of Somnia, and the one that hooks runs together.
+  </p>
+
+  <h4>Training mode</h4>
+  <p style="color:var(--ink);">
+    Drop into pure puzzle challenges to learn the systems — timed matches, element goals,
+    free retries. Useful for new players and a sandbox for tuning encounters.
+  </p>
+
+  <h4>Cast &amp; story</h4>
+  <p style="color:var(--ink);">
+    Reveries are characters, not just party slots. Drifters like Thea narrate the in-between
+    — the moments of arriving in this world, taking notes, asking the things you'd ask.
+    Dialogue, story choices, and rest beats sit between every encounter.
+  </p>
+
+  <h4>The world</h4>
+  <p style="color:var(--ink);">
+    Areas branch into nodes — combat, dialogue, rest, hidden rooms. Each run is a path
+    through the dreamscape that you choose, then live with.
+  </p>
+</div>
+
+<div class="callout warn">
+  Avoid the words "feature-rich," "engaging," "immersive." Use the game's own vocabulary:
+  Reverie, Bond, Dream Bond, Drifter, the outer reach, Reverie type names. The vocabulary
+  itself does most of the worldbuilding.
+</div>
+
+<!-- ========================== 6. ASSETS ========================== -->
+<h2 id="assets">6. Asset checklist &amp; naming</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Source (in <code>~/Downloads/</code>)</th>
+      <th>Copy to</th>
+      <th>Used in</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>IMG_4363.PNG</td>
+      <td><code>src/client/img/somnia_battle_dreamsurge.png</code></td>
+      <td>Combat section (right shot)</td>
+    </tr>
+    <tr>
+      <td>IMG_4370.PNG</td>
+      <td><code>src/client/img/somnia_puzzle_goals.png</code></td>
+      <td>Combat section (left shot)</td>
+    </tr>
+    <tr>
+      <td>IMG_4368.PNG</td>
+      <td><code>src/client/img/somnia_bond_charged.png</code></td>
+      <td>Bond section</td>
+    </tr>
+    <tr>
+      <td>IMG_4369.PNG</td>
+      <td><code>src/client/img/somnia_training_timed.png</code></td>
+      <td>Training section</td>
+    </tr>
+    <tr>
+      <td>IMG_4365.PNG (preferred) <em>or</em> IMG_4366.PNG</td>
+      <td><code>src/client/img/somnia_thea_dialogue.png</code></td>
+      <td>Cast &amp; story</td>
+    </tr>
+    <tr>
+      <td>IMG_4367.PNG</td>
+      <td><code>src/client/img/somnia_atmosphere_forest.png</code></td>
+      <td>Hero strip</td>
+    </tr>
+    <tr>
+      <td>(existing) <code>somnia_battle.png</code></td>
+      <td>Keep, but consider replacing — newer shots are stronger. Could remove.</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>(existing) <code>somnia_veilith.png</code>, <code>somnia_sable.png</code>, <code>somnia_map.png</code></td>
+      <td>Keep all three.</td>
+      <td>Cast (Veilith, Sable) and World (map)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <strong>Image weight note:</strong> these screenshots are likely 3–5 MB each at native iPhone
+  resolution. Resize to ~900px wide PNG (or convert to optimized JPG) before committing —
+  the page is currently lightweight and we don't want a 30 MB Somnia section.
+</div>
+
+<!-- ========================== 7. IMPLEMENTATION ========================== -->
+<h2 id="implementation">7. Implementation phases</h2>
+
+<div class="panel">
+  <h4>Phase 1 — content swap (smallest change)</h4>
+  <ol>
+    <li>Copy + downsize the 6 new screenshots into <code>src/client/img/</code> with the names above</li>
+    <li>Extend the existing arrays in <code>SomniaComponent.jsx</code> to include all new images and captions</li>
+    <li>Ship — same UI, more content. Confirms the captions and image weights work.</li>
+  </ol>
+  <p><span class="pill nice">Effort: ~30 min</span></p>
+</div>
+
+<div class="panel">
+  <h4>Phase 2 — restructure layout</h4>
+  <ol>
+    <li>Replace the single-image-with-Next-button layout with a vertical sectioned layout in <code>SomniaComponent.jsx</code></li>
+    <li>Add a <code>SomniaSection</code> sub-component (image[s] + heading + caption block)</li>
+    <li>Add styles in <code>index.css</code> under a <code>.somnia-*</code> namespace; reuse the playground typography scale (font sizes 22 / 14 / 12)</li>
+    <li>Make character grid 3-up on desktop, stacked on mobile (the existing playground page already maxes at 960px — match that)</li>
+  </ol>
+  <p><span class="pill should">Effort: ~2–3 hours</span></p>
+</div>
+
+<div class="panel">
+  <h4>Phase 3 — atmosphere &amp; polish</h4>
+  <ul>
+    <li>Hero strip uses the forest atmosphere image as a background with a dark gradient and an italic line of copy on top — gives the section a real "land here" moment</li>
+    <li>Each section gets a subtle accent stripe in its corresponding element color (e.g. Bond = the bond-blue, Combat = neutral, Cast = warm)</li>
+    <li>Consider a "Reverie" detail card on hover/tap that pulls forward role/passive — mirrors the in-game UI</li>
+  </ul>
+  <p><span class="pill nice">Effort: ~2 hours, optional</span></p>
+</div>
+
+<!-- ========================== 8. STRETCH ========================== -->
+<h2 id="stretch">8. Stretch ideas (later, not now)</h2>
+
+<ul>
+  <li><strong>Tile-match preview animation.</strong> A small CSS/JS demo of element tiles matching and clearing, embedded above the Combat section. Sells the loop better than a static image ever can.</li>
+  <li><strong>Reverie lineup widget.</strong> Pull the team art into a horizontal row of trading-card-style portraits the way the in-game UI does. Hover/tap reveals role + element.</li>
+  <li><strong>Inline element legend.</strong> Six small tiles labeled fire/water/air/light/dusk/wind so visitors can read the icons in subsequent screenshots. Tiny cognitive aid that pays off across the whole section.</li>
+  <li><strong>"Patch notes" feed.</strong> Since Somnia is being actively built, a 3-line "what's new this month" block under the section signals it's a live project, not a finished portfolio entry.</li>
+  <li><strong>TestFlight / wait-list link.</strong> If/when there's something to opt into, the Somnia section is the natural CTA point.</li>
+</ul>
+
+<hr style="border: none; border-top: 1px solid var(--border); margin: 56px 0 24px;" />
+
+<p style="color: var(--ink-muted); font-size: 12px;">
+  Recommendations doc — generated alongside the new screenshots in <code>~/Downloads/</code>.
+  When ready to implement, start with Phase 1 (content) so you have feedback on the new images
+  in-context before restructuring the layout.
+</p>
+
+</body>
+</html>

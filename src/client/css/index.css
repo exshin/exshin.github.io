@@ -1,10 +1,3 @@
-.resume-line {
-  font-size: 14px;
-  line-height: 1.7;
-}
-.resume-line li {
-  margin-bottom: 8px;
-}
 .big-brand {
   font-size: 32px;
   margin-top: 5px;
@@ -13,9 +6,6 @@
 }
 .top-bar {
   margin-bottom: 40px;
-}
-.company-brand {
-  font-size: 24px;
 }
 .content-view {
   margin-top: 20px;
@@ -29,27 +19,14 @@
 .img-circle {
     border-radius: 50%;
 }
-.company-logo {
-  width: 30px;
-  margin-right: 8px;
-}
 .portrait {
   width: 52px;
   height: 52px;
   margin-top: 4px;
   margin-right: 10px;
 }
-.work-title {
-  font-size: 18px;
-}
 .align-right {
   text-align: right;
-}
-.date-ranges {
-  font-size: 13px;
-}
-.education-container {
-  margin-top: 20px;
 }
 .story-yes-button {
   margin-right: 10px;
@@ -240,13 +217,6 @@ body {
   color: #555;
 }
 
-.resume-nav-active {
-  color: var(--accent) !important;
-  border-left: 3px solid var(--accent);
-  padding-left: 8px;
-  font-weight: 500;
-}
-
 :root {
   --accent: #4a90d9;
   --accent-light: #e8f2fb;
@@ -267,11 +237,6 @@ a:hover {
 .underline {
   text-decoration: underline;
   color: var(--accent) !important;
-}
-
-.company-brand {
-  font-size: 24px;
-  color: #333;
 }
 
 /* Architecture Diagram */

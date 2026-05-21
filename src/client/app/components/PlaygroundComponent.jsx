@@ -1,10 +1,22 @@
 import React from 'react'
 import SomniaComponent from './Somnia/SomniaComponent.jsx'
+import WordBlokComponent from './WordBlok/WordBlokComponent.jsx'
 import PixelBoardComponent from './PixelDrawings/PixelBoardComponent.jsx'
 import TicTacBoardComponent from './TicTacFour/TicTacBoardComponent.jsx'
 import PokePuzzlerComponent from './PokePuzzler/PokePuzzlerComponent.jsx'
 
 const PROJECTS = {
+  WordBlok: {
+    key: 'WordBlok',
+    title: 'WordBlok',
+    tagline: 'Polyomino + Scrabble word puzzle for iOS',
+    description: "WordBlok is a polished iOS word puzzle I'm building that fuses Tetris-style piece placement with Scrabble-style word scoring. Drag polyomino-shaped pieces of letter tiles onto an 8×8 board; any time the placed tiles form a real dictionary word, it scores — with a punishing length multiplier (a 7-letter word is worth 16× a 3-letter word's base value). Letters persist after scoring, so each turn quietly sets up the next. Wildcards, bombs, and blockers add strategic specials. Built natively in SwiftUI with an event-driven engine layer and a pure scorer.",
+    techTags: ['SwiftUI', 'iOS'],
+    projectColor: '#F2C200',
+    thumb: { type: 'image', src: './img/wordblok_title.png' },
+    archived: false,
+    Component: WordBlokComponent,
+  },
   Somnia: {
     key: 'Somnia',
     title: 'Somnia',
@@ -51,7 +63,7 @@ const PROJECTS = {
   },
 }
 
-const PROJECT_ORDER = ['Somnia', 'Pixel Drawer', 'TicTacFour', 'PokePuzzler']
+const PROJECT_ORDER = ['WordBlok', 'Somnia', 'Pixel Drawer', 'TicTacFour', 'PokePuzzler']
 
 function PlaygroundHeader() {
   return (
@@ -199,7 +211,7 @@ class PlaygroundComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      contentView: 'Somnia',
+      contentView: 'WordBlok',
     }
     this.switchContentView = this.switchContentView.bind(this)
   }

@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chime · Backend · R2 Onsite Prep</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #f6f8f7;
+    --panel: #ffffff;
+    --panel-2: #eef3f0;
+    --border: #d8e1dd;
+    --text: #1a2421;
+    --muted: #6b7470;
+    --accent: #0e7a4f;
+    --accent-2: #1cab6b;
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --chime: #1ec677;
+    --chime-dark: #0d6b46;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--chime-dark); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--accent-2); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.chime { border-left: 3px solid var(--chime); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #f7faf8 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.chime { color: #fff; background: var(--chime-dark); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  .story { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .story .title { color: var(--accent); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .story .tags { margin-bottom: 8px; }
+  .story .row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .story .row .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  .round-banner {
+    background: linear-gradient(135deg, var(--chime) 0%, var(--accent) 100%);
+    color: #fff; padding: 12px 18px; border-radius: 8px; margin: 0 0 16px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .round-banner .lbl { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.08em; }
+  .round-banner .time { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Chime · Backend Eng <span class="badge">R2 Onsite</span></h1>
+  <nav class="tabs">
+    <button data-tab="cheat" class="active">Cheat Sheet</button>
+    <button data-tab="coding">Coding (60m)</button>
+    <button data-tab="design">Design (60m)</button>
+    <button data-tab="xfn">Cross-Fn (30m)</button>
+    <button data-tab="em">EM Round (45m)</button>
+    <button data-tab="stories">Stories</button>
+    <button data-tab="company">Company &amp; Values</button>
+    <button data-tab="questions">Q's to Ask</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab active" id="tab-cheat" data-toc='[
+    ["The onsite at a glance","glance"],
+    ["The 10-second pitch","pitch"],
+    ["Chime values (memorize all 8)","values"],
+    ["Words that land well","vocab"],
+    ["Before each round","before"],
+    ["Mission soundbite","mission"],
+    ["Red flags to avoid","red"],
+    ["When stuck","stuck"]
+  ]'>
+    <h2>Cheat Sheet <span class="sub">scan this between rounds</span></h2>
+
+    <h3 class="section" id="glance">The onsite at a glance</h3>
+    <table class="rubric">
+      <tr><th>Round</th><th>Time</th><th>Format</th><th>What they really score</th></tr>
+      <tr><td><strong>Coding</strong></td><td>60 min</td><td>Shared IDE, language of choice (Ruby), 1 problem usually</td><td>CS fundamentals + clean code + verbalized thinking</td></tr>
+      <tr><td><strong>Design</strong></td><td>60 min</td><td>Online whiteboard, backend system</td><td>Tradeoff reasoning, scaling, reliability, data modeling</td></tr>
+      <tr><td><strong>Cross-Functional</strong></td><td>30 min</td><td>Behavioral only, non-eng partner</td><td>How you collaborate with PM/design/QA/support</td></tr>
+      <tr><td><strong>Engineering Manager</strong></td><td>45 min</td><td>Conversational</td><td>Awareness, empathy, trust, "leveling up" — bias to action</td></tr>
+    </table>
+
+    <h3 class="section" id="pitch">The 10-second pitch (about you)</h3>
+    <div class="card chime">
+      <p style="margin:0 0 6px 0"><strong>Template:</strong> "I'm a senior backend engineer with deep experience in payments and money-moving systems at Zendesk — including sole ownership of a Talk billing integration on Zuora. Idempotency, async retries, customer-facing correctness — that's the muscle I want to bring to Chime, because at Chime a bug literally moves a member's money."</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">~25 seconds. Keep it under 45. Then shut up and let them drive.</p>
+    </div>
+
+    <h3 class="section" id="values">Chime values (memorize all 8 — they ask)</h3>
+    <div class="grid-2">
+      <div class="card"><span class="pill chime">1</span><strong>Be member-obsessed</strong> — every decision starts with "how does this help the member?"</div>
+      <div class="card"><span class="pill chime">2</span><strong>Be human</strong> — speak plainly, treat people like people, no corporate hedging</div>
+      <div class="card"><span class="pill chime">3</span><strong>Be bold</strong> — propose the ambitious version, then trim. Not "minimum to ship."</div>
+      <div class="card"><span class="pill chime">4</span><strong>Simplify</strong> — reduce complexity for member, for ops, for engineers. Anti-bloat.</div>
+      <div class="card"><span class="pill chime">5</span><strong>Make it happen</strong> — bias to action. "Olympic pace" of fintech-with-correctness.</div>
+      <div class="card"><span class="pill chime">6</span><strong>Respect the rules</strong> — finance is regulated. You take compliance seriously without using it as a shield.</div>
+      <div class="card"><span class="pill chime">7</span><strong>Team up</strong> — cross-functional partnership. Engineering doesn't ship alone.</div>
+      <div class="card"><span class="pill chime">8</span><strong>Chime in</strong> — speak up, give feedback, push back when needed. Voice is owed.</div>
+    </div>
+
+    <h3 class="section" id="vocab">Words and phrases that will land well</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Mission vocab:</strong> <em>member, financial peace of mind, everyday Americans, fees-free, no overdraft, financial inclusion</em></p>
+      <p style="margin:0 0 6px 0"><strong>Culture vocab:</strong> <em>member-obsessed, bias to action, simplify, bold, ChimeCore, ledger, real-time</em></p>
+      <p style="margin:0 0 6px 0"><strong>Product vocab:</strong> <em>SpotMe, MyPay, Chime+, Chime Card, direct deposit, instant transfers, P2P</em></p>
+      <p style="margin:0"><strong>Engineering vocab:</strong> <em>idempotency, exactly-once, transactional outbox, double-entry ledger, audit log, eventual consistency, compensating transaction</em></p>
+    </div>
+
+    <h3 class="section" id="before">Before each round (30-second prep)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--muted);font-size:12px">CODING</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>"Compile and run code often" is in their guide — narrate testing each method</li>
+          <li>Brute force first, then optimize. State complexity unprompted.</li>
+          <li>Ask 2 clarifiers, walk an example, then code</li>
+          <li>Treat the interviewer as a collaborator, not a judge</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--muted);font-size:12px">DESIGN</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Invest the first 10 min in requirements + scope</li>
+          <li>For Chime: ALWAYS mention idempotency, audit log, ledger</li>
+          <li>Walk through failure scenarios out loud</li>
+          <li>Cover reliability, availability, scalability — they list them explicitly</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--muted);font-size:12px">CROSS-FUNCTIONAL</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Have 2 stories ready: <strong>worked with PM/design</strong>, <strong>worked with support/ops</strong></li>
+          <li>"What went well, what could have gone better, how you handled different points of view" — directly from their prompt</li>
+          <li>Frame around the member, not engineering elegance</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--muted);font-size:12px">EM ROUND</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Be ready for "highs and lows of your career"</li>
+          <li>One story about feedback given, one about feedback received</li>
+          <li>Know what you want from your next role — they'll ask</li>
+          <li>"Bias to action" / leveling up self &amp; surroundings</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="mission">Mission soundbite (use whenever "why Chime?")</h3>
+    <div class="card good">
+      <p class="quote" style="margin:0">"Most banks make money when you mess up — overdraft fees, ATM fees, minimum-balance fees. Chime's model is the opposite: you make money when the member succeeds. That alignment is rare, and it actually changes what gets built. I've spent my career in payments, where every bug literally moves money, so the rigor here is muscle memory. What's new for me is doing it for members who don't have a cushion when things go wrong — and that's why I want to do it here."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Hits: aligned incentives, member-obsessed, payments rigor, "Be human."</p>
+    </div>
+
+    <h3 class="section" id="red">Red flags to avoid (any round)</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>Calling them a "bank."</strong> They are a fintech; the actual bank charter is held by partners (The Bancorp Bank, Stride Bank). Say "Chime" or "the platform."</li>
+        <li><strong>"Customer" instead of "member."</strong> They go out of their way to use "member" — it's a culture marker.</li>
+        <li><strong>Cleverness over correctness</strong> in coding. Fintech rewards working O(n log n) at minute 30 over scrambling for O(n).</li>
+        <li><strong>Skipping idempotency / audit in design.</strong> Anything moving money needs both, full stop.</li>
+        <li><strong>"I" instead of "we"</strong> for collaborative work — and vice versa for things you owned</li>
+        <li><strong>Generic "great company" answers.</strong> Show you've read about ChimeCore, MyPay, SpotMe.</li>
+        <li><strong>Silent coding</strong> for &gt; 30 seconds. Their own tip: "communicate your thought process."</li>
+        <li><strong>Bashing past employers</strong> — always reframe as a problem you tried to fix.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="stuck">When stuck (any round)</h3>
+    <ul class="tight">
+      <li><strong>Restate the problem aloud.</strong> 70% of bugs are misread requirements.</li>
+      <li><strong>Trace one example by hand.</strong> "Let me walk through input X step by step."</li>
+      <li><strong>Ask the interviewer.</strong> "I want to verify my assumption — can you confirm Y?"</li>
+      <li><strong>Out loud: "Let me try a simpler version first."</strong> Then iterate.</li>
+      <li><strong>For behavioral:</strong> "Let me think about that for a moment" — 5-10s silence is fine.</li>
+    </ul>
+  </section>
+
+  <!-- ============ CODING ============ -->
+  <section class="tab" id="tab-coding" data-toc='[
+    ["Format &amp; what to expect","fmt"],
+    ["Communication framework","comm"],
+    ["Pattern 1: Hashmap","p1"],
+    ["Pattern 2: Prefix sum","p2"],
+    ["Pattern 3: Sliding window","p3"],
+    ["Pattern 4: Sort + two pointers","p4"],
+    ["Pattern 5: Tree DFS w/ bounds","p5"],
+    ["Pattern 6: Tree BFS by level","p6"],
+    ["Pattern 7: Grid DFS/BFS","p7"],
+    ["Pattern 8: Stack matching","p8"],
+    ["Pattern 9: Top-K","p9"],
+    ["Pattern 10: Linked list","p10"],
+    ["OOD: LRU Cache","ood1"],
+    ["OOD: Rate Limiter","ood2"],
+    ["Ruby-specific cheats","ruby"],
+    ["Pattern recognition","recog"],
+    ["Reported Chime problems","reported"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Coding Round</div><div style="font-size:16px;font-weight:600">60 min · shared IDE · language of choice</div></div>
+      <div class="time">⏱ 60 min</div>
+    </div>
+
+    <h3 class="section" id="fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>From their guide:</strong> "CS fundamentals such as data structures and algorithms. Big(O) notation."</li>
+        <li><strong>Not asked:</strong> bit logic, Dijkstra's, esoteric algorithms. They explicitly say so.</li>
+        <li><strong>In scope:</strong> hashmaps, linked lists, trees, graphs, arrays, strings.</li>
+        <li><strong>Allowed:</strong> Docs, StackOverflow during the interview (they tell you in writing).</li>
+        <li><strong>Language:</strong> your choice. <strong>Use Ruby</strong> — Chime is a Rails shop, you'll get bonus signal.</li>
+        <li><strong>Compile and run often</strong> — also from their guide. Inline asserts after each function.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="comm">Communication framework (use every time)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Restate</strong> the problem in your own words</li>
+        <li><strong>Clarify</strong> with 2–3 questions (input size, edge cases, mutation OK?, sorted?)</li>
+        <li><strong>Brute force first</strong>, even if you'll optimize ("naive is O(n²)…")</li>
+        <li><strong>Outline before coding</strong> — get a nod</li>
+        <li><strong>Narrate</strong> non-obvious decisions only (skip "now I'll write a for loop")</li>
+        <li><strong>Trace</strong> with a concrete example after coding</li>
+        <li><strong>State complexity</strong> unprompted (time + space)</li>
+        <li><strong>End with:</strong> "Want me to optimize, add tests, or handle edge cases?"</li>
+      </ol>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">For <strong>OOD problems</strong> also ask: memory bounded? thread safety? distribution?</p>
+    </div>
+
+    <h3 class="section" id="p1">Pattern 1: Hashmap for "have I seen this?"</h3>
+    <p><strong>Recognize:</strong> "Find pair/group with property X" — anything checkable in O(1).</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def two_sum(nums, target)
+  seen = {}
+  nums.each_with_index do |num, i|
+    complement = target - num
+    return [seen[complement], i] if seen.key?(complement)
+    seen[num] = i
+  end
+  []
+end</code></pre></div>
+    <ul class="tight">
+      <li><strong>Trap:</strong> Store <em>after</em> checking complement, not before (avoids matching self).</li>
+      <li><strong>Complexity:</strong> O(n) time, O(n) space.</li>
+    </ul>
+
+    <h3 class="section" id="p2">Pattern 2: Prefix sum + hashmap</h3>
+    <p><strong>Recognize:</strong> "Contiguous subarray sum equals/divisible by k" — <em>especially with negatives</em>.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def subarray_sum(nums, k)
+  count = 0
+  prefix_sum = 0
+  sums = Hash.new(0)
+  sums[0] = 1  # phantom prefix — empty subarray sums to 0
+  nums.each do |num|
+    prefix_sum += num
+    count += sums[prefix_sum - k]
+    sums[prefix_sum] += 1
+  end
+  count
+end</code></pre></div>
+    <ul class="tight">
+      <li><strong>Trap:</strong> Forgetting <code class="inline">sums[0] = 1</code> — misses subarrays starting at index 0.</li>
+      <li><strong>When NOT to use:</strong> All-positive arrays → sliding window is simpler.</li>
+    </ul>
+    <div class="card chime">
+      <p style="margin:0;font-size:13px"><strong>Bank account analogy</strong> (Chime-friendly): Running balance = prefix sum. Hashmap = notebook of past balances. "Has my balance ever been (today's balance − k)?" = "is there a stretch where I netted exactly k?" Drop this — it's on-domain.</p>
+    </div>
+
+    <h3 class="section" id="p3">Pattern 3: Sliding Window</h3>
+    <h4>Three flavors</h4>
+    <table class="rubric">
+      <tr><th></th><th>Longest</th><th>Shortest</th></tr>
+      <tr><td>Shrink when</td><td>Invariant <em>broken</em></td><td>Invariant <em>holds</em></td></tr>
+      <tr><td>Record</td><td>After shrink loop</td><td>Inside shrink loop</td></tr>
+      <tr><td>Default best</td><td>0</td><td>Float::INFINITY</td></tr>
+    </table>
+    <p style="color:var(--muted);font-size:12px"><strong>O(n) amortized:</strong> both pointers move ≤ n times total. Verbalize this.</p>
+
+    <h4>Longest Substring Without Repeating</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def length_of_longest_substring(s)
+  last_seen = {}
+  left = 0
+  max_len = 0
+  s.each_char.with_index do |char, right|
+    if last_seen.key?(char) && last_seen[char] >= left
+      left = last_seen[char] + 1
+    end
+    last_seen[char] = right
+    max_len = [max_len, right - left + 1].max
+  end
+  max_len
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Trap:</strong> <code class="inline">&gt;= left</code> check (skip already-evicted duplicates).</p>
+
+    <h4>Longest Substring with At Most K Distinct</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def longest_substring_k_distinct(s, k)
+  return 0 if k == 0
+  counts = Hash.new(0)
+  left = 0
+  best = 0
+  s.each_char.with_index do |char, right|
+    counts[char] += 1
+    while counts.size > k
+      counts[s[left]] -= 1
+      counts.delete(s[left]) if counts[s[left]] == 0
+      left += 1
+    end
+    best = [best, right - left + 1].max
+  end
+  best
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Trap:</strong> Delete zero-count keys, or <code class="inline">counts.size</code> overcounts distinct chars.</p>
+
+    <h4>Minimum Window Substring (variable shortest)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def min_window(s, t)
+  return "" if t.length > s.length
+  required = Hash.new(0)
+  t.each_char { |c| required[c] += 1 }
+  needed = required.size
+  have = Hash.new(0)
+  formed = 0
+  left = 0
+  best_len = Float::INFINITY
+  best_left = 0
+  s.each_char.with_index do |char, right|
+    have[char] += 1
+    formed += 1 if required.key?(char) && have[char] == required[char]
+    while formed == needed
+      if right - left + 1 < best_len
+        best_len = right - left + 1
+        best_left = left
+      end
+      left_char = s[left]
+      have[left_char] -= 1
+      formed -= 1 if required.key?(left_char) && have[left_char] < required[left_char]
+      left += 1
+    end
+  end
+  best_len == Float::INFINITY ? "" : s[best_left, best_len]
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Key trick:</strong> <code class="inline">formed</code> counter updates in O(1). Don't compare hashmaps each step.</p>
+
+    <h3 class="section" id="p4">Pattern 4: Sort + two pointers</h3>
+    <p><strong>Recognize:</strong> Pairs/triplets/quadruplets summing to a target.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def three_sum(nums)
+  nums.sort!
+  result = []
+  n = nums.length
+  (0...n - 2).each do |i|
+    next if i > 0 && nums[i] == nums[i - 1]  # dedup anchor
+    left, right = i + 1, n - 1
+    while left < right
+      total = nums[i] + nums[left] + nums[right]
+      if total < 0
+        left += 1
+      elsif total > 0
+        right -= 1
+      else
+        result << [nums[i], nums[left], nums[right]]
+        left += 1
+        right -= 1
+        left += 1 while left < right && nums[left] == nums[left - 1]
+        right -= 1 while left < right && nums[right] == nums[right + 1]
+      end
+    end
+  end
+  result
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Trap:</strong> Three dedup spots — anchor, left after match, right after match. <strong>Complexity:</strong> O(n²) time, O(1) extra space.</p>
+
+    <h3 class="section" id="p5">Pattern 5: Tree DFS with bounds</h3>
+    <p><strong>Recognize:</strong> Validity depends on ancestral context, not just parent-child.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def is_valid_bst(root, low = -Float::INFINITY, high = Float::INFINITY)
+  return true if root.nil?
+  return false if root.val <= low || root.val >= high
+  is_valid_bst(root.left, low, root.val) &&
+    is_valid_bst(root.right, root.val, high)
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Trap:</strong> Local parent-child checks miss cases like a 4 nested deep in 5's right subtree. <strong>O(n) time, O(h) stack.</strong></p>
+
+    <h3 class="section" id="p6">Pattern 6: Tree BFS by level</h3>
+    <p><strong>Recognize:</strong> "Process level by level / right side view / zigzag / shortest path on tree."</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def level_order(root)
+  return [] if root.nil?
+  result = []
+  queue = [root]
+  until queue.empty?
+    level = []
+    queue.size.times do  # snapshot size BEFORE inner loop
+      node = queue.shift
+      level << node.val
+      queue << node.left if node.left
+      queue << node.right if node.right
+    end
+    result << level
+  end
+  result
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Trap:</strong> Reading <code class="inline">queue.size</code> <em>during</em> the inner loop — snapshot it first. <strong>Ruby gotcha:</strong> <code class="inline">Array#shift</code> is O(n); fine for interview-sized inputs.</p>
+
+    <h3 class="section" id="p7">Pattern 7: Grid traversal (DFS/BFS)</h3>
+    <p><strong>Recognize:</strong> Connected components on a 2D grid.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def num_islands(grid)
+  return 0 if grid.empty?
+  rows, cols = grid.length, grid[0].length
+  count = 0
+  rows.times do |r|
+    cols.times do |c|
+      if grid[r][c] == '1'
+        count += 1
+        dfs(grid, r, c, rows, cols)
+      end
+    end
+  end
+  count
+end
+
+def dfs(grid, r, c, rows, cols)
+  return if r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] != '1'
+  grid[r][c] = '0'  # mark visited by mutating
+  dfs(grid, r + 1, c, rows, cols)
+  dfs(grid, r - 1, c, rows, cols)
+  dfs(grid, r, c + 1, rows, cols)
+  dfs(grid, r, c - 1, rows, cols)
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Senior move:</strong> Ask "can I mutate the grid?" before starting. If no, use a <code class="inline">visited</code> Set.</p>
+
+    <h3 class="section" id="p8">Pattern 8: Stack matching</h3>
+    <p><strong>Recognize:</strong> Nested or paired structure.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def is_valid(s)
+  pairs = { ')' => '(', ']' => '[', '}' => '{' }
+  stack = []
+  s.each_char do |c|
+    if pairs.key?(c)
+      return false if stack.empty? || stack.pop != pairs[c]
+    else
+      stack.push(c)
+    end
+  end
+  stack.empty?
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Trap:</strong> Three failure modes — empty stack on close, mismatch on close, leftover opens at end.</p>
+
+    <h3 class="section" id="p9">Pattern 9: Heap / bucket sort for top-K</h3>
+    <p><strong>Recognize:</strong> "Top K frequent / largest / smallest." Ruby has no built-in heap.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># O(n log n) — sort, simplest
+def top_k_frequent(nums, k)
+  counts = Hash.new(0)
+  nums.each { |n| counts[n] += 1 }
+  counts.sort_by { |_, c| -c }.first(k).map(&amp;:first)
+end
+
+# O(n) — bucket sort, mention as the elegant alternative
+def top_k_frequent_bucket(nums, k)
+  counts = Hash.new(0)
+  nums.each { |n| counts[n] += 1 }
+  buckets = Array.new(nums.length + 1) { [] }
+  counts.each { |num, c| buckets[c] &lt;&lt; num }
+  result = []
+  buckets.reverse_each do |bucket|
+    bucket.each do |num|
+      result &lt;&lt; num
+      return result if result.length == k
+    end
+  end
+  result
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)"><strong>Bucket sort works because</strong> frequency is bounded by <code class="inline">nums.length</code> — index-as-frequency.</p>
+
+    <h3 class="section" id="p10">Pattern 10: Linked list pointer manipulation</h3>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def reverse_list(head)
+  prev = nil
+  curr = head
+  while curr
+    nxt = curr.next
+    curr.next = prev
+    prev = curr
+    curr = nxt
+  end
+  prev
+end</code></pre></div>
+    <p style="font-size:12px;color:var(--muted)">Practice until automatic. Three pointers, four lines in the loop.</p>
+
+    <h3 class="section" id="ood1">OOD Problem 1: LRU Cache</h3>
+    <p><strong>Pattern:</strong> Hashmap (O(1) lookup) + doubly linked list (O(1) reorder).</p>
+
+    <h4>Ruby-clever (mention as senior aside)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class LRUCache
+  def initialize(capacity)
+    @cap = capacity
+    @cache = {}
+  end
+
+  def get(key)
+    return -1 unless @cache.key?(key)
+    val = @cache.delete(key)
+    @cache[key] = val  # re-insert moves to end (most recent)
+    val
+  end
+
+  def put(key, value)
+    @cache.delete(key) if @cache.key?(key)
+    @cache[key] = value
+    @cache.shift if @cache.size > @cap  # removes oldest
+  end
+end</code></pre></div>
+
+    <h4>Classical (what they want to see)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class LRUCache
+  class Node
+    attr_accessor :key, :val, :prev, :next
+    def initialize(key = 0, val = 0)
+      @key = key; @val = val; @prev = nil; @next = nil
+    end
+  end
+
+  def initialize(capacity)
+    @cap = capacity
+    @cache = {}
+    @head = Node.new  # sentinel: most recent side
+    @tail = Node.new  # sentinel: least recent side
+    @head.next = @tail
+    @tail.prev = @head
+  end
+
+  def get(key)
+    return -1 unless @cache.key?(key)
+    node = @cache[key]
+    remove(node)
+    add_to_front(node)
+    node.val
+  end
+
+  def put(key, value)
+    remove(@cache[key]) if @cache.key?(key)
+    node = Node.new(key, value)
+    @cache[key] = node
+    add_to_front(node)
+    if @cache.size > @cap
+      lru = @tail.prev
+      remove(lru)
+      @cache.delete(lru.key)  # critical: also remove from hashmap
+    end
+  end
+
+  private
+
+  def remove(node)
+    node.prev.next = node.next
+    node.next.prev = node.prev
+  end
+
+  def add_to_front(node)
+    node.next = @head.next
+    node.prev = @head
+    @head.next.prev = node
+    @head.next = node
+  end
+end</code></pre></div>
+    <div class="card good">
+      <p style="margin:0 0 4px 0;font-size:12px;color:var(--good)">TALKING POINTS</p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li>Doubly linked, not singly — need O(1) removal of arbitrary node.</li>
+        <li>Sentinel head/tail eliminate null checks at boundaries.</li>
+        <li>Store key on node so <code class="inline">put</code> can also delete from hashmap on evict.</li>
+        <li>Mention the Ruby Hash trick as a senior aside.</li>
+      </ol>
+      <p style="margin:8px 0 0 0;font-size:12px"><strong>Follow-ups:</strong> Thread safety → <code class="inline">Mutex#synchronize</code>. Distributed → Redis with EXPIRE.</p>
+    </div>
+
+    <h3 class="section" id="ood2">OOD Problem 2: Logger Rate Limiter</h3>
+
+    <h4>Approach 1: Simple, unbounded memory</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class Logger
+  WINDOW = 10
+
+  def initialize
+    @last_seen = {}
+  end
+
+  def should_print_message(timestamp, message)
+    if !@last_seen.key?(message) || timestamp >= @last_seen[message] + WINDOW
+      @last_seen[message] = timestamp
+      true
+    else
+      false
+    end
+  end
+end</code></pre></div>
+
+    <h4>Approach 2: Bounded memory with sliding window</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">require 'set'
+
+class Logger
+  WINDOW = 10
+
+  def initialize
+    @queue = []         # [timestamp, message] pairs
+    @recent = Set.new   # O(1) membership lookup
+  end
+
+  def should_print_message(timestamp, message)
+    while !@queue.empty? && @queue.first[0] <= timestamp - WINDOW
+      _, old_msg = @queue.shift
+      @recent.delete(old_msg)
+    end
+    return false if @recent.include?(message)
+    @queue << [timestamp, message]
+    @recent.add(message)
+    true
+  end
+end</code></pre></div>
+    <div class="card chime">
+      <p style="margin:0 0 4px 0;font-size:12px"><strong>Senior move sequence (Chime-friendly — they live in regulated fintech):</strong></p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li>Show approach 1 first.</li>
+        <li>"This works, but unbounded memory in production. Want me to show the bounded version?"</li>
+        <li>Show approach 2.</li>
+        <li>Volunteer follow-ups: thread safety (Mutex), distribution (Redis SETNX + EXPIRE), parameterization.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="ruby">Ruby-specific cheat sheet</h3>
+    <table class="rubric">
+      <tr><th>Need</th><th>Use</th></tr>
+      <tr><td>Counter</td><td><code class="inline">Hash.new(0)</code>, then <code class="inline">h[k] += 1</code></td></tr>
+      <tr><td>Default to array</td><td><code class="inline">Hash.new { |h, k| h[k] = [] }</code></td></tr>
+      <tr><td>Set</td><td><code class="inline">require 'set'; s = Set.new</code></td></tr>
+      <tr><td>Infinity</td><td><code class="inline">Float::INFINITY</code>, <code class="inline">-Float::INFINITY</code></td></tr>
+      <tr><td>Min/max</td><td><code class="inline">[a, b].min</code> / <code class="inline">[a, b].max</code></td></tr>
+      <tr><td>Sort descending</td><td><code class="inline">arr.sort_by { |x| -x }</code></td></tr>
+      <tr><td>Range (exclusive)</td><td><code class="inline">(0...n).each</code></td></tr>
+      <tr><td>Frequency map</td><td><code class="inline">arr.tally</code></td></tr>
+      <tr><td>Heap</td><td>None built-in; sort or bucket sort</td></tr>
+      <tr><td>Deque</td><td><code class="inline">Array</code> (<code class="inline">shift</code> is O(n), fine for interviews)</td></tr>
+      <tr><td>String chars with index</td><td><code class="inline">s.each_char.with_index do |c, i|</code></td></tr>
+      <tr><td>Substring</td><td><code class="inline">s[start, length]</code></td></tr>
+    </table>
+
+    <h3 class="section" id="recog">Pattern recognition cheat sheet</h3>
+    <table class="rubric">
+      <tr><th>Phrasing in problem</th><th>First instinct</th></tr>
+      <tr><td>"Find pair/group with property"</td><td>Hashmap</td></tr>
+      <tr><td>"Subarray sum equals k, with negatives"</td><td>Prefix sum + hashmap</td></tr>
+      <tr><td>"Subarray sum equals k, all positives"</td><td>Sliding window</td></tr>
+      <tr><td>"Longest/shortest substring with property"</td><td>Sliding window (variable)</td></tr>
+      <tr><td>"All windows of size k"</td><td>Sliding window (fixed)</td></tr>
+      <tr><td>"Triplets summing to target"</td><td>Sort + two pointers</td></tr>
+      <tr><td>"Validate / range query on BST"</td><td>DFS with bounds</td></tr>
+      <tr><td>"Process tree level by level"</td><td>BFS with queue size snapshot</td></tr>
+      <tr><td>"Connected components on grid"</td><td>DFS/BFS on grid</td></tr>
+      <tr><td>"Nested or paired structure"</td><td>Stack</td></tr>
+      <tr><td>"Top K …"</td><td>Heap or bucket sort</td></tr>
+      <tr><td>"Design class with O(1) on N operations"</td><td>Combine 2 structures (hash + list)</td></tr>
+      <tr><td>"Rate limiter / dedup"</td><td>Hashmap (+ optional sliding window)</td></tr>
+    </table>
+
+    <h3 class="section" id="reported">Reported Chime coding problems (from candidates)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">MANAGER HIERARCHY</p>
+        <p style="margin:0;font-size:13px">Parse a string like <code class="inline">"1:max:4, 2:ann:0, 3:alb:2, 4:edmond:2"</code> (format <code class="inline">id:name:manager_id</code>) and build a tree. Then likely follow-ups: "find all reports of X," "find common manager of A and B."</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)"><strong>Plan:</strong> Hash <code class="inline">{id =&gt; node}</code>, second pass to wire parent→children, then DFS for queries.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">EXPLODING MINES</p>
+        <p style="margin:0;font-size:13px">Given mines as 3-tuples <code class="inline">(x, y, radius)</code>, find the most destructive mine (one that triggers the largest chain reaction).</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)"><strong>Plan:</strong> Build a graph (mine A "covers" mine B if distance(A,B) ≤ radius_A). DFS from each mine, count reachable nodes. O(n²) for graph build + O(n²) traversal.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">BROWSER HISTORY (MULTI-TAB)</p>
+        <p style="margin:0;font-size:13px">Single-tab browser history → extend to a multi-tab manager that supports open/close tabs, switch, back/forward per tab.</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)"><strong>Plan:</strong> <code class="inline">Tab</code> class with two stacks (back, forward); <code class="inline">Manager</code> class with <code class="inline">{tab_id =&gt; Tab}</code>.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">ARRAY / STRING HEAVY</p>
+        <p style="margin:0;font-size:13px">Reports note "Chime emphasizes Array and String questions" — Remove Duplicates from Sorted Array, Count Unhappy Friends, Max Area Rectangle With Point Constraints, etc.</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Breakdown reported: ~7 easy, ~26 medium, ~8 hard across coding rounds historically.</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="day">Day-of mental model</h3>
+    <div class="card chime">
+      <ul class="tight" style="margin:0">
+        <li><strong>Chime is fintech — correctness &gt; cleverness.</strong></li>
+        <li>Working O(n log n) at minute 30 beats scrambling for O(n).</li>
+        <li>Ask 2–3 clarifying questions before any code.</li>
+        <li>State brute force first, even if you'll optimize.</li>
+        <li>Trace a small example after coding.</li>
+        <li>Always state complexity unprompted.</li>
+        <li>For OOD: ask about memory, threading, distribution.</li>
+        <li>If stuck: explain what you'd try and why; interviewers will guide you — they say this in writing.</li>
+        <li><strong>Be open to feedback. They're rooting for you.</strong></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ DESIGN ============ -->
+  <section class="tab" id="tab-design" data-toc='[
+    ["Format &amp; what to expect","fmt"],
+    ["Their explicit rubric","rubric"],
+    ["Universal framework (use every time)","framework"],
+    ["Fintech-specific essentials","fintech"],
+    ["Likely problem: Money transfer (P2P)","p2p"],
+    ["Likely problem: Mobile check deposit","check"],
+    ["Likely problem: Notification service","notif"],
+    ["Likely problem: Idempotency layer","idemp"],
+    ["Likely problem: Rate limiter (sensitive APIs)","rate"],
+    ["Likely problem: Transaction ledger","ledger"],
+    ["Database tradeoffs cheat sheet","db"],
+    ["Buzzwords to drop with confidence","buzz"],
+    ["Phrases to use","phrases"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Design Round</div><div style="font-size:16px;font-weight:600">60 min · whiteboard · backend system</div></div>
+      <div class="time">⏱ 60 min</div>
+    </div>
+
+    <h3 class="section" id="fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Online collaborative whiteboard.</strong> Excalidraw / Miro / similar.</li>
+        <li><strong>No runnable code expected</strong> — they say so. Mock function signatures only if it clarifies.</li>
+        <li><strong>Backend system</strong> (you're backend, not frontend/mobile).</li>
+        <li><strong>Ambiguous on purpose.</strong> "Take an ambiguous problem and create a system to solve it."</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="rubric">Their explicit rubric (lifted from the prep doc)</h3>
+    <table class="rubric">
+      <tr><th>Signal</th><th>What they're checking</th></tr>
+      <tr><td><strong>Communication</strong></td><td>Describe the problem, your thought process, your plan of action — precisely.</td></tr>
+      <tr><td><strong>Appropriate tech choices</strong></td><td>Identify requirements, capacity, use cases, edge cases, scope, data modeling.</td></tr>
+      <tr><td><strong>High-level design</strong></td><td>Anticipate failure. Reliability (retries, data loss), availability (LB), exception handling, logging, alerting.</td></tr>
+      <tr><td><strong>Scalability</strong></td><td>DB choice, horizontal scaling, sync vs. async, caching, data redundancy.</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted)"><strong>Read literally:</strong> if you don't mention reliability, alerting, logging, or capacity planning — you're leaving signal on the table.</p>
+
+    <h3 class="section" id="framework">Universal framework (use every time)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>(5 min) Functional requirements.</strong> List 3–5 features. Get a nod.</li>
+        <li><strong>(2 min) Non-functional requirements.</strong> Latency target (p99), QPS, consistency vs. availability, data durability.</li>
+        <li><strong>(3 min) Capacity estimate.</strong> Back-of-envelope: DAU, reads/s, writes/s, storage growth. Be quick — anchor numbers.</li>
+        <li><strong>(5 min) Data model.</strong> Tables / entities / key fields. Mention indexes for query patterns you'll use.</li>
+        <li><strong>(5 min) API design.</strong> Endpoints, request/response, idempotency key, auth.</li>
+        <li><strong>(15 min) High-level architecture.</strong> Client → LB → API → service(s) → DB / cache / queue / 3rd party. Draw it.</li>
+        <li><strong>(10 min) Deep dive.</strong> Pick the hardest component. Walk through write path and read path.</li>
+        <li><strong>(10 min) Failure modes &amp; scale.</strong> "What if X dies?" "What at 10× the load?" Always have an answer.</li>
+        <li><strong>(5 min) Wrap.</strong> Summarize tradeoffs you made. State what you'd improve with more time.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="fintech">Fintech-specific essentials (always mention these for Chime)</h3>
+    <div class="card chime">
+      <ul class="tight" style="margin:0">
+        <li><strong>Idempotency.</strong> Every state-changing API takes an <code class="inline">Idempotency-Key</code> header. Dedupe at the API or app layer with a (key, request_hash) table.</li>
+        <li><strong>Double-entry ledger.</strong> Money moves are debits + credits in the same transaction. Sum of every account = 0. Audit trail by construction.</li>
+        <li><strong>Exactly-once via transactional outbox.</strong> Don't dual-write to DB + queue. Write a row to <code class="inline">events</code> in the same DB txn; a poller publishes it. (Or use Debezium / CDC.)</li>
+        <li><strong>Compensating transactions.</strong> No 2PC across services. If step 2 fails, run a compensation for step 1.</li>
+        <li><strong>Audit log immutable + append-only.</strong> Regulators (and your fraud team) need to reconstruct history.</li>
+        <li><strong>Encryption.</strong> PII / PAN at rest (KMS-backed envelope) and in transit (TLS). Tokenize card numbers.</li>
+        <li><strong>PCI scope minimization.</strong> Card data never lands in your own DB if you can route through a tokenization vault.</li>
+        <li><strong>Reconciliation jobs.</strong> Daily diff against partner bank statements. Alert on drift.</li>
+        <li><strong>Rate limiting on sensitive endpoints.</strong> Login, password reset, transfer-initiate.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="p2p">Likely problem: Money transfer (P2P, Chime-style)</h3>
+    <div class="card">
+      <h4>Requirements (clarify first)</h4>
+      <ul class="tight">
+        <li><strong>Functional:</strong> Member A sends $X to member B. Both see balance update. Notifications fire. Idempotent retries.</li>
+        <li><strong>Non-functional:</strong> p99 &lt; 500ms perceived. Strong consistency on balances (no double-spend). 99.99% availability for the API. Audit trail forever.</li>
+      </ul>
+      <h4>Capacity (anchor with numbers)</h4>
+      <p style="margin:6px 0;font-size:13px">~25M members. Assume 5% DAU send/day = 1.25M transfers/day = ~15 TPS average, ~150 TPS peak. Cheap; we're correctness-bound not throughput-bound.</p>
+      <h4>API</h4>
+      <pre style="font-size:12px;background:var(--panel-2);padding:8px;border-radius:4px;margin:6px 0">POST /v1/transfers
+  Headers: Idempotency-Key: &lt;uuid&gt;, Authorization: Bearer ...
+  Body: { from_member_id, to_member_id, amount_cents, currency, memo }
+  Response: { transfer_id, status, ledger_entries }</pre>
+      <h4>Data model</h4>
+      <table class="rubric">
+        <tr><td><code class="inline">accounts</code></td><td>id, member_id, balance_cents (cache only — derive from ledger), updated_at</td></tr>
+        <tr><td><code class="inline">ledger_entries</code></td><td>id, account_id, transfer_id, amount_cents (signed), created_at — <em>append-only</em></td></tr>
+        <tr><td><code class="inline">transfers</code></td><td>id, idempotency_key (UNIQUE), from, to, amount, status, created_at</td></tr>
+        <tr><td><code class="inline">idempotency_keys</code></td><td>key, request_hash, response_blob, created_at — TTL 24h</td></tr>
+      </table>
+      <h4>Write path (the meat)</h4>
+      <ol class="tight">
+        <li>API receives request. Look up <code class="inline">idempotency_keys</code>: if hit and request matches → replay stored response. If hit but request differs → 422 conflict.</li>
+        <li>Open DB transaction. Insert <code class="inline">transfers</code> row (UNIQUE on idempotency_key catches racing requests).</li>
+        <li>Insert two <code class="inline">ledger_entries</code>: <code class="inline">(from, -amount)</code>, <code class="inline">(to, +amount)</code>.</li>
+        <li>Update <code class="inline">accounts.balance_cents</code> for both (with a CHECK constraint: <code class="inline">balance &gt;= 0</code> — if it fails, the txn rolls back and we return 402).</li>
+        <li>Insert <code class="inline">events</code> row for outbox (notification fanout).</li>
+        <li>Commit. Store response in <code class="inline">idempotency_keys</code>. Return 200.</li>
+      </ol>
+      <h4>Async path</h4>
+      <p style="margin:6px 0;font-size:13px">Outbox poller reads <code class="inline">events</code> → publishes to SNS/Kafka → notification service → push + email + in-app.</p>
+      <h4>Failure modes (volunteer these)</h4>
+      <ul class="tight">
+        <li><strong>Network blip on response:</strong> client retries with same Idempotency-Key → replay path.</li>
+        <li><strong>DB primary failover mid-transaction:</strong> txn rolls back; client sees 5xx and retries; idempotency key dedupes.</li>
+        <li><strong>Concurrent transfers from same account:</strong> row-level lock on the account (SELECT ... FOR UPDATE) or rely on the CHECK constraint to fail one of them.</li>
+        <li><strong>Outbox publisher crashes after commit but before publish:</strong> next poll sends — at-least-once delivery downstream, consumer must be idempotent.</li>
+        <li><strong>Notification service down:</strong> doesn't block the transfer. Retry with backoff; surface in in-app feed eventually.</li>
+      </ul>
+      <h4>Scaling notes</h4>
+      <p style="margin:6px 0;font-size:13px">At 150 TPS, single Postgres primary is fine for years. If we needed to scale: shard by <code class="inline">from_member_id</code>, accept that cross-shard transfers need a saga. Read replicas for balance reads (with read-your-writes via session pinning).</p>
+    </div>
+
+    <h3 class="section" id="check">Likely problem: Mobile check deposit (Remote Deposit Capture)</h3>
+    <div class="card">
+      <p style="font-size:12px;color:var(--muted);margin:0 0 6px 0"><strong>Reported in real Chime interviews.</strong> Build a production-grade RDC feature that lets a retail-banking app user deposit a check by taking a photo.</p>
+      <h4>Key decisions to walk through</h4>
+      <ul class="tight">
+        <li><strong>Upload path:</strong> Mobile presigns to S3 (don't POST 5 MB images through your API). Backend gets the S3 key.</li>
+        <li><strong>Synchronous validation:</strong> image format/size/orientation, basic OCR confidence. Fail fast back to the user.</li>
+        <li><strong>Async pipeline:</strong> queue → MICR extraction → fraud check → check duplicate detection (hash of MICR + amount per member, dedupe within window) → ACH submission via partner.</li>
+        <li><strong>State machine:</strong> <code class="inline">submitted → in_review → accepted → posted</code> (or <code class="inline">rejected</code>, <code class="inline">held</code>). Member sees status.</li>
+        <li><strong>Provisional credit:</strong> SpotMe-style — money available immediately, but real funds settle in 1–5 business days. Need to track both <code class="inline">available_balance</code> and <code class="inline">settled_balance</code>.</li>
+        <li><strong>Fraud / risk:</strong> velocity (X checks / N days), endorsement check, blacklist of MICR routing numbers. Mention you'd integrate with a risk service, not build from scratch.</li>
+        <li><strong>Compliance:</strong> Reg CC funds-availability rules. Cite by name to show you've heard of it.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="notif">Likely problem: Notification service</h3>
+    <div class="card">
+      <h4>Requirements</h4>
+      <p style="font-size:13px;margin:6px 0">Send push / email / SMS / in-app to 25M members based on triggers (transaction posted, paycheck arrived, balance low). Honor member preferences. At-least-once delivery. Quiet hours.</p>
+      <h4>Architecture</h4>
+      <p style="font-size:13px;margin:6px 0"><code class="inline">producer → topic (per event type) → router (preferences + dedupe) → channel queues (push/email/SMS) → channel workers → vendor (Twilio/SendGrid/APNs/FCM)</code></p>
+      <h4>Key components</h4>
+      <ul class="tight">
+        <li><strong>Template service.</strong> Templates with placeholders, versioned, localized.</li>
+        <li><strong>Preference service.</strong> Read-heavy; cache in Redis. Source of truth Postgres.</li>
+        <li><strong>Dedupe.</strong> <code class="inline">(member_id, event_key)</code> table with TTL. Prevents the same "balance low" alert twice.</li>
+        <li><strong>Rate limit per member.</strong> Don't carpet-bomb. Token bucket per (member, channel).</li>
+        <li><strong>Vendor failover.</strong> Twilio primary, MessageBird backup. Circuit breaker.</li>
+        <li><strong>Delivery receipts.</strong> Webhook from vendor → update <code class="inline">notifications</code> table for analytics &amp; retries.</li>
+      </ul>
+      <h4>Tradeoffs to volunteer</h4>
+      <p style="font-size:13px;margin:6px 0">At-least-once + idempotent vendor IDs > exactly-once. Push has best deliverability for transactional; SMS for high-urgency (fraud). Email lowest priority for transactional alerts.</p>
+    </div>
+
+    <h3 class="section" id="idemp">Likely problem: Idempotency layer (cross-service)</h3>
+    <div class="card">
+      <p style="font-size:13px;margin:6px 0"><strong>Stripe-style framing.</strong> They love this because it's directly applicable to their domain.</p>
+      <h4>Storage</h4>
+      <p style="font-size:13px;margin:6px 0">Redis (fast, TTL) for hot keys + Postgres (durable) for audit. Or single Postgres with table partitioned by created_at day.</p>
+      <h4>Schema</h4>
+      <pre style="font-size:12px;background:var(--panel-2);padding:8px;border-radius:4px;margin:6px 0">idempotency_keys (
+  key VARCHAR PRIMARY KEY,
+  request_hash VARCHAR NOT NULL,
+  response_status INT,
+  response_body JSONB,
+  state ENUM('in_flight', 'completed'),
+  locked_until TIMESTAMP,
+  created_at TIMESTAMP
+)</pre>
+      <h4>Flow</h4>
+      <ol class="tight">
+        <li>Insert row with <code class="inline">state='in_flight'</code>, <code class="inline">locked_until=NOW()+30s</code>. <code class="inline">ON CONFLICT (key)</code>:</li>
+        <li>If existing is <code class="inline">completed</code> + hashes match → return cached response.</li>
+        <li>If existing is <code class="inline">completed</code> + hashes differ → 422.</li>
+        <li>If existing is <code class="inline">in_flight</code> + lock not expired → 409 (retry later).</li>
+        <li>If existing is <code class="inline">in_flight</code> + lock expired → take it over (assume prior request died).</li>
+        <li>Process request, update row to <code class="inline">completed</code> with response.</li>
+      </ol>
+      <p style="font-size:12px;color:var(--muted);margin:6px 0"><strong>Senior touches:</strong> hash the canonicalized request body to detect divergence. TTL keys after 24h. Don't accept duplicate keys with different request payloads (that's a client bug).</p>
+    </div>
+
+    <h3 class="section" id="rate">Likely problem: Rate limiter (sensitive endpoints)</h3>
+    <div class="card">
+      <h4>Requirements</h4>
+      <p style="font-size:13px;margin:6px 0">Throttle login attempts, password resets, transfer-initiate by (member, IP, device). Fail closed.</p>
+      <h4>Algorithm: token bucket in Redis</h4>
+      <pre style="font-size:12px;background:var(--panel-2);padding:8px;border-radius:4px;margin:6px 0">key = "rl:#{bucket_id}"
+# Lua script for atomicity:
+#   tokens = GET key (or capacity if missing)
+#   refill based on time elapsed
+#   if tokens >= 1: decrement, allow
+#   else: deny + return retry-after</pre>
+      <h4>Tradeoffs</h4>
+      <ul class="tight">
+        <li><strong>Sliding-window log</strong> = precise but memory O(requests per window). Use for low-traffic / very sensitive endpoints.</li>
+        <li><strong>Fixed window</strong> = simple, burst-prone at boundaries. Use for analytics endpoints, not money.</li>
+        <li><strong>Token bucket</strong> = smooth, bursty allowance. Default choice.</li>
+        <li><strong>Distributed:</strong> Redis cluster, single key per bucket → potential hot spot. Mitigate with key sharding by IP-suffix or load-shedding before Redis.</li>
+      </ul>
+      <h4>Failure mode</h4>
+      <p style="font-size:13px;margin:6px 0"><strong>Redis down → fail closed</strong> for money APIs (better to reject than allow unbounded). Fail open only for non-sensitive reads.</p>
+    </div>
+
+    <h3 class="section" id="ledger">Likely problem: Transaction ledger (ChimeCore-flavored)</h3>
+    <div class="card">
+      <p style="font-size:13px;margin:6px 0"><strong>This may come up explicitly.</strong> ChimeCore is their proprietary ledger and transaction-processing platform. Show you understand double-entry.</p>
+      <h4>Core invariant</h4>
+      <p style="font-size:13px;margin:6px 0">Every transaction creates 2+ ledger entries summing to zero. <code class="inline">SUM(ledger_entries.amount_cents) GROUPED BY transaction_id = 0</code>. Always.</p>
+      <h4>Schema</h4>
+      <pre style="font-size:12px;background:var(--panel-2);padding:8px;border-radius:4px;margin:6px 0">accounts (id, owner_id, type, currency)
+  type: member_checking, member_savings, partner_bank_settlement,
+        fee_revenue, interchange_revenue, ...
+
+ledger_entries (
+  id, account_id, transaction_id, amount_cents (signed),
+  posted_at, created_at
+) -- append-only, never UPDATE
+
+transactions (
+  id, kind, status, idempotency_key, external_ref, created_at
+)</pre>
+      <h4>Operations</h4>
+      <ul class="tight">
+        <li><strong>Post:</strong> Insert N ledger entries in one DB txn. Reject if sum != 0.</li>
+        <li><strong>Balance:</strong> <code class="inline">SUM(amount_cents) WHERE account_id = ?</code>. Materialize a cached balance on a separate row, updated in same txn — but the ledger is the source of truth.</li>
+        <li><strong>Reverse:</strong> New transaction with negated entries. <em>Never delete</em> historical entries.</li>
+        <li><strong>Reconcile:</strong> Daily job compares <code class="inline">SUM(member_checking)</code> against partner bank's reported balance. Alert on drift.</li>
+      </ul>
+      <h4>Scaling</h4>
+      <p style="font-size:13px;margin:6px 0">Partition <code class="inline">ledger_entries</code> by <code class="inline">posted_at</code> month → fast pruning of cold partitions to cheaper storage (S3 / cold Postgres). Materialized balance view refreshed in-line with each post.</p>
+    </div>
+
+    <h3 class="section" id="db">Database tradeoffs cheat sheet</h3>
+    <table class="rubric">
+      <tr><th>Choice</th><th>Use when</th></tr>
+      <tr><td><strong>Postgres / MySQL</strong></td><td>Default for anything money-touching. ACID, joins, mature ops. <strong>Chime defaults here.</strong></td></tr>
+      <tr><td><strong>Redis</strong></td><td>Cache, rate limits, idempotency hot path, session store. Never source of truth for money.</td></tr>
+      <tr><td><strong>DynamoDB</strong></td><td>High-scale single-key reads/writes, predictable cost, no joins. Good for member profile blob.</td></tr>
+      <tr><td><strong>Kafka</strong></td><td>Event streaming, replay, multiple consumers. Outbox publisher target.</td></tr>
+      <tr><td><strong>SQS / SNS</strong></td><td>Simpler than Kafka. SNS fanout → SQS per consumer. <strong>Chime uses these.</strong></td></tr>
+      <tr><td><strong>S3</strong></td><td>Blobs: check images, statement PDFs, exports. Lifecycle policies for compliance retention.</td></tr>
+      <tr><td><strong>Snowflake / Redshift</strong></td><td>Analytics, not online. Daily ETL from operational stores.</td></tr>
+      <tr><td><strong>Elasticsearch</strong></td><td>Full-text on transaction memos, member search. Not source of truth.</td></tr>
+    </table>
+
+    <h3 class="section" id="buzz">Buzzwords to drop with confidence</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0;color:var(--good);font-size:12px">USE THESE</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li><strong>Idempotency key / dedupe table</strong></li>
+          <li><strong>Transactional outbox</strong> (avoid dual-write)</li>
+          <li><strong>Double-entry ledger</strong></li>
+          <li><strong>Compensating transaction</strong> / saga</li>
+          <li><strong>CDC (change data capture)</strong></li>
+          <li><strong>Read-your-writes</strong> consistency</li>
+          <li><strong>SELECT ... FOR UPDATE</strong> row locking</li>
+          <li><strong>Circuit breaker</strong> / bulkhead</li>
+          <li><strong>p99 latency budget</strong></li>
+          <li><strong>Audit log / append-only</strong></li>
+          <li><strong>Quorum reads / writes</strong></li>
+          <li><strong>Backpressure</strong> on queues</li>
+        </ul>
+      </div>
+      <div class="card bad">
+        <p style="margin:0;color:var(--bad);font-size:12px">AVOID</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li><strong>2PC across services</strong> (use sagas instead)</li>
+          <li><strong>"Just use eventual consistency"</strong> for money</li>
+          <li><strong>"Microservices for everything"</strong> — start with a modular monolith</li>
+          <li><strong>"Just throw it on Kafka"</strong> — explain why</li>
+          <li>Vague "we'd scale by adding more servers"</li>
+          <li>"NoSQL because it's faster" — name the access pattern</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="phrases">Phrases to use during the round</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">OPENING</p>
+        <p class="quote">"Before I draw anything — let me echo the requirements back and ask 3 clarifiers."</p>
+        <p class="quote">"What's the read/write ratio? Any latency SLOs I should design to?"</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHEN MAKING A CHOICE</p>
+        <p class="quote">"I'm going to reach for Postgres here because we need ACID guarantees on the balance update. If you want to push back I'm happy to talk about DynamoDB."</p>
+        <p class="quote">"Cheapest correct thing first — Redis cache, single Postgres primary. We can shard later if we have to."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">FOR FAILURE MODES</p>
+        <p class="quote">"What happens if the DB primary dies mid-transaction? The txn rolls back, client retries with the same idempotency key, we replay."</p>
+        <p class="quote">"What's our recovery time objective? That'll shape whether we use multi-AZ or multi-region."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WRAP-UP</p>
+        <p class="quote">"With more time I'd dig into [the dispute-handling flow / cross-region replication / fraud signals]. Worth a follow-up?"</p>
+        <p class="quote">"Tradeoffs I made on purpose: chose strong consistency over multi-region writes because at Chime's volume that's the right call today."</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CROSS-FUNCTIONAL ============ -->
+  <section class="tab" id="tab-xfn" data-toc='[
+    ["Format &amp; what to expect","fmt"],
+    ["What they actually score","score"],
+    ["The four likely partners (frame stories for these)","partners"],
+    ["Most common questions","qs"],
+    ["Answer template","tmpl"],
+    ["Strong vs. weak — same question","sw"],
+    ["Sample answers","samp"],
+    ["Pitfalls to avoid","pit"],
+    ["Closing the round","close"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Cross-Functional Round</div><div style="font-size:16px;font-weight:600">30 min · behavioral, non-eng partner</div></div>
+      <div class="time">⏱ 30 min</div>
+    </div>
+
+    <h3 class="section" id="fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>No coding, no whiteboarding.</strong> Entirely behavioral.</li>
+        <li><strong>Interviewer is non-engineering</strong> — likely PM, design, QA, or support / ops.</li>
+        <li><strong>The point</strong> (from their guide): "How you collaborate with members outside your immediate org."</li>
+        <li><strong>30 minutes is short.</strong> 2–3 stories + your questions. Don't overpack.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="score">What they actually score</h3>
+    <table class="rubric">
+      <tr><th>Dimension</th><th>What "good" sounds like</th></tr>
+      <tr><td><strong>Perspective-taking</strong></td><td>You can describe what the PM / support partner was optimizing for, not just what they "asked you to do."</td></tr>
+      <tr><td><strong>Conflict navigation</strong></td><td>"We disagreed on X. I tried their position by Y. We resolved by Z." Not "I just deferred."</td></tr>
+      <tr><td><strong>Communication clarity</strong></td><td>You wrote / spoke in their language, not in eng jargon. Receipt of the message confirmed.</td></tr>
+      <tr><td><strong>Member orientation</strong></td><td>You connect the cross-functional work to <em>member impact</em>, not just internal process.</td></tr>
+      <tr><td><strong>Repair / closing the loop</strong></td><td>"What I do differently now is invite legal to the spec review on day one, not at sign-off."</td></tr>
+    </table>
+
+    <h3 class="section" id="partners">The four likely partners — frame stories for each</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">PRODUCT MANAGER</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Scope tradeoff: PM wanted feature A, you wanted to ship A-minus-1 to make a date</li>
+          <li>You changed PM's mind with data (volume, latency, support load)</li>
+          <li>You said no to a feature and explained the alternative</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">DESIGN</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Pushed back on a flow because the backend wouldn't support it cleanly — proposed an alternative that kept the UX intent</li>
+          <li>Worked with design on error states for a payments / sensitive flow</li>
+          <li>Translated technical constraints into design language</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">QA / QUALITY</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Caught a bug late; you partnered with QA on the right fix vs. the fast fix</li>
+          <li>Built better test fixtures for a regulated / data-sensitive area</li>
+          <li>You added structured logs / observability that QA could use</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">SUPPORT / OPS</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Wrote a runbook / one-pager so support could resolve tickets without escalating</li>
+          <li>Sat with support, watched them work, and shipped a tool change that reduced ticket volume</li>
+          <li>Took ownership of a recurring class of tickets and root-caused it</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="qs">Most common questions</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">COLLABORATION</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Tell me about working with PM on a project that didn't go smoothly."</li>
+          <li>"Describe a time you worked closely with design / support / ops."</li>
+          <li>"How do you handle requirements you disagree with?"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">CONFLICT</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Tell me about a time you had a different point of view than a PM / designer."</li>
+          <li>"How do you resolve disagreements with non-engineers?"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">COMMUNICATION</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"How do you explain a technical tradeoff to a non-technical stakeholder?"</li>
+          <li>"Describe a time you had to deliver bad news to a partner team."</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">OWNERSHIP</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"When have you owned the relationship with a non-eng partner, not just the deliverable?"</li>
+          <li>"Tell me about a time you proactively included support / legal / compliance."</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="tmpl">Answer template (STAR-lite for cross-fn)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Situation (1 sentence):</strong> Who, what project, what the cross-functional tension was.</li>
+        <li><strong>Their position (1 sentence — the critical part):</strong> Describe the PM/design/support point of view in <em>their</em> terms. Show you understood them.</li>
+        <li><strong>Action (3–4 sentences):</strong> Specific verbs. <em>How</em> you communicated (1:1, doc, demo, etc). What you tried of their approach before pushing back.</li>
+        <li><strong>Result (1 sentence + number):</strong> Outcome for the member, the team, the metric.</li>
+        <li><strong>Reflection (1 sentence):</strong> What you do differently now when partnering with non-eng.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="sw">Strong vs. weak — "Tell me about working with a PM you disagreed with"</h3>
+    <div class="grid-2">
+      <div class="card bad">
+        <p style="margin:0 0 4px 0;color:var(--bad);font-size:12px">WEAK</p>
+        <p class="quote" style="margin:0;font-size:13px">"My PM wanted a feature shipped in two weeks. I told him the estimate was actually four weeks. Eventually he saw I was right and we shipped in five. The PM should have listened to engineering earlier."</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Why weak: no perspective on what PM was optimizing for, blame-y, no reflection.</p>
+      </div>
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">STRONG</p>
+        <p class="quote" style="margin:0;font-size:13px">"My PM was pushing a two-week ship on a billing change. From my side it was at least four — the integration touched three downstream systems and I needed time for guard rails. But I realized I was reading the situation wrong: he had committed to a customer that month, and slipping was a relationship cost I wasn't carrying. So I sat with him and broke the work into a two-week minimum-viable that hit the customer commitment, plus a follow-up sprint for the safety net. We shipped both. The lesson I carried out: my first move with a PM disagreement now is to ask <em>what's the commitment behind the deadline</em>, not just <em>can we slip</em>. Slipping often costs them more than it costs me."</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="samp">Sample answers (drafted from your background)</h3>
+
+    <h4>"Tell me about partnering with a non-engineering team"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"At Zendesk I owned a payments integration on Talk — Zendesk's call center product, billed through Zuora. The way I found my biggest project there was actually by partnering with support, not eng. I was reviewing the support ticket queue while ramping on the code, and I noticed engineers were spending hours every week manually fixing customer payment data — same class of issue, every week. Nobody had connected those tickets to a real bug yet.<br><br>
+      I sat with the support partner who was triaging those tickets, walked through three of them with him, and got the customer-side context I wouldn't have seen from logs alone. That's how I traced it to Zuora silently returning a 200 on a failed write, then retrying and creating duplicate charges.<br><br>
+      I shipped guard rails plus targeted logging in about a week. Tickets in that class stopped. The follow-up I learned: I now treat the support queue as a leading indicator of real bugs, not just noise. Engineers reading their own support tickets is one of the highest-leverage things you can do."</p>
+      <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Hits: cross-functional, member impact, perspective-taking, reflection.</p>
+    </div>
+
+    <h4>"Tell me about a time you had to communicate a technical decision to non-engineers"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Same Zendesk Talk payments project — once I traced the root cause, I had to explain to my PM and to support leadership why the fix needed a week and why we couldn't just write a script to clean up duplicates.<br><br>
+      The thing that worked was framing it in <em>their</em> terms. For the PM I anchored on: every week we don't ship, that's another N hours of engineer time we're burning on manual cleanup, and another batch of affected customers. For support I anchored on: ticket volume drops to zero in this class once it's fixed, freeing your team for harder cases. Both framings were true — I just picked the one each audience cared about.<br><br>
+      I don't write a one-pager anymore without thinking about which decision each stakeholder needs to make from it. The same technical content gets framed differently depending on who I'm asking to act."</p>
+    </div>
+
+    <h3 class="section" id="pit">Pitfalls to avoid</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>Engineering-superior framing.</strong> "I had to explain to the PM…" — instead, "the PM was optimizing for X, which I hadn't considered until…"</li>
+        <li><strong>Blame anywhere.</strong> Not the PM, not the designer, not "the deadline." Own what you could have done sooner.</li>
+        <li><strong>All-tech stories.</strong> The story has to have a non-eng partner with a real point of view. If the cross-fn person is decoration, pick a different story.</li>
+        <li><strong>Forgetting "the member."</strong> Land every story on member impact (or developer experience if the customer is internal eng).</li>
+        <li><strong>30 min &lt; 60 min.</strong> Don't deliver a 6-minute STAR. Aim for 2-3 minutes per answer so you have time for 4-5 exchanges plus your questions.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="close">Closing the round</h3>
+    <ul class="tight">
+      <li><strong>Use the prep doc's hint:</strong> "Great opportunity to ask about what other teams at Chime are working on." They literally invite this.</li>
+      <li>Ask your interviewer about <strong>their team's biggest cross-functional pain point</strong> — and what they wish engineers understood.</li>
+      <li>State clearly: "I'd love to partner with your team specifically because [specific reason from what they said]."</li>
+    </ul>
+  </section>
+
+  <!-- ============ EM ROUND ============ -->
+  <section class="tab" id="tab-em" data-toc='[
+    ["Format &amp; what to expect","fmt"],
+    ["Their explicit rubric","rubric"],
+    ["Most common questions","qs"],
+    ["Career arc — pre-build your narrative","arc"],
+    ["Feedback stories (you'll be asked)","feedback"],
+    ["Strengths &amp; weaknesses — done right","sw"],
+    ["Sample answers","samp"],
+    ["Pitfalls","pit"],
+    ["Closing the round","close"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Engineering Manager Round</div><div style="font-size:16px;font-weight:600">45 min · conversational · career fit</div></div>
+      <div class="time">⏱ 45 min</div>
+    </div>
+
+    <h3 class="section" id="fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Conversational.</strong> 1:1 with the hiring manager (or skip-level).</li>
+        <li><strong>From their prompt:</strong> "learn more about your professional experience, goals, and how Chime might help your career path."</li>
+        <li><strong>Bidirectional.</strong> "Also a chance for you to learn more about Chime and our engineering culture."</li>
+        <li><strong>Most-likely questions</strong> are about <em>highs and lows</em>, <em>feedback given/received</em>, and <em>what you want next</em>.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="rubric">Their explicit rubric (memorize all four)</h3>
+    <table class="rubric">
+      <tr><th>Signal</th><th>What "good" sounds like</th></tr>
+      <tr><td><strong>Awareness</strong></td><td>Solid grasp of strengths and weaknesses. Specific. "I default to async written comms; I have to actively push myself into face time" — not "I should communicate more."</td></tr>
+      <tr><td><strong>Empathy</strong></td><td>Imagine someone else's feelings; make them feel heard even when you disagree. Show this in how you describe past disagreements.</td></tr>
+      <tr><td><strong>Building trust</strong></td><td>Earned trust with people at various levels and orgs. Honest, straightforward. Anti-spin.</td></tr>
+      <tr><td><strong>Leveling up</strong></td><td>Bias to action on improving yourself and your surroundings. Specific things you've changed about how you work in the last year.</td></tr>
+    </table>
+
+    <h3 class="section" id="qs">Most common questions</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">CAREER ARC</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Walk me through your career so far."</li>
+          <li>"Tell me about the highs and lows."</li>
+          <li>"Why are you looking right now?"</li>
+          <li>"What are you looking for in your next role?"</li>
+          <li>"Why Chime specifically?"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">FEEDBACK</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Tell me about feedback you've received that changed how you work."</li>
+          <li>"Tell me about feedback you've given — especially hard feedback."</li>
+          <li>"What would your last manager say is your biggest growth area?"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">SELF-AWARENESS</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"What are you best at?"</li>
+          <li>"What are you actively working on improving?"</li>
+          <li>"What kind of environment do you do your best work in?"</li>
+          <li>"What kind of manager do you do your best work with?"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">LEVELING UP</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"What's a habit you've changed in the last year?"</li>
+          <li>"How do you stay current technically?"</li>
+          <li>"Tell me about a time you improved your team or your surroundings, not just yourself."</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="arc">Career arc — pre-build your narrative</h3>
+    <div class="card chime">
+      <p style="margin:0 0 8px 0"><strong>The story you should be able to tell in 90 seconds:</strong></p>
+      <ol class="tight">
+        <li><strong>Zendesk (most of career):</strong> deep payments/billing rigor. Sole-owned a Talk payments feature on Zuora, learned what "a bug literally moves money" actually means. Built guard rails + observability for high-blast-radius systems.</li>
+        <li><strong>Riviera Partners (current):</strong> startup contrast — smaller team, fewer people in the room, broader product surface. <em>[Fill in one concrete win you can name.]</em></li>
+        <li><strong>Side project (Wordblok):</strong> first iOS App Store shipment in one week — proves you can ship fast when scope is the lever, not effort.</li>
+        <li><strong>Why now:</strong> want to combine financial-grade rigor (Zendesk muscle) with member-facing impact at scale (Chime). The pace of fintech + the correctness bar I'm already trained on.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="feedback">Feedback stories — pre-draft both</h3>
+
+    <h4>Feedback you received that changed how you work</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Early at Zendesk, a senior engineer reviewed one of my designs and said 'this is correct, but I had to read it three times to know <em>why</em> you made each choice.' The code wasn't the issue — the doc was. I'd written what the system did, not why I'd chosen it over the alternatives I considered. That stuck.<br><br>
+      What I do now: every design doc has a 'rejected alternatives' section. Not theoretical — the actual options I weighed and why I cut them. Two effects: reviewers stop suggesting things I already considered, and six months later when someone asks 'why did we do it this way,' the answer is in the doc. It also forced me to <em>actually</em> consider alternatives instead of going with the first idea, which is the bigger win."</p>
+      <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Hits: awareness, leveling up, specific habit change.</p>
+    </div>
+
+    <h4>Hard feedback you gave</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"On my team a junior engineer kept getting LGTM'd through reviews without much friction. His PRs were technically working but missing edge cases that should have been called out — and he wasn't getting the chance to grow because we were rubber-stamping.<br><br>
+      I started leaving more substantive reviews on his PRs — specifically as <em>questions</em>, not directives. 'What happens if this raises?' instead of 'change this to X.' I paired with him on his next feature instead of just commenting after. The hard part was that the first conversation was uncomfortable for both of us — he initially read it as me holding him to a higher bar than the rest of the team, which was fair. I had to be honest: yes, I was, because I thought he could clear it.<br><br>
+      His next two PRs needed maybe a third of the comments. The lesson for me was that the discomfort of giving the feedback honestly was way smaller than the cost of <em>not</em> giving it — which would have been him plateauing and not knowing why."</p>
+    </div>
+
+    <h3 class="section" id="sw">Strengths &amp; weaknesses — done right</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">STRENGTH (use one specific)</p>
+        <p style="margin:0;font-size:13px"><strong>Pick:</strong> "rigor on high-blast-radius changes." Anchor with the Zuora bug story — found a class of bugs no one had connected, shipped guard rails + logging in a week. Frame as a <em>muscle</em>, not a personality trait.</p>
+      </div>
+      <div class="card warn">
+        <p style="margin:0 0 4px 0;color:var(--warn);font-size:12px">WEAKNESS (be specific, show work)</p>
+        <p style="margin:0;font-size:13px"><strong>Real, not fake-humble:</strong> "I default to async written communication. It works for design docs and PRs, but I've had to learn that for harder conversations — disagreements, performance feedback, alignment with PMs — I have to <em>start</em> with a voice or face-to-face conversation, then summarize back in writing. Async-first as my default was costing me real-time alignment."</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Anti-cliché: avoid "perfectionism," "I work too hard," "I care too much."</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="samp">Sample answers</h3>
+
+    <h4>"Why Chime?"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Two reasons, honestly. The first is the alignment of the business model with member outcomes. Most banks make money when you mess up — overdraft fees, ATM fees. Chime makes money when the member succeeds. That changes what gets built and what gets prioritized, and it's the kind of incentive I want to be working under.<br><br>
+      The second is the engineering surface. ChimeCore as a proprietary ledger, the SpotMe / MyPay / Chime+ surface area — that's payments rigor at member scale, which is the exact muscle I've spent my career building. At Zendesk I owned a Talk payments integration through Zuora, where every silent error from a third party turned into a customer call. The kinds of decisions I made there — idempotency, audit logging, guard rails before features — are the table stakes at Chime, not the exception.<br><br>
+      I'm coming in wanting to do that work for members who don't have a cushion when things go wrong. That's the part that matters to me personally."</p>
+    </div>
+
+    <h4>"What are you looking for in your next role?"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Three things. One — high-impact, high-correctness work. I want what I ship to matter, and I want it to be the kind of thing where a bug isn't an inconvenience, it's real harm to a real person. That's how I stay sharp.<br><br>
+      Two — a team where I can both contribute senior-level and keep learning. I've been doing this long enough to know what I'm good at; I'm also clear on where my gaps are — distributed systems at member scale, regulated environment, modern fintech stack — and Chime is one of the few places where filling those gaps is actually the day job.<br><br>
+      Three — a culture that makes 'bias to action' compatible with 'be a careful steward of trust.' Those two can sound contradictory but they're not, and I think the companies that get both right are the ones I want to be at."</p>
+    </div>
+
+    <h4>"What's a habit you've changed in the last year?"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Two: incorporating AI tools into my daily workflow seriously, and shipping side projects on tight self-imposed timeboxes.<br><br>
+      On AI: I'm a daily Claude Code user. Not as novelty — as practice. The gap between engineers who use these tools well and engineers who don't is widening fast, and the only way to close it is to treat the practice as work. That's changed how I prototype, how I read unfamiliar codebases, and how fast I ramp on new frameworks.<br><br>
+      On shipping: I gave myself a week earlier this year to ship my first iOS game to the App Store — Wordblok. The forcing function did the work. I cut two game modes, monetization, and polish, and shipped the core loop in three modes. Live on the App Store on day seven. The takeaway wasn't 'I can work hard' — it was that <em>scope</em> is the lever when speed matters, and the timebox is the actual feature-prioritization mechanism. I now pick the deadline before the feature list, not after."</p>
+    </div>
+
+    <h3 class="section" id="pit">Pitfalls</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>Vague weaknesses.</strong> "I should communicate more" isn't a weakness, it's a non-answer.</li>
+        <li><strong>Fake-humble strengths.</strong> "I'm too detail-oriented" is a tell that you don't know your real one.</li>
+        <li><strong>Bashing past employers / managers.</strong> Even subtle. Reframe as a problem you tried to fix.</li>
+        <li><strong>"I want growth" with no specifics.</strong> What kind of growth? Pin it.</li>
+        <li><strong>No questions for the EM.</strong> Reads as not interested. Have 3 ready.</li>
+        <li><strong>Pretending you have no gaps.</strong> They're hiring you to learn things; show them you know what you don't know.</li>
+        <li><strong>Generic feedback story.</strong> "My manager told me to be more proactive" is empty. Be specific about what was said and what changed.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="close">Closing the round</h3>
+    <ul class="tight">
+      <li><strong>Always close with the "hesitations" question:</strong> "Based on what we discussed, do you have any hesitations about my fit for this role? I'd love a chance to address them." Almost no candidates do this; EMs reliably remember.</li>
+      <li>Ask about <strong>what success looks like at 30/60/90 days</strong> on this team.</li>
+      <li>State your interest explicitly: "I'm excited about this team specifically because [one specific thing they said]."</li>
+    </ul>
+  </section>
+
+  <!-- ============ STORIES ============ -->
+  <section class="tab" id="tab-stories" data-toc='[
+    ["How to use this","how"],
+    ["Story 1: Zuora silent-200 bug","s1"],
+    ["Story 2: Cross-fn with support","s2"],
+    ["Story 3: Wordblok speed","s3"],
+    ["Story 4: Ramped fast (NestJS)","s4"],
+    ["Story 5: Mentorship / code review","s5"],
+    ["Story 6: Disagreement (DDD)","s6"],
+    ["Story 7: Ambiguity (order processing)","s7"],
+    ["Mapping stories to questions","map"]
+  ]'>
+    <h2>Stories Bank <span class="sub">your pre-rehearsed STAR answers</span></h2>
+
+    <h3 class="section" id="how">How to use this</h3>
+    <div class="card chime">
+      <p style="margin:0 0 6px 0"><strong>Each story is ~150–220 words spoken — about 60–90 seconds.</strong> Pick 4–5 you can deliver cleanly. The "Mapping" table at the bottom shows which story to reach for when.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Land every story on a <strong>member impact</strong> hook for Chime — even when the original wasn't fintech, frame it that way. "What does this customer/user actually get out of this?"</p>
+    </div>
+
+    <h3 class="section" id="s1">Story 1: Production bug root-cause &amp; fix (Zendesk Talk / Zuora silent-200)</h3>
+    <div class="story">
+      <div class="title">Found a class of silent duplicate-charge bugs nobody had connected, shipped fix in one week</div>
+      <div class="tags"><span class="pill chime">be member-obsessed</span><span class="pill">make it happen</span><span class="pill">ownership</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Took sole ownership of a core payments feature on Talk (Zendesk's call center product) after the original owner and dev left. The system: Talk → Billing App → SQS job → Zuora (third-party payments + subscription store) → callback.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>Reviewing dashboards and the support ticket queue while ramping on the code, I noticed engineers were spending hours <em>every week</em> manually reviewing and fixing customer payment data. Same class of issue repeatedly. No one had connected the tickets to a real bug.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I traced the issue to Zuora occasionally returning a silent 200 — success response despite failing to store the data. Their automatic retry would then succeed, producing duplicate charge entries against the customer. In one week I shipped targeted guard rails for the specific condition plus extra logging so future bugs in this class could be identified in minutes, not weeks.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Customer support tickets in that class stopped. The engineer-hours-per-week we were burning on manual cleanup went to zero. Affected customers stopped getting wrongly-billed.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>The lesson I carried: support queues are leading indicators of real bugs, not noise. I treat them as a primary signal now, not something to skim past. And idempotency / dedupe at the call site is non-negotiable when the third party doesn't guarantee it.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"This is exactly the kind of bug Chime cares about. A silent failure that quietly produces duplicate charges is the worst possible outcome at a member-facing fintech. I've already done this work — I'd rather catch the next one before anyone calls support."</div></div>
+    </div>
+
+    <h3 class="section" id="s2">Story 2: Cross-functional with support (same project, different framing)</h3>
+    <div class="story">
+      <div class="title">Sat with support, learned the customer-facing context, traced the bug</div>
+      <div class="tags"><span class="pill chime">team up</span><span class="pill chime">be human</span><span class="pill">cross-functional</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Same Zendesk Talk payments project. I was new to the code, looking for the highest-leverage thing to work on.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I could have started with the open tech-debt backlog, or feature-request list. But I wanted to find the work that mattered most to actual customers, and that signal isn't in Jira.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I sat with one of the support engineers who was triaging payment tickets, walked through three of them with him, and got the customer-side context I wouldn't have seen from logs alone. He told me <em>which</em> tickets were the painful ones — not always the ones eng would have prioritized from headcount. That conversation pointed me at the Zuora silent-200 class.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Found and fixed the highest-leverage bug in my first month on the project. Built a working relationship with that support engineer that paid off on the next two projects — he started flagging weird tickets to me proactively.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>I don't take a project anymore without spending at least an hour with the support team that fields tickets for it. Their leading indicators are better than ours, and the relationship has compounding returns.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"Member-obsessed isn't a poster — it's a habit. The fastest way to be member-obsessed as an engineer is to actually talk to the people on the other end of the phone."</div></div>
+    </div>
+
+    <h3 class="section" id="s3">Story 3: Speed / shipped fast (Wordblok, slot 7)</h3>
+    <div class="story">
+      <div class="title">Shipped first iOS App Store game in one week using scope, not effort</div>
+      <div class="tags"><span class="pill chime">make it happen</span><span class="pill chime">simplify</span><span class="pill">bias to action</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>I wanted to find out how fast I could go from idea to shipped iOS game. Never published to the App Store before. "Someday I'll ship a game" had been on my list a while, so I made it concrete: one week, live, no slipping.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I had a longer feature list than a week could carry — including App Store submission, review, and store listing, all of which were new to me. If I tried to do everything I'd ship nothing.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>The speed unlock was scope, not effort. I cut ruthlessly against the one-week budget: kept the core gameplay loop with 3 modes (enough to feel like a game, not a tech demo). Cut 2 additional modes I'd been workshopping. Cut monetization entirely — easy to bolt on later if it had players, pointless before. Cut gameplay polish, animations, balance tuning.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Wordblok shipped on day 7. First game live on the App Store. Now showcased on my portfolio.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>The forcing function did the work. Without the timebox I would have workshopped those two cut modes indefinitely. The lesson: <em>pick the deadline before the feature list, not after</em>. The budget should constrain scope from day one, not get applied as triage at the end.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"'Make it happen' and 'simplify' aren't separate values — they're the same value. Ship the smallest correct thing that proves the point, then iterate. That's how I shipped Wordblok and how I'd want to ship at Chime."</div></div>
+    </div>
+
+    <h3 class="section" id="s4">Story 4: Ramped fast on unfamiliar stack (NestJS / TypeScript)</h3>
+    <div class="story">
+      <div class="title">Picked up NestJS in a week for a live technical assessment</div>
+      <div class="tags"><span class="pill chime">make it happen</span><span class="pill">leveling up</span><span class="pill">learning</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Live technical assessment in NestJS — a stack I hadn't worked in. About a week to get from "read it" to "build with it under time pressure."</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I knew TypeScript at a reading level, not writing-with-confidence. NestJS conventions were new — decorators, modules, DI. Couldn't fake it on the day, and no time to learn the framework end-to-end.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I picked the smallest set of primitives I'd actually need — modules, services, controllers, DI — and built one toy idempotency-checking endpoint with them. Then I practiced the testing harness specifically until I could write a test in under a minute. Ignored everything else.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Built the assessment in scope. More valuable than passing was the repeatable approach: when I hit a new framework, the first question is what's the smallest primitive set that gets me to "I can ship in this" — not "I'm comfortable in this."</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>Same instinct is why Claude Code is in my daily workflow. The gap between engineers who use AI tools well and those who don't is widening, and the only way to close it is to treat the practice as work, not entertainment.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"Chime is a Rails shop and I'm fluent in Rails — but the bigger asset is that I'm someone who can ramp on a new stack in a week, not a sprint, when the team needs it."</div></div>
+    </div>
+
+    <h3 class="section" id="s5">Story 5: Mentorship / raised the code-review bar</h3>
+    <div class="story">
+      <div class="title">Raised review bar on a junior eng's PRs — questions, not directives</div>
+      <div class="tags"><span class="pill chime">team up</span><span class="pill chime">chime in</span><span class="pill">mentorship</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>On my team, code review had drifted toward LGTM-and-merge. Bugs were slipping through that shouldn't have, and a junior engineer wasn't getting the kind of feedback that actually grew his skill — he was just getting unblocked.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I didn't want to become the bottleneck who slowed everyone down. But "ship faster by reviewing less" wasn't the right answer either — the cost was landing on someone, just not me.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I started leaving more substantive reviews on his PRs — specifically as inline <em>questions</em> ("what happens if this raises?") rather than directives ("change this to X"). I paired with him on his next feature instead of just commenting after. Wrote a short doc on what I look for in a review and shared it in the team channel so the bar wasn't just in my head.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>His next two PRs needed maybe a third of the comments. He told me later that the questions were what helped — they made him notice things himself instead of being told.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>Mentoring taught me to ask first, prescribe second. Most senior engineers, including me, default to the answer too fast. Questions teach; answers patch.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"'Chime in' is also about how you give feedback. The version that actually scales the team is the question, not the directive."</div></div>
+    </div>
+
+    <h3 class="section" id="s6">Story 6: Disagreement / pushback (DDD on Zendesk Talk usage payments)</h3>
+    <div class="story">
+      <div class="title">Pushed back on DDD mandate for a small project — deferred, was honestly both right and wrong</div>
+      <div class="tags"><span class="pill chime">chime in</span><span class="pill chime">simplify</span><span class="pill">trust</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>At Zendesk I owned the Talk usage payments project — relatively small scope, small team, me as sole engineering owner on the implementation. Around that time the architecture group was standardizing on Domain-Driven Design as the pattern for payments work across the broader org.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I thought DDD was overkill for <em>my</em> project — the scope didn't justify the ceremony of aggregates, ubiquitous language, bounded-context boundaries. My second concern was forward-looking: a future engineer parachuting in to extend a small service wrapped in DDD scaffolding would have a harder onboarding than necessary. The architecture group's standing wasn't nothing — they were optimizing for org-wide consistency and shared vocabulary across the broader payments surface, which is a legitimate goal I wasn't carrying.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I raised it in 1:1s with the arch lead, not in the architecture review meeting — better signal-to-noise, less ego. I made the case on scope and team-size grounds and offered a lighter-weight alternative. I genuinely tried their position rather than just objecting — implemented enough of it to feel the friction firsthand. Once it was clear the org-consistency argument was going to win, I deferred and committed. To mitigate my discoverability concern, I went heavy on inline comments and wrote thorough READMEs so the next engineer didn't have to reverse-engineer the DDD mapping from the code alone.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Honestly, both right and wrong. <strong>Right</strong>: the DDD ceremony did add cost that wouldn't have existed at this scope, and I've seen engineers since then take longer to extend it than they would have a simpler version. <strong>Wrong</strong>: the org-wide consistency the arch group cared about actually paid off — when other payments work touched my service, the shared vocabulary made cross-team conversations dramatically easier than they'd have been if I'd done my own thing. The READMEs and comments turned out to be the single highest-leverage thing I shipped on that project; they outlived multiple engineer transitions.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>Two things I carry from it. First — when I argue scope vs. shared standards now, I steelman the network effects of consistency much harder before I push back. I undervalued it then. Second — when I lose a call I disagreed with, the work isn't to be quietly bitter; it's to find the mitigation that makes the chosen path work as well as it can. The doc-heavy mitigation was the part I'm most proud of in retrospect, not the pushback itself.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"'Chime in' is owed when you disagree — but so is recommitting hard when the call lands somewhere you didn't choose. The mitigation work after a deferred disagreement is where the real character shows up. And the README/comments lesson is exactly the kind of thing I'd bring to ChimeCore-adjacent work — make the next engineer's onboarding the design constraint, not the afterthought."</div></div>
+    </div>
+
+    <h3 class="section" id="s7">Story 7: Ambiguity (order processing service)</h3>
+    <div class="story">
+      <div class="title">Built order processing integration service from a one-line spec</div>
+      <div class="tags"><span class="pill chime">make it happen</span><span class="pill chime">be bold</span><span class="pill">ownership</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>At Zendesk the ask started as one line — "we need a service that handles orders end-to-end." No spec, no design doc.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>The hard part wasn't the happy path; it was that we sat on SQS, which can redeliver. So anything I built had to be idempotent or we'd double-charge customers. And partial failures — one downstream call succeeds, the next fails — couldn't require a human every time.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I owned the design. Picked SQS over Kafka because the team was small and SQS was operationally cheaper. Used MySQL over a document store because support needed to query state and the access patterns were relational. Built idempotency around a <code class="inline">(message_id, step)</code> table so retries were safe. Wrote the on-call runbook before launch, not after.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Service has been running reliably in production. The runbook-first habit cut MTTR for the on-call rotation that picked it up later.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>The thing I'd do differently: structured metrics on day one. I had logs but not dashboards, and the gap cost me hours the first time something went sideways in prod.</div></div>
+      <div class="row"><div class="lbl">Chime angle</div><div>"This is the muscle that translates straight to ChimeCore work. Idempotency, audit, partial-failure handling, runbook-first — table stakes at a fintech, and I've already done it."</div></div>
+    </div>
+
+    <h3 class="section" id="map">Mapping stories to common questions</h3>
+    <table class="rubric">
+      <tr><th>If they ask…</th><th>Reach for…</th></tr>
+      <tr><td>"Describe a production bug you root-caused"</td><td>Story 1 (Zuora silent-200)</td></tr>
+      <tr><td>"Tell me about a project you're proud of"</td><td>Story 1 or Story 7 (order processing)</td></tr>
+      <tr><td>"Tell me about a cross-functional project"</td><td>Story 2 (support partnership)</td></tr>
+      <tr><td>"Tell me about working with a PM / designer / non-eng"</td><td>Story 2 (support); shape Story 7 if PM angle</td></tr>
+      <tr><td>"Tell me about a time you shipped something fast"</td><td>Story 3 (Wordblok)</td></tr>
+      <tr><td>"Tell me about cutting scope / saying no to a feature"</td><td>Story 3 (Wordblok — 4 explicit cuts)</td></tr>
+      <tr><td>"Tell me about ramping fast on something unfamiliar"</td><td>Story 4 (NestJS)</td></tr>
+      <tr><td>"Tell me about mentoring / feedback you gave"</td><td>Story 5 (code review)</td></tr>
+      <tr><td>"Tell me about a disagreement / pushback"</td><td>Story 6 (DDD on Talk payments) — also good for "time you were wrong" and "deferring to senior judgment"</td></tr>
+      <tr><td>"Tell me about handling ambiguity"</td><td>Story 7 (order processing)</td></tr>
+      <tr><td>"Tell me about ownership / self-direction"</td><td>Story 1 or Story 7</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ COMPANY ============ -->
+  <section class="tab" id="tab-company" data-toc='[
+    ["The basics","basics"],
+    ["What they do (product lines)","products"],
+    ["ChimeCore (their proprietary ledger)","core"],
+    ["Tech stack","stack"],
+    ["Business model (member-aligned)","biz"],
+    ["The 8 values in their own words","values"],
+    ["Engineering culture","eng"],
+    ["Recent moves (2025–2026)","recent"],
+    ["Who they compete with","comp"],
+    ["Things to drop into conversation","drop"]
+  ]'>
+    <h2>Company &amp; Values <span class="sub">talking points that show you did the homework</span></h2>
+
+    <h3 class="section" id="basics">The basics</h3>
+    <table class="rubric">
+      <tr><td><strong>Founded</strong></td><td>2012 by Chris Britt &amp; Ryan King</td></tr>
+      <tr><td><strong>HQ</strong></td><td>San Francisco (also SF Bay Area / Chicago / Vancouver offices)</td></tr>
+      <tr><td><strong>What they are</strong></td><td>A <em>fintech</em>, not a bank. Banking services provided by partner banks (The Bancorp Bank, Stride Bank). Refer to Chime as "the platform" or "Chime," not "the bank."</td></tr>
+      <tr><td><strong>Members</strong></td><td>22M+ members (and growing). Primarily everyday Americans, often unbanked / underbanked by traditional institutions.</td></tr>
+      <tr><td><strong>Status</strong></td><td>Filed S-1 (going public); previously valued at $25B (private). Most valuable US consumer fintech.</td></tr>
+      <tr><td><strong>Mission</strong></td><td>Make financial peace of mind a reality for everyday Americans.</td></tr>
+    </table>
+
+    <h3 class="section" id="products">What they do (product lines)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">CHIME CHECKING / CARD</p>
+        <p style="margin:0;font-size:13px">Core checking account + debit card. No monthly fees, no overdraft fees, no minimum balance. Direct deposit up to 2 days early.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">SPOTME</p>
+        <p style="margin:0;font-size:13px">Fee-free overdraft up to $200. Member spends, Chime fronts it, gets paid back from next direct deposit. <strong>Underwriting + risk + ledger problem.</strong></p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">MYPAY</p>
+        <p style="margin:0;font-size:13px">Earned-wage access — get up to $500 of your paycheck before payday. Newer product. Direct competitor to EarnIn / DailyPay.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">CHIME+</p>
+        <p style="margin:0;font-size:13px">Premium-tier offering for qualifying members — higher SpotMe limits, additional benefits. Their move into tiering.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">CREDIT BUILDER</p>
+        <p style="margin:0;font-size:13px">Secured credit card backed by a deposit. Builds credit history for members who don't have one. <strong>Distinctive product</strong> — almost no one else does it free.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">CHIME WORKPLACE</p>
+        <p style="margin:0;font-size:13px">Employer-side product — financial wellness benefits including direct deposit + access to Chime products.</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="core">ChimeCore — their proprietary ledger</h3>
+    <div class="card chime">
+      <p style="margin:0 0 6px 0"><strong>ChimeCore</strong> is Chime's proprietary ledger and transaction-processing platform. It's the substrate underneath every product (Card, Chime+, MyPay, SpotMe).</p>
+      <p style="margin:0 0 6px 0"><strong>Why it matters in interviews:</strong> If you bring up double-entry ledger, transactional outbox, audit-log-as-source-of-truth in the design round, you're directly on their domain. Reference ChimeCore by name — it signals you've actually read about them.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Don't claim deep knowledge you don't have. "I read that ChimeCore is your proprietary ledger — I'd love to learn more about how it's structured" is a great closing question.</p>
+    </div>
+
+    <h3 class="section" id="stack">Tech stack</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">BACKEND</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li><strong>Ruby on Rails (primary, heavy use)</strong> — see Noel Rappin's "I ❤ Ruby" team</li>
+          <li>Sidekiq (background jobs)</li>
+          <li>PostgreSQL</li>
+          <li>Redis (cache, rate limits)</li>
+          <li>AWS (SQS, SNS, S3, RDS, etc.)</li>
+          <li>Selected Go services for performance-critical paths</li>
+          <li>GraphQL (API layer)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">DATA / INFRA</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Kafka (event streaming)</li>
+          <li>Snowflake (analytics warehouse)</li>
+          <li>Airflow (orchestration)</li>
+          <li>Datadog / Splunk (observability)</li>
+          <li>Terraform (IaC)</li>
+          <li>Kubernetes (some workloads)</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted)"><strong>For your interview:</strong> heavy Rails = you should be fluent and idiomatic. Job postings emphasize "Ruby on Rails or comparable frameworks, transactional databases, caching systems."</p>
+
+    <h3 class="section" id="biz">Business model (the alignment story)</h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0"><strong>How Chime makes money:</strong> Primarily <em>interchange</em> — the small fee merchants pay when a member uses their Chime debit card. <strong>Member usage = Chime revenue.</strong></p>
+      <p style="margin:0 0 6px 0"><strong>How traditional banks make money on retail:</strong> overdraft fees, ATM fees, minimum-balance fees, monthly maintenance fees. Member <em>mistakes</em> = bank revenue.</p>
+      <p style="margin:0;font-size:13px"><strong>This is the alignment story.</strong> When you say "member-obsessed isn't a slogan, it's the business model," you're right. The incentive to help the member is literally in the P&amp;L.</p>
+    </div>
+
+    <h3 class="section" id="values">The 8 values in their own words</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0">
+        <li><strong>Be member-obsessed</strong> — "Members come first in everything we do."</li>
+        <li><strong>Be human</strong> — "We bring authenticity to our work and our interactions."</li>
+        <li><strong>Be bold</strong> — "We take big swings and pursue ambitious outcomes."</li>
+        <li><strong>Simplify</strong> — "We make the complex feel easy — for members and ourselves."</li>
+        <li><strong>Make it happen</strong> — "We move with urgency and bias to action."</li>
+        <li><strong>Respect the rules</strong> — "We operate with the rigor regulated finance demands."</li>
+        <li><strong>Team up</strong> — "We win together, across functions and levels."</li>
+        <li><strong>Chime in</strong> — "We speak up, give feedback, push back honestly."</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="eng">Engineering culture</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Rails as a strategic choice</strong> — Noel Rappin (creator of <em>Programming Ruby</em>) was hired to lead the "I ❤ Ruby" team, championing Ruby tools/practices across engineering.</li>
+        <li><strong>Hands-on innovation culture</strong> — they emphasize experimentation and practical application of emerging tech.</li>
+        <li><strong>Member impact framing</strong> in design discussions — engineers are expected to ground arguments in member outcomes, not technical preference.</li>
+        <li><strong>Regulated mindset</strong> — finance compliance is in everyone's water. Reg E, Reg CC, PCI, BSA/AML show up in normal engineering conversations.</li>
+        <li><strong>Values Awards</strong> — annual peer-nominated recognition for "living the values." Indicates values are operationalized, not just listed.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="recent">Recent moves (2025–2026)</h3>
+    <table class="rubric">
+      <tr><th>When</th><th>What</th><th>Why it matters</th></tr>
+      <tr><td>2025</td><td>S-1 filed (going public)</td><td>Maturing into a public-co operating cadence. Compliance / reporting rigor bumps up.</td></tr>
+      <tr><td>2024–2025</td><td>MyPay launch</td><td>Move into earned-wage access. Competing with EarnIn, DailyPay.</td></tr>
+      <tr><td>Ongoing</td><td>Chime+ tiering</td><td>First real premium tier — moving beyond "free for everyone" toward differentiated offerings.</td></tr>
+      <tr><td>Ongoing</td><td>ChimeCore evolution</td><td>Investment in ledger infrastructure as competitive advantage. Public job postings emphasize Ruby-on-Rails proficiency for this work.</td></tr>
+    </table>
+
+    <h3 class="section" id="comp">Who they compete with</h3>
+    <table class="rubric">
+      <tr><th>Competitor</th><th>How Chime differs</th></tr>
+      <tr><td><strong>Cash App</strong></td><td>Cash App is P2P-first with banking bolted on. Chime is banking-first with P2P inside.</td></tr>
+      <tr><td><strong>Varo / Current / SoFi</strong></td><td>Other US neobanks. Chime is the scale leader (22M+ members).</td></tr>
+      <tr><td><strong>Traditional banks (Wells, BofA, Chase)</strong></td><td>Different incentive model (fees vs. interchange). Chime's tech is mobile-native.</td></tr>
+      <tr><td><strong>EarnIn / DailyPay (for MyPay)</strong></td><td>Standalone earned-wage products. Chime bundles it with checking — stickier.</td></tr>
+      <tr><td><strong>Credit Karma / Self (for Credit Builder)</strong></td><td>Other credit-building products, often with fees. Chime's is integrated and free.</td></tr>
+    </table>
+
+    <h3 class="section" id="drop">Things to drop into conversation (proves you did the homework)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"The alignment of interchange revenue with member success — that's the part of the model I find most interesting."</li>
+        <li>"I read that ChimeCore is your proprietary ledger — I'd love to hear how it's structured."</li>
+        <li>"Noel Rappin joining to lead the Ruby practice tells me Rails is a strategic bet here, not just a legacy choice."</li>
+        <li>"SpotMe is a really elegant product from a risk + ledger standpoint — fronting money against an expected direct deposit is non-trivial."</li>
+        <li>"Credit Builder is the product I'm most curious about technically — building credit history through a deposit-backed card with no fees is a clever incentive design."</li>
+        <li>"I noticed the S-1 filing — how has the pre-public posture changed engineering priorities, if at all?"</li>
+        <li>"22 million members at this kind of pace — what's the biggest scaling challenge that doesn't get talked about publicly?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Q's TO ASK ============ -->
+  <section class="tab" id="tab-questions" data-toc='[
+    ["The strategy","strat"],
+    ["For the EM (hiring manager)","em"],
+    ["For a senior IC (coding / design)","ic"],
+    ["For the cross-functional partner","xfn"],
+    ["Company / strategy (any interviewer)","co"],
+    ["ChimeCore / fintech-specific","fin"],
+    ["The closing question (always)","close"],
+    ["Questions NOT to ask","avoid"]
+  ]'>
+    <h2>Questions to Ask <span class="sub">have 3 ready for every interviewer</span></h2>
+
+    <h3 class="section" id="strat">The strategy</h3>
+    <div class="card chime">
+      <p style="margin:0 0 6px 0">Have <strong>3 questions ready per interviewer</strong>: one about <em>them or their team</em>, one about <em>Chime as a company</em>, one about <em>how the role succeeds</em>.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Listen for things to follow up on. The best questions in an interview are ones the interviewer just teed up for you, not the ones you pre-wrote. Pre-write the safety net; reach for it only if you don't have a better real-time question.</p>
+    </div>
+
+    <h3 class="section" id="em">For the EM (hiring manager)</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"What does success look like for someone in this role at 30, 60, 90 days?"</li>
+        <li>"What's the team's hardest problem right now — the one you'd most want a new hire to help with?"</li>
+        <li>"How do you think about the balance between shipping fast and the correctness bar that fintech requires?"</li>
+        <li>"What's been your biggest hire-and-grow win in the last year?"</li>
+        <li>"What does 'leveling up the team' look like for you, beyond hiring?"</li>
+        <li>"How do you give performance feedback — formal cadence, informal, both? I want to know what to expect."</li>
+        <li>"What's a recent technical decision your team made that you'd describe as bold?"</li>
+        <li>"What's the part of your team's work you wish more people on Chime understood?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="ic">For a senior IC (coding or design interviewer)</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"What's the biggest piece of technical debt the team has right now — and how are you thinking about it?"</li>
+        <li>"How is ChimeCore evolving? Is most engineering interacting with it via libraries, or are people building inside it?"</li>
+        <li>"What's the on-call experience like? Healthy?"</li>
+        <li>"How does the team balance Rails-monolith work with the Go services? Are there teams that focus on each, or does it blend?"</li>
+        <li>"What's a recent design decision your team got wrong and changed?"</li>
+        <li>"How does a regulated environment actually feel day-to-day in your team? Helpful guardrails or constant friction?"</li>
+        <li>"What's the most fun thing your team has shipped in the last six months?"</li>
+        <li>"What's the gap between senior and staff engineer at Chime, in your experience?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="xfn">For the cross-functional partner</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"What's the thing engineers do that makes your work easier? And what's the thing you wish more engineers knew?"</li>
+        <li>"How do you partner with engineering on shaping a project — early, or once the spec is done?"</li>
+        <li>"What's the biggest cross-functional challenge your team has right now?"</li>
+        <li>"Tell me about a recent project where your team and engineering really clicked. What made it work?"</li>
+        <li>"What does 'team up' actually look like in practice between your function and engineering?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="co">Company / strategy (any interviewer can field)</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"With the S-1 filed, how has the pre-public posture changed engineering priorities, if at all?"</li>
+        <li>"Where do you see Chime in 3 years? What's the part of the roadmap that excites you most?"</li>
+        <li>"Chime+ is interesting as a first real tiered offering — what's the team / org thinking about how tiering shapes future product?"</li>
+        <li>"MyPay puts you in the earned-wage-access space against standalone players. Why did you build it in-house rather than partner?"</li>
+        <li>"What's the cultural shift Chime is going through as it scales past 20M members?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="fin">ChimeCore / fintech-specific</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"I read ChimeCore is the proprietary ledger underneath every product. Without giving away anything sensitive, what's the part of the ledger architecture you're most proud of?"</li>
+        <li>"How do you handle idempotency across the API surface — central middleware, per-service, or something else?"</li>
+        <li>"What's the reconciliation cadence with partner banks like? Daily, intraday?"</li>
+        <li>"How does SpotMe risk-decide in real-time, and what's the latency budget for that decision?"</li>
+        <li>"For a member-facing failure (e.g., transfer that gets stuck), what's the operational playbook? Who's the first responder?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="close">The closing question (always)</h3>
+    <div class="card good">
+      <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">ASK THIS EVERY ROUND</p>
+      <p class="quote" style="margin:0">"Based on what we discussed, do you have any hesitations about my fit for this role? I'd love a chance to address them before we wrap up."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Signals confidence + self-awareness + coachability. Almost no candidates do this and interviewers reliably remember it. Most powerful in the EM round; works in every round.</p>
+    </div>
+
+    <h3 class="section" id="avoid">Questions NOT to ask</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li>"What does Chime do?" / "Who are your competitors?" — Googleable.</li>
+        <li>"Is Chime a bank?" — they're a fintech; the bank charter belongs to partners. Asking this signals you didn't read up.</li>
+        <li>"How much vacation do I get?" — save for recruiter / offer.</li>
+        <li>"Is it remote?" — same.</li>
+        <li>"How long until I get promoted?" — reads transactional.</li>
+        <li>"Do you have layoffs planned?" — Even if you want to know, ask diplomatically: "How has the team been impacted by recent prioritization shifts?"</li>
+        <li>Anything yes/no — make them open-ended so you actually learn something.</li>
+      </ul>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.innerHTML = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelectorAll("aside li a").forEach(x => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach(s => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) buildTOC(section);
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("chime-tab", tabId); } catch (e) {}
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "cheat";
+  try {
+    const saved = localStorage.getItem("chime-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 1200);
+      } catch (e) {
+        btn.textContent = "Failed";
+      }
+    });
+  });
+
+  // Keyboard shortcuts: 1-8 jumps to tab
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"cheat","2":"coding","3":"design","4":"xfn","5":"em","6":"stories","7":"company","8":"questions" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handshake Interview Cheat Sheet</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --panel-2: #eef1f5;
+    --border: #d8dde5;
+    --text: #1a1d23;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-2: #7c3aed;
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --hs: #166c46;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--hs); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--accent-2); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.hs { border-left: 3px solid var(--hs); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #f8fafc !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.hs { color: #fff; background: var(--hs); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  .story { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .story .title { color: var(--accent); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .story .tags { margin-bottom: 8px; }
+  .story .row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .story .row .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Handshake <span class="badge">prep</span></h1>
+  <nav class="tabs">
+    <button data-tab="cheat" class="active">Cheat Sheet</button>
+    <button data-tab="leadership">Leadership Round</button>
+    <button data-tab="pairing">CodeSignal Pairing</button>
+    <button data-tab="problems">Likely Problems</button>
+    <button data-tab="stories">Stories Bank</button>
+    <button data-tab="company">Company &amp; Values</button>
+    <button data-tab="tech">Tech Stack &amp; Snippets</button>
+    <button data-tab="questions">Q's to Ask</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab active" id="tab-cheat" data-toc='[
+    ["The 10-second pitch","pitch"],
+    ["Handshake values (memorize)","values"],
+    ["Words that land well","vocab"],
+    ["Before each round","before"],
+    ["Mission soundbite","mission"],
+    ["Red flags to avoid","red"],
+    ["When stuck","stuck"]
+  ]'>
+    <h2>Cheat Sheet <span class="sub">scan this between rounds</span></h2>
+
+    <h3 class="section" id="pitch">The 10-second pitch (about you)</h3>
+    <div class="card hs">
+      <p style="margin:0 0 6px 0"><strong>Template:</strong> "I'm a [role] who's spent the last [N] years building [domain]. I'm most energized when I get to [specific verb: ship fast / unblock teams / cut ambiguity]. I'm here because Handshake's mission — democratizing opportunity — connects directly to [your personal hook]."</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Use this verbatim if asked "tell me about yourself." Keep it under 60 seconds. Then shut up and let them drive.</p>
+    </div>
+
+    <h3 class="section" id="values">Handshake values (memorize all six)</h3>
+    <div class="grid-2">
+      <div class="card"><span class="pill hs">1</span><strong>Empathy</strong> — for students, for teammates. Infra/platform engs: your "users" are other engineers.</div>
+      <div class="card"><span class="pill hs">2</span><strong>Humility &amp; Hard Work</strong> — "Midwest values" — grounded, hardworking, not flashy.</div>
+      <div class="card"><span class="pill hs">3</span><strong>Empowered by Diversity</strong> — diverse teams ship better products. Not a checkbox.</div>
+      <div class="card"><span class="pill hs">4</span><strong>Accountability &amp; Drive</strong> — "act like you're the only one holding the ball." Olympic pace.</div>
+      <div class="card"><span class="pill hs">5</span><strong>Adaptability</strong> — navigate ambiguity. The company pivoted to AI in 2025; they reward people who pivot.</div>
+      <div class="card"><span class="pill hs">6</span><strong>Access &amp; Outcomes First</strong> — if it doesn't expand opportunity or improve outcomes, it doesn't ship.</div>
+    </div>
+
+    <h3 class="section" id="vocab">Words and phrases that will land well</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Mission vocab:</strong> <em>democratize, access, outcomes, early-career, equity of opportunity, expert network</em></p>
+      <p style="margin:0 0 6px 0"><strong>Culture vocab:</strong> <em>Olympic pace, high standards, ownership, ambiguity, refound, urgency, the only one holding the ball</em></p>
+      <p style="margin:0 0 6px 0"><strong>Product vocab:</strong> <em>students, employers, institutions, Handshake AI, expert data, Taro, knowledge workers, three-sided marketplace</em></p>
+      <p style="margin:0"><strong>Engineering vocab:</strong> <em>pair programming, service ownership, on-call for your code, monolith→services, GraphQL, Rails, Sidekiq</em></p>
+    </div>
+
+    <h3 class="section" id="before">Before each round (30-second prep)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--muted);font-size:12px">LEADERSHIP</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Have 3 stories ready: <strong>leadership crisis</strong>, <strong>cross-functional</strong>, <strong>failure + learning</strong></li>
+          <li>Tie each to <strong>one</strong> Handshake value</li>
+          <li>End each with "and here's what I'd do differently"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--muted);font-size:12px">PAIRING</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Ask 2 clarifiers in the first 90 seconds</li>
+          <li>Verbalize the data model before any code</li>
+          <li>Run / test after every function — never go silent &gt; 30s</li>
+          <li>Treat the interviewer as <strong>a teammate</strong>, not a judge</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="mission">Mission soundbite (use whenever "why Handshake?")</h3>
+    <div class="card good">
+      <p class="quote" style="margin:0">"Where you go to college, who your parents know, what zip code you grew up in — those still drive who gets the first interview. Handshake is one of the only platforms attacking that directly at scale. And now with Handshake AI, you're applying the same network to who gets to shape frontier models. I want to work on that."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Adapt the personal hook. The structure (problem → handshake's leverage → why now → why you) is what works.</p>
+    </div>
+
+    <h3 class="section" id="red">Red flags to avoid (any round)</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>"I" instead of "we"</strong> for collaborative work — and vice versa for things you owned</li>
+        <li><strong>Blaming managers, teams, or "the deadline"</strong> — always own the part you could have changed</li>
+        <li><strong>Generic "great company" answers</strong> — they want to hear Handshake-specific knowledge</li>
+        <li><strong>Silent coding</strong> in pairing — &gt; 30 seconds of dead air is a real ding</li>
+        <li><strong>Defensive responses</strong> to feedback — "good point, let me try that" beats "actually…"</li>
+        <li><strong>Skipping the design discussion</strong> in pairing — talk before typing</li>
+        <li><strong>Pure-tech humblebrag</strong> in leadership — "I rewrote the whole system alone" = anti-signal</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="stuck">When stuck (any round)</h3>
+    <ul class="tight">
+      <li><strong>Restate the problem aloud.</strong> 70% of bugs are misread requirements.</li>
+      <li><strong>Trace one example by hand.</strong> "Let me walk through input X step by step."</li>
+      <li><strong>Ask the interviewer.</strong> "I want to verify my assumption — can you confirm Y?"</li>
+      <li><strong>Out loud: "Let me try a simpler version first."</strong> Then iterate.</li>
+      <li><strong>Behavioral version:</strong> "Let me think about that for a moment" — silence is fine for 5–10 seconds in the leadership round, just not in the coding round.</li>
+    </ul>
+  </section>
+
+  <!-- ============ LEADERSHIP ============ -->
+  <section class="tab" id="tab-leadership" data-toc='[
+    ["Format &amp; what to expect","fmt"],
+    ["What they actually score","score"],
+    ["Most common questions","qs"],
+    ["Answer templates","tmpl"],
+    ["Project-deep-dive (most likely!)","deep"],
+    ["Why Handshake","why"],
+    ["Strong-vs-weak examples","sw"],
+    ["Sample answers (your stories)","samp"],
+    ["Handshake-specific pitfalls","pit"],
+    ["Closing the round","close"]
+  ]'>
+    <h2>Leadership Round <span class="sub">conversational, project-focused, value-aligned</span></h2>
+
+    <h3 class="section" id="fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Format:</strong> Usually 1:1 with hiring manager (sometimes +1 senior IC or PM). Conversational, <em>not</em> a panel grill.</li>
+        <li><strong>Length:</strong> 45–60 min</li>
+        <li><strong>Style:</strong> Project-focused. Candidates report this is "less standard behavioral, more centered around your interests and the projects you've worked on."</li>
+        <li><strong>What they're really checking:</strong> Will you fit "Olympic pace"? Do you genuinely care about the mission? Can you self-direct in ambiguity?</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="score">What they actually score</h3>
+    <table class="rubric">
+      <tr><th>Dimension</th><th>What "good" sounds like</th></tr>
+      <tr><td><strong>Ownership</strong></td><td>"I noticed X was broken, owned the fix end-to-end, here's what I shipped." Not "my manager told me to…"</td></tr>
+      <tr><td><strong>Mission alignment</strong></td><td>You connect your decisions to <em>users</em> (students, employers, interns), not just technical elegance.</td></tr>
+      <tr><td><strong>Drive / pace</strong></td><td>Specific numbers and timelines. "Two weeks." "Day three I…" beats "eventually we…"</td></tr>
+      <tr><td><strong>Empathy</strong></td><td>You enabled others. "I paired with X" / "I unblocked Y by…" Not just "I built X alone."</td></tr>
+      <tr><td><strong>Self-awareness</strong></td><td>You name what you'd do differently. Specific, not "I should communicate more."</td></tr>
+      <tr><td><strong>Adaptability</strong></td><td>You've handled a pivot, a re-org, a scrapped project. You don't need stable specs to be productive.</td></tr>
+    </table>
+
+    <h3 class="section" id="qs">Most common questions (reported by past candidates)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">PROJECT / IMPACT</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Tell me about a project you're proud of."</li>
+          <li>"Walk me through the most interesting thing you've shipped in the last year."</li>
+          <li>"What's the most interesting thing you've done in the past 24 hours?" (real reported Q!)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">LEADERSHIP / OWNERSHIP</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Tell me about a time you had to step in and save the day."</li>
+          <li>"Tell me about a time you disagreed with your manager / a senior engineer."</li>
+          <li>"How do you decide what to work on when nobody tells you?"</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">VALUES / FIT</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Why Handshake?"</li>
+          <li>"What are your goals?"</li>
+          <li>"How do you handle ambiguity?"</li>
+          <li>"Tell me about a time you had to ramp up fast on something unfamiliar."</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">FAILURE / GROWTH</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>"Tell me about a time you failed / a project that didn't go well."</li>
+          <li>"What's the hardest feedback you've gotten?"</li>
+          <li>"What would your last manager say is your biggest area to improve?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="tmpl">Answer templates (lift these directly)</h3>
+
+    <h4>STAR-lite (use for behavioral)</h4>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Situation (1 sentence):</strong> Domain + stakes. "We were rolling out feature X two weeks before back-to-school traffic spiked 10x."</li>
+        <li><strong>Tension (1 sentence — replace "Task"):</strong> The interesting thing. "But we discovered the underlying API couldn't handle the load."</li>
+        <li><strong>Action (3–4 sentences, specific verbs):</strong> What <em>you</em> did. Decisions made. People you worked with. Trade-offs you took.</li>
+        <li><strong>Result (1 sentence + number):</strong> "Ended up shipping on time, p95 dropped from 1.2s to 380ms."</li>
+        <li><strong>Reflection (1 sentence — the Handshake differentiator):</strong> "What I'd do differently is loop in the platform team a week earlier — I assumed we had the headroom and we didn't."</li>
+      </ul>
+    </div>
+
+    <h4>"Why Handshake?" answer scaffold</h4>
+    <div class="card accent">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Personal hook (1 sentence):</strong> Why this mission matters to you specifically. Anything from "first-gen college student" to "watched friends grind LinkedIn cold-DMs" to "spent time in education tech."</li>
+        <li><strong>Show you know the company (1–2 sentences):</strong> Reference Handshake AI, the Taro acquisition, the AI economy pivot, or a specific product detail. <em>Anything</em> they wouldn't expect a casual candidate to know.</li>
+        <li><strong>Why now (1 sentence):</strong> Why <em>this</em> moment in your career, and <em>this</em> moment for Handshake.</li>
+        <li><strong>Why this team specifically (1 sentence):</strong> Tie it to what you saw in the job description.</li>
+      </ol>
+    </div>
+
+    <h4>Disagreement / conflict template</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Frame the disagreement <strong>around the work, not the person.</strong> "We disagreed on whether to ship the v1 or wait for the v2 model."</li>
+        <li>Show you <strong>genuinely tried their position.</strong> "I spent a day prototyping their approach so I could compare honestly."</li>
+        <li>Name how you <strong>resolved it</strong> — escalation, data, compromise, or "I deferred and was wrong."</li>
+        <li>End with what the conflict <strong>taught you</strong> about how you collaborate now.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="deep">Project deep-dive (most likely format)</h3>
+    <div class="card hs">
+      <p style="margin:0 0 8px 0">Handshake interviewers often pick one project from your résumé and drill into it for 20+ minutes. <strong>This is the single most important thing to prepare.</strong></p>
+      <p style="margin:0 0 8px 0"><strong>Pick 2 projects in advance</strong> where you can speak to:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>The <strong>business reason</strong> the project existed — who was unblocked, how revenue/users/SLO improved</li>
+        <li>The <strong>technical architecture</strong> at a level you can whiteboard live</li>
+        <li>The <strong>two hardest decisions</strong> you made and the alternatives you rejected</li>
+        <li><strong>One thing you got wrong</strong> and what changed because of it</li>
+        <li>How you <strong>worked with non-engineers</strong> (PM, design, sales, ops)</li>
+        <li>What you'd do <strong>differently with what you know now</strong></li>
+      </ul>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px"><strong>Drill them on you:</strong> assume they'll ask "what would have happened if you used Y instead of X?" and "why didn't your team push back on this requirement?" Have answers ready.</p>
+    </div>
+
+    <h3 class="section" id="why">"Why Handshake?" — three personal hooks to choose from</h3>
+    <div class="grid-3">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">HOOK A — career mobility</p>
+        <p class="quote" style="margin:0;font-size:13px">"Most of my early breaks came from one connection I happened to make in college. Handshake is the platform that scales that to everyone."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">HOOK B — AI economy</p>
+        <p class="quote" style="margin:0;font-size:13px">"The Handshake AI pivot is what made me apply. You already have the expert network frontier labs need — that's a moat almost nobody else has."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">HOOK C — pace + impact</p>
+        <p class="quote" style="margin:0;font-size:13px">"I want to be at a company that ships fast on a mission that matters. Handshake's growth from $0 to $100M ARR in 8 months on the AI side tells me you're that company right now."</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="sw">Strong vs. weak — same question, both answers</h3>
+    <div class="grid-2">
+      <div class="card bad">
+        <p style="margin:0 0 4px 0;color:var(--bad);font-size:12px">WEAK — "Tell me about a project you're proud of"</p>
+        <p class="quote" style="margin:0;font-size:13px">"I built a really cool microservice that handles all our payment processing. It uses Go and gRPC and it's been running in production for two years. I was the lead engineer on it."</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Why weak: no users, no numbers, no trade-offs, no teammates, no reflection. Sounds like résumé bullet read aloud.</p>
+      </div>
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">STRONG — same question</p>
+        <p class="quote" style="margin:0;font-size:13px">"Last fall our payment-failure rate quietly drifted from 0.3% to 1.1% — small in percent, but at our volume that was 4 figures a week of dropped revenue and worse, customers calling support. I owned the dig. Day one I instrumented the failure paths; day three I had the root cause — a downstream provider had silently tightened a timeout. The cheap fix was a retry; the right fix was pulling the call out of the request path. I pitched both to my PM, we shipped the cheap fix Friday and the right fix the following sprint. Failure rate is back under 0.2%. The thing I'd do differently: I should have pushed for SLOs on that path a year earlier — we had no alert and that's why it drifted."</p>
+        <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Why strong: numbers, users, decision + alternatives, timeline, teammates, what you'd change.</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="samp">Sample answers (drafted from your stories)</h3>
+    <div class="card hs">
+      <p style="margin:0 0 6px 0"><strong>Read these out loud once before the round.</strong> Each is ~150–220 words — about 60–90 seconds spoken. Voice rules from your context file: contractions, no buzzwords, lead with the tension, land on a concrete result + reflection.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Where you see <em>[Fill in: …]</em>, swap in a real number on the day. If you don't have one, drop the line entirely — vague metrics hurt more than missing ones.</p>
+    </div>
+
+    <h4>"Tell me about a project you're proud of" / project deep-dive opener</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0 0 0 0;font-size:13px">"At Zendesk I built our order processing integration service from scratch. The ask started as one line — 'we need a service that handles orders end-to-end.' No spec, no design doc. The hard part wasn't the happy path; it was that we sat on SQS, which can redeliver, so anything I built had to be idempotent or we'd double-charge customers. And we had partial failures — one downstream call would succeed and the next would fail, and that couldn't require a human every time.<br><br>
+      I owned the design. Picked SQS over Kafka because the team was small and SQS was operationally cheaper. Used MySQL over a document store because support needed to query state and the access patterns were relational. Built idempotency around a <code class='inline'>(message_id, step)</code> table so retries were safe, and I wrote the on-call runbook before launch — not after.<br><br>
+      Service has been running reliably <em>[Fill in: orders/day or duration]</em>. The thing I'd do differently: structured metrics on day one. I had logs but not dashboards, and the gap cost me a few hours the first time something went sideways in prod."</p>
+    </div>
+
+    <h4>"How do you handle ambiguity?"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Honestly, that's most of what the order processing build was. The ask was one line. So my default in ambiguity is: write the doc before I write the code. I drafted a one-pager with three scopes — minimal, medium, full — what each would cost and what each would leave on the table. Walked it past my manager and one senior eng in 1:1s, not a meeting, because that's faster feedback. Picked medium, got explicit buy-in, then built a thin vertical slice so I could see real load before I locked the schema.<br><br>
+      The thing I learned is that the room is the wrong place to resolve ambiguity. Pre-aligning one person at a time gets you sharper feedback and you don't end up averaging three half-baked positions. That's what I do now whenever something lands without a spec."</p>
+    </div>
+
+    <h4>"Tell me about a time you had to ramp up on something fast"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"I had a live technical assessment in NestJS recently — a stack I hadn't actually written before. About a week to get from 'read it' to 'build with it under time pressure.'<br><br>
+      I didn't try to learn the framework end to end. I picked the smallest set of primitives I'd actually need — modules, services, controllers, DI — and built one toy idempotency endpoint with them. Then I drilled the testing harness specifically until I could write a test in under a minute. Ignored everything else.<br><br>
+      Passed the assessment. But the more useful outcome is that I now have a repeatable approach: when I hit a new framework, the first question is what's the smallest set of primitives that gets me to 'I can ship in this' — not 'I'm comfortable in this.' Same instinct is why Claude Code is in my daily workflow. The gap between engineers who use AI tools well and engineers who don't is widening, and the only way to close it is to treat the practice as work, not novelty."</p>
+    </div>
+
+    <h4>"Tell me about a cross-functional project"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"At Zendesk I worked on billing infrastructure — the kind of system where a bug literally moves money. One rollout I led needed finance for revenue recognition, legal for terms-of-service, and support so they could answer customer questions when invoices changed. Engineering wasn't the bottleneck; alignment was.<br><br>
+      I drove the eng spec but spent maybe half my time outside eng. Paired with our finance partner to map invoicing edge cases I wouldn't have seen myself. Wrote a one-pager support could lean on for ticket responses. Walked legal through the customer-visible changes line by line. Ran a dry-run in staging against real billing-cycle fixtures before we touched prod.<br><br>
+      Shipped on schedule. No emergency rollback, no surprise tickets, no finance escalation. The bigger thing was the relationship I built with that finance partner — it paid off on the next three projects. I learned the work <em>between</em> teams is often more leverage than the code itself. I don't call a spec done anymore until the non-eng partners have read it and told me what they'd do differently."</p>
+    </div>
+
+    <h4>"Why Handshake?"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Two things, honestly. One — most of my early breaks came from one connection I happened to make in college. The Handshake mission is the version of that at scale, for people who don't get lucky.<br><br>
+      Two — and this is what actually made me apply now — the Handshake AI pivot. You already have the expert network frontier labs need for training-data validation. That's a moat almost nobody else can build from scratch. I read Garrett's Lenny's piece on the refounding; I've watched the $0-to-$100M AI ARR number circulate. That kind of pace is the moment I want to be in.<br><br>
+      I'm coming from billing systems and an end-to-end order processing integration service at Zendesk — financial-grade rigor combined with greenfield ownership in a high-blast-radius environment. That's almost exactly the muscle group I think Handshake is hiring for right now: someone who can move fast on something that has to be correct. And on the AI tools side, I'm a daily Claude Code user, so I'm not arriving as a skeptic on the pivot — I'm already operating that way."</p>
+    </div>
+
+    <h4>"Tell me about yourself"</h4>
+    <div class="card good">
+      <p class="quote" style="margin:0;font-size:13px">"Sure. I'm a senior engineer, mostly Ruby on Rails and distributed systems. Spent most of my career at Zendesk — that's where I worked on billing infrastructure and built our order processing integration service end-to-end on SQS and MySQL. The kind of work where a bug literally moves money, so I got good at being deliberate about high-blast-radius changes and at coordinating across finance, legal, and support.<br><br>
+      I'm at Riviera Partners now — opposite end of the spectrum. Startup, smaller team, fewer people in the room for every decision. <em>[Fill in: a sentence on what you've owned at Riviera — e.g., a service you've built, a team you've taken from X to Y, a domain you've gotten fluent in.]</em><br><br>
+      What I'm looking for next is the combination of both — financial-grade rigor on a mission that matters, with the pace of a company that's mid-pivot. Handshake AI's growth and the refounding posture is exactly the pace and ambiguity I do my best work in, and the Zendesk + Riviera combination is the muscle group I want to bring."</p>
+    </div>
+
+    <h3 class="section" id="pit">Handshake-specific pitfalls</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>"I'm great at slow, careful work."</strong> — They want pace. Reframe as "deliberate" + a fast story.</li>
+        <li><strong>Talking only about backend / only about frontend.</strong> They're a full-stack shop. Show range.</li>
+        <li><strong>Generic mission answer.</strong> Anyone can say "I care about students." Show that you read about Handshake AI.</li>
+        <li><strong>No questions about the AI pivot.</strong> Not asking signals you didn't do homework.</li>
+        <li><strong>Bashing past employers.</strong> Always reframe past frustration as a problem you tried to fix.</li>
+        <li><strong>"I work best alone."</strong> — Handshake values pair programming as a cultural pillar. Don't.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="close">Closing the round well</h3>
+    <ul class="tight">
+      <li><strong>Have 3 questions ready</strong> (see "Q's to Ask" tab) — one about the team, one about the AI pivot, one about how the role succeeds.</li>
+      <li><strong>State your interest explicitly.</strong> "Just to be clear — I'm really excited about this role specifically because [one specific reason]."</li>
+      <li><strong>Ask about next steps</strong> if they haven't told you.</li>
+    </ul>
+  </section>
+
+  <!-- ============ PAIRING ============ -->
+  <section class="tab" id="tab-pairing" data-toc='[
+    ["The platform: CodeSignal Project IDE","ide"],
+    ["Session shape","shape"],
+    ["First 5 minutes (do every time)","first5"],
+    ["What they actually score","score"],
+    ["Communication phrases","comms"],
+    ["The problem playbook","play"],
+    ["Likely problem domains","domains"],
+    ["Language choice","lang"],
+    ["Iteration when they add a part","iter"],
+    ["Edge cases to volunteer","edge"],
+    ["Quick wins / smells to avoid","smells"]
+  ]'>
+    <h2>CodeSignal Project Pairing <span class="sub">60–90 min, real pair programming, real IDE</span></h2>
+
+    <h3 class="section" id="ide">The platform: CodeSignal Project IDE</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Multi-file IDE</strong> with a real filesystem — create, edit, run files. Not a single text box.</li>
+        <li><strong>Live collaborative editing.</strong> Both you and the interviewer can type and see each other's cursors.</li>
+        <li><strong>Code compiles and runs.</strong> There's a terminal/test runner. Use it constantly.</li>
+        <li><strong>Timer in the top-right.</strong> Interviewer can extend.</li>
+        <li><strong>Languages supported:</strong> Ruby, Python, JS/TS, Java, C#, PHP, Go.</li>
+        <li><strong>Practice it once before the interview</strong> — even 15 minutes on their public demo so the UI isn't a surprise.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="shape">Session shape</h3>
+    <table class="rubric">
+      <tr><th>Stage</th><th>Time</th><th>What to do</th></tr>
+      <tr><td><strong>Read problem</strong></td><td>5 min</td><td>Read twice. Highlight ambiguities. <em>Don't touch the keyboard.</em></td></tr>
+      <tr><td><strong>Clarify + design</strong></td><td>5–10 min</td><td>Ask 1–2 clarifiers. State your data model and the 2–3 functions you'll write.</td></tr>
+      <tr><td><strong>Implement Part 1</strong></td><td>15–25 min</td><td>Smallest viable version. Run + assert as you go.</td></tr>
+      <tr><td><strong>Run + edge cases</strong></td><td>5–10 min</td><td>Walk an input through. Volunteer 2 edge cases.</td></tr>
+      <tr><td><strong>Part 2 (extension)</strong></td><td>15–25 min</td><td>Acknowledge new requirement aloud first. Refactor if needed; say so.</td></tr>
+      <tr><td><strong>Part 3 / discussion</strong></td><td>5–15 min</td><td>Sometimes a Part 3, sometimes "how would you scale this?" / "what tests would you add?"</td></tr>
+    </table>
+
+    <h3 class="section" id="first5">First 5 minutes (do this every time)</h3>
+    <ol class="tight">
+      <li><strong>Read the prompt twice.</strong> Don't start typing.</li>
+      <li><strong>Restate it back.</strong> "So I'm building X that supports Y, input format is Z. Did I capture that right?"</li>
+      <li><strong>Ask 1–2 high-value clarifiers.</strong> Examples:
+        <ul class="tight">
+          <li>"Is input a stream of method calls or string commands I parse?"</li>
+          <li>"On error, do you want me to raise, return None, or log and continue?"</li>
+          <li>"Is order of operations guaranteed, or do I need to handle concurrency?"</li>
+        </ul>
+      </li>
+      <li><strong>State the data model in one sentence.</strong> "I'll model this as a class with a dict of jobs keyed by id."</li>
+      <li><strong>Type the empty skeleton.</strong> Class + one method stub + one inline assert. <em>Run it.</em> Now implement.</li>
+    </ol>
+
+    <h3 class="section" id="score">What they actually score (~50/50 split)</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">TECHNICAL (~50%)</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Correctness first. Match the spec literally.</li>
+          <li>Clean naming, types, small focused functions.</li>
+          <li>Picks reasonable data structures (dict over list-scan when relevant)</li>
+          <li>Handles edge cases <strong>that you raised</strong>.</li>
+          <li>Code runs. You used the test runner.</li>
+        </ul>
+      </div>
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">COLLABORATION (~50%)</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Constant verbalization of thought.</li>
+          <li>Asks clarifying Qs before assuming.</li>
+          <li>Takes interviewer suggestions gracefully — "Good catch, let me adjust."</li>
+          <li>Discusses trade-offs out loud.</li>
+          <li>Stays calm when stuck. Asks for help cleanly.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="comms">Communication phrases (memorize 4)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">OPENING</p>
+        <p class="quote">"Let me echo back what I heard before I dive in…"</p>
+        <p class="quote">"Quick clarifier before I touch code: when X happens, do you want Y or Z?"</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHILE CODING</p>
+        <p class="quote">"I'm going to start with the simplest version that could possibly work and iterate."</p>
+        <p class="quote">"I'm going to skip input validation for now and come back if we have time — just calling that out."</p>
+        <p class="quote">"My instinct here is a hash map keyed by user_id — agree with that or do you want me to keep it list-based for now?"</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHEN STUCK</p>
+        <p class="quote">"Let me trace one input through this by hand."</p>
+        <p class="quote">"I want to verify my assumption — can you confirm Y behaves like Z?"</p>
+        <p class="quote">"I'm going to scrap this approach and redo with strategy B. Give me 2 minutes."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHEN PART 2 LANDS</p>
+        <p class="quote">"Okay — to support this cleanly, I'd want to refactor [thing]. About 2 minutes. Sound good?"</p>
+        <p class="quote">"Does this change existing behavior, or only extend it?"</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHEN INTERVIEWER PUSHES BACK</p>
+        <p class="quote">"Good point — let me think about that for a second… yeah, you're right, I'll switch to [their approach]."</p>
+        <p class="quote">"I want to push back gently on that — here's why I went with X. Open to changing if you see a problem though."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WRAP-UP</p>
+        <p class="quote">"If I had another 30 min I'd add [tests / pagination / error types]. Here's roughly how."</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="play">The problem playbook (works on 90% of CodeSignal projects)</h3>
+    <div class="card hs">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Define the domain object.</strong> <code class="inline">Struct.new(:a, :b, keyword_init: true)</code> — gives you accessors, <code class="inline">==</code>, and <code class="inline">to_s</code> for free.</li>
+        <li><strong>Define a container.</strong> Almost always <code class="inline">Database</code> / <code class="inline">Manager</code> / <code class="inline">Registry</code> class with a dict inside.</li>
+        <li><strong>Stub the public methods.</strong> Empty bodies, type hints, one assert per method that runs.</li>
+        <li><strong>Implement the simplest method first.</strong> Usually create / insert / register.</li>
+        <li><strong>Run after every method.</strong> Inline assertions, not a test framework, unless they offer one.</li>
+        <li><strong>Handle errors specifically.</strong> Raise typed exceptions with messages. <code class="inline">raise ValueError(f"no such job: {job_id}")</code>.</li>
+        <li><strong>When Part 2 lands</strong>: acknowledge aloud, decide refactor-vs-extend, then do it.</li>
+        <li><strong>End with edge cases volunteered.</strong> "Empty input, duplicate IDs, missing fields — let me handle those quickly."</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="domains">Likely problem domains (educated guesses from Handshake's stack)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">JOB / APPLICATION DOMAIN</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li><strong>Job posting CRUD</strong> with filtering (skills, location, deadline)</li>
+          <li><strong>Application pipeline</strong>: state machine (submitted → reviewed → interviewed → offered)</li>
+          <li><strong>Matching</strong>: rank candidates by overlap of required vs. profile skills</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">MESSAGING / EVENTS</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li><strong>Event scheduler</strong> for career fairs / interview slots</li>
+          <li><strong>Notification fanout</strong> from one employer to many students</li>
+          <li><strong>Inbox model</strong> with read/unread state and pagination</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">DATA-SHAPING</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>In-memory query engine (a la SQLish)</li>
+          <li>Aggregations: "top N employers by application count this week"</li>
+          <li>Time-windowed counters / rate limits</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--accent);font-size:12px">PROFILE / SEARCH</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Profile completeness scoring</li>
+          <li>Tag-based filtering (skills, majors, interests)</li>
+          <li>Pagination + sorting + filtering combined</li>
+        </ul>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin:8px 0">⚠ These are <em>educated guesses</em>. One past candidate reported "a fairly involved simulation of something being implemented at Handshake," which suggests they sometimes use thinly-disguised real-product features. Be ready to model anything from their domain.</p>
+
+    <h3 class="section" id="lang">Language: Ruby</h3>
+    <div class="card good">
+      <p style="margin:0 0 8px 0"><strong>You're coding in Ruby.</strong> Best possible signal for a Rails shop — they'll feel at home reading your code, and you'll feel at home writing it.</p>
+      <p style="margin:0 0 8px 0"><strong>Defaults to lean on:</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><code class="inline">Struct.new(:a, :b, keyword_init: true)</code> for value objects</li>
+        <li><code class="inline">@things = {}</code> keyed by id; <code class="inline">@things.fetch(id) { raise KeyError, "no such id: #{id}" }</code></li>
+        <li>Typed errors: <code class="inline">ArgumentError</code>, <code class="inline">KeyError</code>, <code class="inline">RuntimeError</code> — always with messages</li>
+        <li><code class="inline">Enumerable</code> chain: <code class="inline">select</code> &rarr; <code class="inline">sort_by</code> &rarr; <code class="inline">first(n)</code></li>
+        <li>Inline <code class="inline">raise "fail" unless ...</code> for asserts; or <code class="inline">Minitest::Assertions</code> if loaded</li>
+      </ul>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px"><strong>Restraint:</strong> Ruby rewards one-liners but clarity wins under pressure. If a chain has &gt; 3 links, break it into a named method. Don't ship a clever <code class="inline">reduce</code> if a <code class="inline">for</code>-style loop is more legible.</p>
+    </div>
+
+    <h3 class="section" id="iter">Iteration when they add a part</h3>
+    <ol class="tight">
+      <li><strong>Acknowledge the new requirement aloud</strong> before touching code. "Got it — so now we need to support partial applications. Behavior is X."</li>
+      <li><strong>Ask: does this change existing behavior, or only add to it?</strong> Determines refactor vs. extend.</li>
+      <li><strong>If refactor needed:</strong> say it. "To do this cleanly I want to pull this if-chain into a strategy. Two minutes."</li>
+      <li><strong>Re-run all prior asserts</strong> after each part. Out loud: "Let me re-run Part 1's checks to make sure I didn't regress."</li>
+    </ol>
+
+    <h3 class="section" id="edge">Edge cases to volunteer (cheap points)</h3>
+    <ul class="tight">
+      <li><strong>Empty input</strong> — empty list, empty string, no records yet</li>
+      <li><strong>Duplicate / already-exists</strong> — what does insert do with a duplicate id?</li>
+      <li><strong>Missing / unknown id</strong> — get / update / delete on a non-existent record</li>
+      <li><strong>Off-by-one boundaries</strong> — first record, last record, single record</li>
+      <li><strong>Type / null</strong> — None / nil / undefined in places you assumed strings</li>
+      <li><strong>Concurrent mutation</strong> — only mention if they raise scale or you have time</li>
+    </ul>
+
+    <h3 class="section" id="smells">Quick wins &amp; smells to avoid</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">QUICK WINS</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Type hints on every function signature</li>
+          <li>Inline asserts after each method, with print "ok"</li>
+          <li>Specific exception types with messages</li>
+          <li>Names like <code class="inline">apply_to_job</code> not <code class="inline">apply</code></li>
+          <li>Delete dead code before "I'm done"</li>
+        </ul>
+      </div>
+      <div class="card bad">
+        <p style="margin:0 0 4px 0;color:var(--bad);font-size:12px">SMELLS</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Nested ifs &gt; 2 deep — flatten with early returns</li>
+          <li>Magic strings — make them constants/enums</li>
+          <li>One giant function — split by responsibility</li>
+          <li>Copy-pasted blocks — extract a helper</li>
+          <li>Global mutable state — wrap in a class</li>
+          <li>Stale prints / commented-out code at the end</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIKELY PROBLEMS ============ -->
+  <section class="tab" id="tab-problems" data-toc='[
+    ["Confidence tiers","tiers"],
+    ["Tier 1: Vending Machine (drill this!)","vend"],
+    ["Vending Machine starter code","vendcode"],
+    ["Tier 1: CRUD + ranking/filtering","rank"],
+    ["CRUD + ranking starter code","rankcode"],
+    ["Tier 2: Generic CRUD extend","crud"],
+    ["The universal shape","shape"],
+    ["Likely Part 2 / Part 3 twists","p2"],
+    ["Take-home + pairing format","tk"],
+    ["Tonight: drill order","drill"]
+  ]'>
+    <h2>Likely Problems <span class="sub">specific prompts reported by past candidates</span></h2>
+
+    <h3 class="section" id="tiers">Confidence tiers</h3>
+    <div class="card warn">
+      <p style="margin:0 0 6px 0"><strong>None of these are guarantees</strong> — Handshake rotates problems and sometimes uses thinly-disguised real-product features. But these have all been reported 2+ times in public sources, so practicing them is high-EV.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Sources: Glassdoor, 1Point3Acres, Taro interview reports, Blind, InterviewQuery, Prepfully (2019–2025).</p>
+    </div>
+    <table class="rubric">
+      <tr><th>Confidence</th><th>Problem</th><th>Likely format</th></tr>
+      <tr><td><span class="pill good">Tier 1</span></td><td><strong>Vending Machine OOP</strong></td><td>Live OOP design, single class + helpers, multi-part</td></tr>
+      <tr><td><span class="pill good">Tier 1</span></td><td><strong>CRUD app + ranking/filtering</strong> (Reddit/Twitter-style)</td><td>Take-home (solo) → pairing extension</td></tr>
+      <tr><td><span class="pill">Tier 2</span></td><td><strong>Generic CRUD extend</strong> — job board / event mgmt / inbox</td><td>Multi-part build-up, sometimes from a scaffold</td></tr>
+      <tr><td><span class="pill warn">Tier 3</span></td><td>State-machine simulation ("involved simulation of something at Handshake")</td><td>Reported but vague — one-off</td></tr>
+      <tr><td><span class="pill warn">Tier 3</span></td><td>System design follow-up (scale to millions of users)</td><td>Verbal, in the last 15 min for senior roles</td></tr>
+    </table>
+
+    <h3 class="section" id="vend">Tier 1 — Vending Machine OOP</h3>
+    <div class="card hs">
+      <p style="margin:0 0 8px 0"><strong>Verbatim prompt (Glassdoor + 1Point3Acres):</strong></p>
+      <p class="quote" style="margin:0 0 8px 0">"Code a vending machine that needs to track inventory and return correct change in denominations of 5, 10, and 25 cents."</p>
+      <p style="margin:0 0 8px 0"><strong>Reported follow-on requirement:</strong></p>
+      <p class="quote" style="margin:0 0 8px 0">"Two methods are needed — one to input change, one to select an item — and the two actions should be idempotent and able to happen in any order before vending."</p>
+      <p style="margin:0"><strong>What makes it hard:</strong> the idempotency + ordering twist. Most candidates write a stateful "insert coin → pick item → vend" linear flow and get caught by Part 2 when they're told the operations can happen in any order and may be repeated safely.</p>
+    </div>
+
+    <h4>Design checklist before you code</h4>
+    <ul class="tight">
+      <li><strong>State:</strong> inventory (dict: item → (price_cents, count)), coin balance currently inserted (int), accumulated revenue, change drawer (dict: denomination → count)</li>
+      <li><strong>Public API:</strong> <code class="inline">insert_coin(cents)</code>, <code class="inline">select_item(name)</code>, <code class="inline">refund()</code>, <code class="inline">restock(name, qty, price_cents)</code></li>
+      <li><strong>Idempotency model (Part 2):</strong> if "select" is called twice for the same item before vending, treat the second call as a no-op (or a re-select with the same intent). If insert is called multiple times before select, accumulate.</li>
+      <li><strong>Change-making:</strong> greedy with 25→10→5 works here (it's a canonical change set). If they swap denominations later (e.g., add 7-cent coins), be ready to switch to DP and call that out.</li>
+      <li><strong>Errors:</strong> out-of-stock → return inserted coins; insufficient funds → keep coins, tell user how much more; can't make exact change → refund or refuse.</li>
+    </ul>
+
+    <h3 class="section" id="vendcode">Vending Machine — starter code (Ruby)</h3>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 8px 0">Each public method does one thing. <code class="inline">vend</code> reads top-to-bottom like the spec. Trace one example through it to lock in the flow.</p>
+
+    <h4>Mental model — read this first</h4>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>4 pieces of state:</strong> <code class="inline">@items</code> (what's for sale), <code class="inline">@drawer</code> (coins on hand for change), <code class="inline">@paid</code> (this round's coins), <code class="inline">@choice</code> (what the user picked).</li>
+        <li><strong>2 user actions:</strong> <code class="inline">insert(coin)</code> bumps <code class="inline">@paid</code>. <code class="inline">select(name)</code> sets <code class="inline">@choice</code>. <em>Both are idempotent and order-independent</em> — that's the Part 2 twist.</li>
+        <li><strong>1 commit action:</strong> <code class="inline">vend</code> runs all the checks; if everything passes, it decrements stock + drawer and returns <code class="inline">[name, change]</code>.</li>
+      </ul>
+    </div>
+
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># Greedy change-making works because each denom divides the next (5 | 10 | 25).
+# For arbitrary denoms, switch to DP — mention this aloud, don't code unless asked.
+DENOMS = [25, 10, 5].freeze
+
+Item = Struct.new(:name, :price, :stock, keyword_init: true)
+
+class VendingMachine
+  def initialize
+    @items  = {}             # name =&gt; Item
+    @drawer = Hash.new(0)    # denom =&gt; count of coins on hand
+    @paid   = 0              # cents inserted this round
+    @choice = nil            # item name the user picked (nil = none yet)
+  end
+
+  # ---------- setup ----------
+
+  def restock(name:, price:, stock:)
+    @items[name] = Item.new(name: name, price: price, stock: stock)
+  end
+
+  def load_drawer(denom, count)
+    @drawer[denom] += count
+  end
+
+  # ---------- user actions (idempotent + any-order) ----------
+
+  def insert(coin)
+    raise ArgumentError, "bad coin: #{coin}" unless DENOMS.include?(coin)
+    @drawer[coin] += 1
+    @paid += coin
+  end
+
+  def select(name)
+    raise KeyError, "no item: #{name}" unless @items.key?(name)
+    @choice = name                       # re-selecting is a no-op
+  end
+
+  def refund
+    refunded = @paid
+    reset_round
+    refunded
+  end
+
+  # ---------- vend ----------
+  # Reads like the spec: get the item, check funds, compute change, commit.
+  def vend
+    item   = chosen_item                 # raises if no choice / out of stock
+    short  = item.price - @paid
+    raise "need #{short} more cents" if short.positive?
+
+    change = make_change(@paid - item.price)
+    raise "can't make exact change" if change.nil?
+
+    commit_purchase(item, change)
+  end
+
+  private
+
+  def chosen_item
+    raise "no item selected" if @choice.nil?
+    item = @items[@choice]
+    raise "out of stock: #{item.name}" if item.stock.zero?
+    item
+  end
+
+  # Validate-then-commit: only mutate state once we know the sale will succeed.
+  def commit_purchase(item, change)
+    change.each { |d, n| @drawer[d] -= n }
+    item.stock -= 1
+    bought = item.name
+    reset_round
+    [bought, change]
+  end
+
+  def reset_round
+    @paid   = 0
+    @choice = nil
+  end
+
+  def make_change(cents)
+    out = {}
+    DENOMS.each do |d|                   # walk denoms largest → smallest
+      n = [cents / d, @drawer[d]].min    # use what's needed OR what's available
+      next if n.zero?
+      out[d] = n
+      cents -= d * n
+    end
+    cents.zero? ? out : nil              # nil = couldn't cover the amount
+  end
+end
+
+# ---------- tests ----------
+
+# Part 1: linear flow — pay 85¢ for a 75¢ coke, expect 10¢ change
+m = VendingMachine.new
+m.restock(name: "coke", price: 75, stock: 3)
+m.load_drawer(25, 4); m.load_drawer(10, 4); m.load_drawer(5, 4)
+
+m.insert(25); m.insert(25); m.insert(25); m.insert(10)
+m.select("coke")
+name, change = m.vend
+raise "fail" unless name == "coke"
+raise "fail" unless change.sum { |d, n| d * n } == 10   # total value of change
+puts "ok — part 1 (linear)"
+
+# Part 2: idempotent + any-order — select before paying, re-select, then pay
+m2 = VendingMachine.new
+m2.restock(name: "chips", price: 50, stock: 1)
+m2.load_drawer(25, 4)
+
+m2.select("chips")                       # select FIRST
+m2.select("chips")                       # re-select — idempotent, no double-vend
+m2.insert(25); m2.insert(25)
+name, change = m2.vend
+raise "fail" unless name == "chips" &amp;&amp; change.empty?  # {} = sale w/ zero change
+puts "ok — part 2 (idempotent + reordered)"
+</code></pre>
+    </div>
+
+    <h4>What <code class="inline">vend</code> is doing, in plain English</h4>
+    <ol class="tight">
+      <li><strong>Get the chosen item.</strong> Raise if nothing's been selected or it's out of stock.</li>
+      <li><strong>Check funds.</strong> If short, raise with how much more is needed.</li>
+      <li><strong>Compute change.</strong> If the drawer can't cover it, raise — <em>without mutating anything</em>.</li>
+      <li><strong>Commit.</strong> Subtract change from drawer, decrement stock, reset round, return <code class="inline">[name, change]</code>.</li>
+    </ol>
+    <div class="card good">
+      <p style="margin:0"><strong>The reliability trick:</strong> all the checks happen <em>before</em> any state changes. If <code class="inline">make_change</code> returns <code class="inline">nil</code>, we raise and nothing has been mutated. No partial sale, no inventory in a weird state. <strong>This is the "validate-then-commit" pattern</strong> — say it aloud when you write <code class="inline">commit_purchase</code>; interviewers love hearing it.</p>
+    </div>
+    <div class="card warn">
+      <p style="margin:0"><strong>Talking points during this problem:</strong> mention greedy-works-for-this-coin-set, mention you'd switch to DP if they extend denominations, mention thread-safety as a "future concern" if they push on scale, mention you'd separate <code class="inline">CoinChanger</code> into its own class if they ask about reuse across machines.</p>
+    </div>
+
+    <h3 class="section" id="rank">Tier 1 — CRUD + ranking / filtering (Reddit/Twitter-style)</h3>
+    <div class="card hs">
+      <p style="margin:0 0 8px 0"><strong>Verbatim prompt (Taro report, Handshake Denver):</strong></p>
+      <p class="quote" style="margin:0 0 8px 0">"How would you adjust the logic of the existing GET request to display records in a similar logic to Reddit/Twitter? (most recent records with the most upvotes at the top)"</p>
+      <p style="margin:0 0 8px 0"><strong>Context:</strong> typically delivered as a take-home (~1 hour solo) where you build the base CRUD, followed by an on-site pairing session (~60 min) with 2 engineers where they ask you to extend the GET endpoint with a ranking/filtering rule.</p>
+      <p style="margin:0"><strong>What makes it hard:</strong> the ranking rule is intentionally underspecified. "Recent + popular" can mean many things — strict tiebreak? hot-score? time-decay? You're graded on asking what they actually want, then implementing it cleanly, <em>not</em> on inventing the perfect formula.</p>
+    </div>
+
+    <h4>What to ask in the first 2 minutes</h4>
+    <ul class="tight">
+      <li>"Is 'most recent with most upvotes' a weighted score, or do I sort by upvotes within a recency window?"</li>
+      <li>"How long is the recency window? Last 24 hours? Last 100 records?"</li>
+      <li>"If two records have the same score, what's the tiebreak — id, timestamp, alphabetical?"</li>
+      <li>"Is this in-memory ranking, or do you want me to write the SQL?"</li>
+      <li>"Pagination — cursor-based or offset?"</li>
+    </ul>
+
+    <h3 class="section" id="rankcode">CRUD + ranking — starter code (Ruby, heavily commented)</h3>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 8px 0">The tuple-key <code class="inline">sort_by</code> in <code class="inline">#feed</code> is the single highest-signal moment in this code. Make sure you can explain it from memory.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># =============================================================
+# CRUD + RANKED FEED  (Reddit/Twitter-style)
+#   Reported on Taro (Handshake Denver SE): "Adjust the GET to display
+#   records most-recent + most-upvoted at the top."
+#
+#   Often delivered as a take-home (~1hr solo, base CRUD) →
+#   on-site pair (~1hr, ranking extension).
+#
+#   The ranking rule is INTENTIONALLY VAGUE. Always ask 2–3
+#   clarifying questions BEFORE coding the sort.
+# =============================================================
+
+require "time"   # stdlib Time helpers; not strictly needed for the inline tests
+
+# Struct.new + block lets us attach instance methods to a Struct.
+# Why: Post stays mostly value-y, but `post.upvote!` reads better
+# than `post.upvotes += 1` scattered throughout the Feed class.
+# The bang (!) is Ruby convention for "mutates self".
+Post = Struct.new(:id, :title, :author, :created_at, :upvotes, keyword_init: true) do
+  def upvote!
+    self.upvotes += 1
+  end
+end
+
+class Feed
+  # Constants pulled out for two reasons:
+  #   1. self-documenting — `window: ONE_DAY` reads better than `window: 86400`
+  #   2. trivial to swap if interviewer says "make it 1 hour"
+  # Ruby's Time arithmetic uses SECONDS, so all time math is in seconds.
+  ONE_DAY = 24 * 60 * 60
+
+  def initialize
+    @posts = {}   # id =&gt; Post — same Hash-keyed-by-id workhorse pattern as before
+  end
+
+  # ---------------- CRUD ----------------
+
+  def create(post)
+    # Defensive: refuse duplicate ids. Caller probably has a bug.
+    raise ArgumentError, "duplicate post: #{post.id}" if @posts.key?(post.id)
+    # `||=`  assigns only if current value is nil/false. Safer than `= 0`
+    # because it preserves an explicitly-passed value (e.g. 0 stays 0,
+    # 42 stays 42, but nil becomes 0).
+    post.upvotes ||= 0
+    @posts[post.id] = post
+  end
+
+  # Hash#fetch with a BLOCK: the block runs only if the key is missing.
+  # Why prefer this over `@posts[id] or raise ...`?
+  #   - `nil` could be a legitimate value in other hashes
+  #   - the block-form is the idiomatic "fail loudly with a message" pattern
+  def get(id)
+    @posts.fetch(id) { raise KeyError, "no such post: #{id}" }
+  end
+
+  # Delegate to get() so the "no such post" message is DRY across callers.
+  def upvote(id)
+    get(id).upvote!
+  end
+
+  # Hash#delete returns the deleted value, or nil if missing.
+  # We use that nil as the trigger for the raise — concise.
+  def delete(id)
+    @posts.delete(id) || (raise KeyError, "no such post: #{id}")
+  end
+
+  # ---------------- PART 2: ranked feed ----------------
+  #
+  # The brief "most recent + most upvoted at the top" is AMBIGUOUS.
+  # Real-world it could mean any of:
+  #   (a) Sort by upvotes within a recency window         ← we implement this
+  #   (b) Compute a hot-score combining age + upvotes     ← see self.hot_score
+  #   (c) Strict "most recent first, tiebreak by upvotes" ← different sort key
+  # ALWAYS ASK which one before coding. The asking is half the score.
+  #
+  # `now:` is a KEYWORD ARG (not hardcoded Time.now). Why:
+  #   tests can pass a fixed `now` so the result is deterministic.
+  #   Mention this aloud — interviewers notice testability awareness.
+  #
+  # `window:` and `limit:` default-arg'd so callers can override.
+  def feed(now: Time.now, window: ONE_DAY, limit: 20)
+    # Filter to recent posts.
+    # Time subtraction returns a Float of seconds elapsed.
+    # `select` returns a NEW array — non-mutating, doesn't touch @posts.
+    recent = @posts.values.select { |p| (now - p.created_at) &lt;= window }
+
+    # ============= THE KEY IDIOM: tuple-key sort_by =============
+    #
+    # sort_by returns ascending order. To sort DESC on a numeric field,
+    # negate it: `-p.upvotes` puts the highest-upvoted post FIRST.
+    #
+    # The tuple [a, b, c] compares lexicographically — first by a,
+    # then by b only on ties, then by c only on tie-of-ties. So this:
+    #
+    #     [-p.upvotes, -p.created_at.to_i, p.id]
+    #
+    # expresses, in plain English:
+    #   "primary: upvotes desc; tiebreak: recency desc; final tiebreak: id asc"
+    #
+    # Why include `p.id` as the LAST tiebreak? DETERMINISM.
+    # If two posts have identical upvotes AND identical timestamps,
+    # we still want the same ordering across runs (for tests, for caching,
+    # for pagination cursors). Mentioning this signals seniority.
+    #
+    # `.first(limit)` after sort: take the top N. (`.take(limit)` would
+    # also work and is identical here. Both are idiomatic.)
+    recent.sort_by { |p| [-p.upvotes, -p.created_at.to_i, p.id] }.first(limit)
+  end
+
+  # ---------------- Part 3 alt: hot-score (Reddit/HN-style) ----------------
+  #
+  # DON'T code this unprompted. But MENTION the concept out loud:
+  #   "Another interpretation of 'recent + popular' is a single hot-score
+  #    that combines age + upvotes — like Reddit's. Want me to swap in that
+  #    approach, or stick with the windowed sort?"
+  #
+  # The formula, decoded:
+  #   log(upvotes + 1)   →  log smooths big numbers; 100 vs 10,000 isn't
+  #                         100× the user attention. Reddit does this too.
+  #   +1 inside the log  →  handles upvotes==0 cleanly:
+  #                         log(0) = -Infinity, but log(1) = 0. Safe floor.
+  #   age_hours / 12     →  every 12 hours of age subtracts 1 from the score
+  #                         (tune this constant to taste)
+  #   [...,1.0].max      →  guards against zero/negative ages → infinite scores
+  #
+  # `self.hot_score` (class method) because it doesn't depend on instance state.
+  def self.hot_score(post, now)
+    age_hours = [((now - post.created_at) / 3600.0), 1.0].max
+    Math.log([post.upvotes, 1].max + 1) - (age_hours / 12.0)
+  end
+end
+
+# =============================================================
+# INLINE TESTS
+#   Use a FIXED `now` (Time.utc with explicit date) so the test
+#   is deterministic. Never let tests depend on Time.now — they flake.
+# =============================================================
+
+now  = Time.utc(2026, 5, 27, 12, 0, 0)
+feed = Feed.new
+
+# Post A: outside the 24h window (2 days old), VERY popular.
+#   We expect this to be EXCLUDED by the window filter — even though
+#   it has the most upvotes — to prove the window actually filters.
+feed.create(Post.new(id: "a", title: "old &amp; popular", author: "u1",
+                     created_at: now - 2 * Feed::ONE_DAY, upvotes: 999))
+
+# Post B: recent (1h old) but low engagement.
+feed.create(Post.new(id: "b", title: "new &amp; quiet",   author: "u2",
+                     created_at: now - 3600,            upvotes: 2))
+
+# Post C: recent (2h old) AND popular — the expected #1.
+feed.create(Post.new(id: "c", title: "new &amp; popular", author: "u3",
+                     created_at: now - 7200,            upvotes: 50))
+
+# Expected ordering:
+#   A excluded (outside 24h window)
+#   C first (50 upvotes &gt; 2 upvotes)
+#   B second
+result = feed.feed(now: now)
+# `map(&amp;:id)` is the shorthand for `map { |p| p.id }` — works because
+# Symbol#to_proc converts :id into a one-arg lambda.
+# `%w[c b]` is the array-of-strings literal: ["c", "b"]. Saves quoting.
+raise "fail: #{result.map(&amp;:id).inspect}" unless result.map(&amp;:id) == %w[c b]
+puts "ok — feed ranking, 24h window, upvotes desc"
+</code></pre>
+    </div>
+
+    <h3 class="section" id="crud">Tier 2 — generic CRUD extend</h3>
+    <div class="card">
+      <p style="margin:0 0 8px 0">If you don't get the vending machine or the ranking problem, you'll get something with this shape:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Job board (post job, apply, list by skill)</li>
+        <li>Event scheduling (career fair slots, RSVPs, conflicts)</li>
+        <li>Inbox / messaging (send, list, mark-read, search)</li>
+        <li>Application pipeline (state machine: submitted → reviewed → offered)</li>
+      </ul>
+      <p style="margin:8px 0 0 0">All of them follow the universal shape below — so if you can rep the pattern, you can rep all four.</p>
+    </div>
+
+    <h3 class="section" id="shape">The universal shape (works on basically every Handshake pairing problem)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Domain object</strong> — <code class="inline">Struct.new(...)</code> with named fields</li>
+        <li><strong>Container class</strong> — dict keyed by id, plus secondary indexes if needed for query patterns</li>
+        <li><strong>Five CRUD methods</strong> — create, get, list, update, delete — each ~5 lines, each with one inline assert</li>
+        <li><strong>One or two domain methods</strong> — the actual "interesting" operation (rank, vend, schedule, match, apply)</li>
+        <li><strong>Typed exceptions</strong> with messages on every error path</li>
+        <li><strong>One or two volunteered edge cases</strong> at the end — "empty input, duplicate id, missing id"</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="p2">Likely Part 2 / Part 3 twists (rehearse the reaction)</h3>
+    <table class="rubric">
+      <tr><th>When Part 2 says…</th><th>The right move is…</th></tr>
+      <tr><td>"Now make these operations idempotent"</td><td>Track an op-id or a state flag; re-applying with same id is a no-op. <em>(Vending machine twist!)</em></td></tr>
+      <tr><td>"Add ranking / sort by X then Y"</td><td>Sort with a tuple key. Ask the tiebreak rule first.</td></tr>
+      <tr><td>"Add filtering by Z"</td><td>Either a list comp or a secondary index dict if they emphasize speed.</td></tr>
+      <tr><td>"Add pagination"</td><td>Offset-based first, cursor-based if they say "scale." Always ask which.</td></tr>
+      <tr><td>"Add a time window"</td><td>Pass <code class="inline">now</code> into the function for testability. Mention it out loud — they notice.</td></tr>
+      <tr><td>"Now support a new kind of X"</td><td>Strategy / dispatch table — don't grow the if/elif. (See Tech tab.)</td></tr>
+      <tr><td>"Make it thread-safe / concurrent"</td><td>Talk through locks <em>before</em> coding. Usually they want the discussion, not the code.</td></tr>
+      <tr><td>"How would you scale this to millions of users?"</td><td>Verbal answer — index, cache, denormalize hot read paths, offload write fanout to a queue.</td></tr>
+      <tr><td>"Add tests for the new behavior"</td><td>Inline asserts are fine; if they have a framework loaded, use it.</td></tr>
+    </table>
+
+    <h3 class="section" id="tk">Take-home + pairing format (one reported variant)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 8px 0">For some teams (reported on Taro for the Denver SE role), the round splits into two halves:</p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Solo phase (~60 min)</strong> — you get a spec for a small CRUD app. You implement the base. Tests expected.</li>
+        <li><strong>Pairing phase (~60 min)</strong> — two engineers join. They ask you to extend the same app with new requirements that weren't in the original spec. <em>This</em> is where the ranking/filter twist lands.</li>
+      </ol>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px"><strong>Implication:</strong> when you write the solo phase, leave it <em>open to extension</em>. Don't over-engineer Part 1. A clean container class with explicit methods will let you extend it cleanly when the pair shows up.</p>
+    </div>
+
+    <h3 class="section" id="drill">Tonight — drill order</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Vending Machine, in your strongest language.</strong> ~45 min. Write it from scratch <em>without</em> looking at the starter above. Then refactor for the idempotency twist.</li>
+        <li><strong>CRUD + ranked feed.</strong> ~30 min. From scratch. Ask yourself the 5 clarifying questions <em>out loud</em> before coding — practice the verbal too.</li>
+        <li><strong>One Part-2 cold-start drill.</strong> Pick any CRUD you wrote, then have ChatGPT (or a friend) throw an unexpected extension at you. 15 min. Practice the "acknowledge → ask → decide refactor-vs-extend → execute" loop.</li>
+        <li><strong>Talk to the wall.</strong> Spend 5 min narrating a solution out loud. The single biggest gain in pairing is reducing dead-air, not technical skill.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ STORIES BANK ============ -->
+  <section class="tab" id="tab-stories" data-toc='[
+    ["How to use this tab","how"],
+    ["Story slot 1: Ownership / saved-the-day","s1"],
+    ["Story slot 2: Cross-functional / influence","s2"],
+    ["Story slot 3: Failure / what you learned","s3"],
+    ["Story slot 4: Ambiguity / no spec","s4"],
+    ["Story slot 5: Mentorship / leveling someone up","s5"],
+    ["Story slot 6: Disagreement / pushback","s6"],
+    ["Story slot 7: Speed / shipped fast","s7"],
+    ["Mapping stories to questions","map"]
+  ]'>
+    <h2>Stories Bank <span class="sub">fill in these slots <em>before</em> the interview — they map to every behavioral Q</span></h2>
+
+    <h3 class="section" id="how">How to use this tab</h3>
+    <div class="card hs">
+      <p style="margin:0 0 8px 0">Behavioral interviews come down to <strong>about 7 archetypes</strong>. If you have one prepared story per archetype, you'll have an answer for any question.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Slots below are pre-filled from your actual material (Zendesk billing + order processing, code review, NestJS ramp). Two slots are flagged <strong class="bad">[GAP]</strong> — failure and disagreement need a real anecdote you haven't given me yet. Don't fabricate either on the day.</p>
+    </div>
+
+    <h3 class="section" id="s1">Story slot 1: Ownership / saved the day</h3>
+    <div class="story">
+      <div class="title">Built the order processing integration service end-to-end at Zendesk</div>
+      <div class="tags"><span class="pill">accountability &amp; drive</span><span class="pill">ownership</span><span class="pill">distributed systems</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>At Zendesk, we needed a service that integrated order processing across systems — async work touching billing, fulfillment, and an external API. No service existed for it; greenfield build, and I was the engineer on it.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>SQS could redeliver messages, so anything I built had to be idempotent or we'd double-charge customers. Partial failures were normal — one downstream call would succeed and another would fail, and I had to make that recoverable without manual ops every time.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I owned the design from scratch. Picked SQS over Kafka because the team was small and SQS was operationally cheaper. Picked MySQL because the access patterns were relational and support needed to query state. Built idempotency around a <code class="inline">(message_id, step)</code> table so retries were safe. Wrote the on-call runbook before launch, not after, and wired in structured logging that let me reconstruct any single order's path in prod without redeploying.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Service has been running in production handling our order volume reliably. Support team can self-serve on debugging from the logs. <em>[Fill in: a concrete number — orders/day, zero double-charges, p95, etc.]</em></div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>I'd push for real metrics on day one instead of adding them after the first prod issue. I had logs but not dashboards, and the gap cost me a few hours the first time something went sideways.</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"This is the kind of work I want at Handshake — one engineer, real scope, real production blast radius, where the right call early saves the team a month later."</div></div>
+    </div>
+
+    <h3 class="section" id="s2">Story slot 2: Cross-functional / influence without authority</h3>
+    <div class="story">
+      <div class="title">Billing rollout at Zendesk with finance, legal, and support in the loop</div>
+      <div class="tags"><span class="pill">empathy</span><span class="pill">collaboration</span><span class="pill">high stakes</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>At Zendesk I worked on billing infrastructure — the kind of system where a bug literally moves money. One rollout I led needed coordination across finance (revenue recognition), legal (terms of service), and support (so they could answer customer questions when invoices changed).</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>Engineering wasn't the bottleneck — alignment was. Each team had different definitions of "ready to ship," and any one of them could've blocked the launch on the day.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I drove the eng spec but spent half my time outside eng. Paired with our finance partner to map invoicing edge cases. Wrote a one-pager support could lean on for ticket responses. Walked legal through the customer-visible changes line by line. Ran a dry-run in staging against real billing-cycle fixtures before we touched prod.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Rollout shipped on schedule. No emergency rollback, no surprise tickets, no finance escalation. The relationships I built with finance paid off on the next several projects.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>I learned the work <em>between</em> teams is often more leverage than the code itself. I don't call a spec "done" anymore until non-eng partners have read it and told me what they'd do differently.</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"Handshake is a three-sided marketplace — students, employers, universities. Engineering decisions touch all three. I've shipped in environments where that's the case."</div></div>
+    </div>
+
+    <h3 class="section" id="s3">Story slot 3: Failure / what you learned <span class="pill warn">DRAFT — verify the specifics match reality</span></h3>
+    <div class="story">
+      <div class="title">Trusted SQS deduplication too much on the first cut of the order processing service</div>
+      <div class="tags"><span class="pill">humility</span><span class="pill">self-awareness</span><span class="pill">distributed systems</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Early in the order processing build at Zendesk, I made an assumption that cost me roughly a week of rework and a real hit to my own confidence on the design.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>On my first design pass I leaned on SQS's built-in deduplication as my idempotency layer. The reasoning felt clean — SQS dedups within its window, my handler writes once per message, therefore no duplicates. I ran integration tests against a single producer, things looked right, and I moved on to the rest of the build.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>When I load-tested in staging with multiple producers and simulated network blips, I started seeing duplicate writes in MySQL. SQS's dedup window doesn't catch every redelivery scenario — visibility-timeout expirations and producer-side retries were slipping through. Once I saw the bug, I stopped feature work, built a real idempotency layer — a <code class="inline">(message_id, step)</code> table that the handler checks before any side effect — and retrofitted it into every handler I'd written. Re-ran the load test, clean. Walked my manager through what I'd missed before they had to ask.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Caught in staging, not prod — but I lost about a week, and I'd been talking like the expert on the design while skipping the part of the SQS docs that would have flagged this. The cost was credibility I had to rebuild over the next few weeks of careful, visible work.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>I treat every external system as non-idempotent now until I've proven otherwise — and "proven" means a load test that simulates real failure modes, not a unit test that exercises the happy path. Concrete habit: I write a short "what would I have to assume about this system for the design to break?" list before I trust any vendor guarantee. Came directly out of this.</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"Handshake values 'humility &amp; hard work' — the failure cost me real trust, and rebuilding it taught me how to take vendor guarantees seriously without leaning on them blindly."</div></div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin:6px 0"><strong>Before you tell this, verify:</strong> (1) you used SQS — FIFO or standard — and which; (2) the duplicate-writes bug was caught in <em>staging</em>, not prod (if it was prod, the framing shifts but the story still works); (3) the <code class="inline">(message_id, step)</code> table is roughly how you actually solved it. If any of those are off, the story collapses under follow-up questions. If the real failure was somewhere else entirely (a Zendesk billing miss, a migration that bit you), send me 2–3 sentences and I'll redo it.</p>
+
+    <h3 class="section" id="s4">Story slot 4: Ambiguity / no spec</h3>
+    <div class="story">
+      <div class="title">Scoping the order processing service from "we need this" to a shipping spec</div>
+      <div class="tags"><span class="pill">adaptability</span><span class="pill">ownership</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>When I picked up the order processing integration work at Zendesk, the brief was about a paragraph long — there was a need, but no design doc and no agreed-on tech stack.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I had to define what "handles" meant — just the queue plumbing? The state machine? The external integrations? Each interpretation had a different scope and a different ship date. Picking the largest version would've burned a quarter; picking the smallest would've left holes the team would feel later.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I wrote a one-pager naming three scopes — minimal, medium, full — with what each would cost in time and what it would leave on the table. Walked it past my manager and one senior eng in 1:1s, not a meeting. Picked the medium scope and got explicit buy-in before touching code. Built a thin vertical slice first so I could see real load patterns before locking the MySQL schema.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Shipped the medium scope on roughly the timeline I committed to. The "full" features got picked up later — but only the ones we still actually needed by then, which was about half.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>When the problem is ambiguous I now default to writing the doc first and getting it read by one person at a time, not bringing it to a room. Faster feedback, fewer half-baked compromises.</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"Handshake is mid-pivot to AI. I expect to walk into unclear scope on day one — the order processing service was exactly that for me, and I liked it."</div></div>
+    </div>
+
+    <h3 class="section" id="s5">Story slot 5: Mentorship / leveling someone up</h3>
+    <div class="story">
+      <div class="title">Raising the PR review bar so a junior eng could grow without being slowed down</div>
+      <div class="tags"><span class="pill">empathy</span><span class="pill">empowered by diversity</span><span class="pill">mentorship</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>On my team, code review had drifted toward LGTM-and-merge. Bugs were slipping through that shouldn't have, and junior engineers weren't getting feedback that helped them grow — they were just getting unblocked.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I didn't want to be the gatekeeper who slowed everyone down. But "ship faster by reviewing less" wasn't the right answer either — the cost was landing on someone, just not me.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I started leaving more substantive reviews on one junior engineer's PRs — specifically, inline <em>questions</em> ("what happens if this raises?") rather than directives ("change this to X"). I paired with him on his next feature instead of just commenting after. Wrote a short doc on what I look for in a review and shared it in a team channel so the bar wasn't just in my head.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>His next two PRs needed maybe a third of the comments. He told me later the questions were what helped — they made him notice things himself instead of being told.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>Mentoring taught me to ask first, prescribe second. Most senior engineers, including me, default to the answer too fast. Questions teach; answers patch.</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"'Empowered by diversity' isn't just hiring — it's making sure everyone on the team can ship at the same pace. Code review is the easiest place I get to do that work."</div></div>
+    </div>
+
+    <h3 class="section" id="s6">Story slot 6: Disagreement / pushback (incl. with a senior person) <span class="pill bad">GAP — fill in</span></h3>
+    <div class="story">
+      <div class="title">[ Pick: a tech direction you pushed back on, or a code-review disagreement with a senior eng ]</div>
+      <div class="tags"><span class="pill">drive</span><span class="pill">empathy</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>You haven't given me a real anecdote yet — don't fabricate. Strongest candidates from your background: a Zendesk architecture call on the order processing service (SQS vs. Kafka, schema design, rollout strategy), a Zendesk billing change you thought carried more risk than the team was treating it with, or a Riviera decision where you pushed back on a senior partner / leadership call.</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>Why the other person had standing — manager, staff eng, PM owning the call. This matters because pushing back <em>up</em> is what they're really checking.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>How you raised it (1:1, not in a meeting, ideally). Data you brought. How you genuinely tried their position — e.g., "I spent a day prototyping their approach so I could compare honestly" (lifted from the template — only say it if it's true).</div></div>
+      <div class="row"><div class="lbl">Result</div><div>If you "won": name the cost (time, relationship, scope). If you "lost": name what you learned and how you recommitted. <strong>The "I deferred and was right to" version lands well</strong> if it's honest.</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>What good disagreement looks like to you now. Specific habit, not "communicate better."</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"Olympic pace means you can't wait for consensus — but you also can't run people over. I work to disagree fast and recommit fast."</div></div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin:6px 0">Same as slot 3 — send me the 2-3 sentence raw anecdote and I'll shape it. Code-review pushback is the fallback if you can't think of an architectural one.</p>
+
+    <h3 class="section" id="s7">Story slot 7: Speed / shipped fast</h3>
+    <div class="story">
+      <div class="title">Picked up NestJS / TypeScript for a live technical assessment under deadline</div>
+      <div class="tags"><span class="pill">drive</span><span class="pill">pace</span><span class="pill">learning</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>I had a live technical assessment in NestJS — a stack I hadn't worked in. I had about a week to get from "read it" to "build with it under time pressure."</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>I knew TypeScript at a reading level, not at a writing-with-confidence level. NestJS conventions were new — decorators, modules, DI. I couldn't fake it on the day, and there wasn't time to learn the framework end to end.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I picked the smallest set of primitives I'd actually need — modules, services, controllers, DI — and built one toy idempotency-checking endpoint with them. Then I practiced the testing harness specifically until I could write a test in under a minute. Ignored everything else in the framework that wasn't load-bearing for the assessment.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Built the assessment in scope and passed the round. More valuable: I have a repeatable approach now for ramping on a new framework — what's the smallest primitives set that gets me to "I can ship in this"?</div></div>
+      <div class="row"><div class="lbl">Reflection</div><div>Stay-current pressure is real. I use Claude Code in my daily workflow — not as a novelty, but because the gap between engineers who use AI tools well and those who don't is widening fast. Treating that as practice, not entertainment, is part of how I keep pace.</div></div>
+      <div class="row"><div class="lbl">HS angle</div><div>"'Olympic pace' isn't shipping fast in your comfort zone. It's being someone who can ramp on a new stack without burning three sprints getting comfortable first."</div></div>
+    </div>
+
+    <h3 class="section" id="map">Mapping stories to common questions</h3>
+    <table class="rubric">
+      <tr><th>If they ask…</th><th>Reach for…</th></tr>
+      <tr><td>"Tell me about a project you're proud of"</td><td>Slot 1 (ownership) — has numbers, scope, decisions</td></tr>
+      <tr><td>"Tell me about a time you saved the day"</td><td>Slot 1 or Slot 7 (speed)</td></tr>
+      <tr><td>"Tell me about a time you failed"</td><td>Slot 3 (failure)</td></tr>
+      <tr><td>"Tell me about a conflict with a coworker"</td><td>Slot 6 (disagreement)</td></tr>
+      <tr><td>"How do you handle ambiguity?"</td><td>Slot 4 (ambiguity)</td></tr>
+      <tr><td>"Tell me about a time you mentored someone"</td><td>Slot 5 (mentorship)</td></tr>
+      <tr><td>"Tell me about a cross-functional project"</td><td>Slot 2 (cross-functional)</td></tr>
+      <tr><td>"Tell me about a time you had to ramp up fast"</td><td>Slot 4 or Slot 7</td></tr>
+      <tr><td>"What's the hardest feedback you've gotten?"</td><td>Slot 3 (failure) — pivot to the feedback that came out of it</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ COMPANY ============ -->
+  <section class="tab" id="tab-company" data-toc='[
+    ["The basics","basics"],
+    ["What they do (3 product lines)","products"],
+    ["The AI pivot (most important context)","ai"],
+    ["Recent moves (2025–2026)","recent"],
+    ["Leadership team","leaders"],
+    ["Engineering culture","eng"],
+    ["The values in their own words","values"],
+    ["Who they compete with","comp"],
+    ["Things to drop into conversation","drop"]
+  ]'>
+    <h2>Company &amp; Values <span class="sub">talking points that show you did the homework</span></h2>
+
+    <h3 class="section" id="basics">The basics</h3>
+    <table class="rubric">
+      <tr><td><strong>Founded</strong></td><td>2014, by Garrett Lord, Ben Christensen, Scott Ringwelski — all from Michigan Tech</td></tr>
+      <tr><td><strong>HQ</strong></td><td>San Francisco (remote-friendly)</td></tr>
+      <tr><td><strong>Valuation</strong></td><td>~$3.5B (Series F, $200M raised, 2025). Total raised: $434M+</td></tr>
+      <tr><td><strong>Size</strong></td><td>~100+ engineers</td></tr>
+      <tr><td><strong>Mission</strong></td><td>"Democratize access to opportunity — any student can build a great career no matter who they know, where they live, or what school they attend."</td></tr>
+      <tr><td><strong>Reach</strong></td><td>25M knowledge workers, 1,600+ universities, 1M+ employers (100% of Fortune 50)</td></tr>
+    </table>
+
+    <h3 class="section" id="products">What they do (three product lines)</h3>
+    <div class="grid-3">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">STUDENT PLATFORM</p>
+        <p style="margin:0;font-size:13px">Profiles, job/internship matching, virtual career fairs, applications, messaging with employers. The original product.</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">EMPLOYER PLATFORM</p>
+        <p style="margin:0;font-size:13px">Job posting, candidate search/filter, virtual events, pipeline building, AI-assisted recruiting tools (Summer/Fall 2025 releases).</p>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">HANDSHAKE AI</p>
+        <p style="margin:0;font-size:13px">Human data marketplace — connecting the existing expert network (PhDs, advanced-degree holders) to frontier AI labs for training data validation. <strong>The fastest-growing line.</strong></p>
+      </div>
+    </div>
+
+    <h3 class="section" id="ai">The AI pivot — most important context for any interview</h3>
+    <div class="card hs">
+      <p style="margin:0 0 8px 0">In March 2025, Handshake launched <strong>Handshake AI</strong> after realizing their existing user base of 20M+ professionals included <strong>500,000 PhDs and 3M advanced-degree holders</strong> — exactly the expert population frontier labs (OpenAI, Anthropic, Google, Meta) need for RLHF data, eval, and training validation.</p>
+      <p style="margin:0 0 8px 0"><strong>The leverage:</strong> zero customer acquisition cost. They already had the experts.</p>
+      <p style="margin:0 0 8px 0"><strong>The result:</strong> $0 → $50M revenue in <strong>4 months</strong>. On track for $100M+ ARR within 12 months. Tripled overall ARR in 2025.</p>
+      <p style="margin:0"><strong>Why this matters for your interview:</strong> Handshake is mid-"refound." Leadership has been very public about this — Garrett Lord called it "refounding for the AI era" in Lenny's Newsletter. They want people who are <em>excited</em> about that pivot and can navigate the ambiguity it creates. If you ignore this in conversation, you signal you didn't do homework.</p>
+    </div>
+
+    <h3 class="section" id="recent">Recent moves (2025–2026)</h3>
+    <table class="rubric">
+      <tr><th>When</th><th>What</th><th>Why it matters</th></tr>
+      <tr><td>Mar 2025</td><td>Handshake AI launches</td><td>The pivot. Most-talked-about thing in the company.</td></tr>
+      <tr><td>Mid 2025</td><td>Cleanlab acquisition</td><td>Data quality / labeling capabilities for AI training pipeline</td></tr>
+      <tr><td>Aug 2025</td><td>Garrett Lord on Lenny's Newsletter</td><td>Read this. It's the canonical artifact of how leadership talks about the pivot.</td></tr>
+      <tr><td>Late 2025</td><td>Series F, $200M @ $3.5B</td><td>Funded for the AI expansion</td></tr>
+      <tr><td>Feb 2026</td><td><strong>Taro acquisition</strong></td><td>175K+ engineers from top tech companies. Launching a program for 10K engineers to contribute to frontier model dev.</td></tr>
+      <tr><td>2026</td><td>10.3% of internships mention AI; 4.2% of full-time early-career jobs require AI skills (~2× YoY)</td><td>Their dataset is also showing the macro shift they're betting on.</td></tr>
+    </table>
+
+    <h3 class="section" id="leaders">Leadership team</h3>
+    <ul class="tight">
+      <li><strong>Garrett Lord</strong> — Co-founder &amp; CEO. Ex-Palantir Forward Deployed Eng. The face of the AI pivot.</li>
+      <li><strong>Ben Christensen, Scott Ringwelski</strong> — Co-founders (less public)</li>
+      <li><strong>Asif Makhani</strong> — CTO (per craft.co — verify before citing in interview)</li>
+      <li><strong>Sharath Rao</strong> — VP Engineering, Data</li>
+      <li><strong>Francisco "Paco" Guzmán</strong> — Head of AI Research, Handshake AI (recent hire)</li>
+      <li><strong>Sahil Bhaiwala, Yang Zhao</strong> — Handshake AI leadership</li>
+    </ul>
+
+    <h3 class="section" id="eng">Engineering culture</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Monolith → services migration</strong> in progress. Service ownership model — teams on-call for the code they write.</li>
+        <li><strong>Pair programming</strong> is a publicly-stated cultural pillar. Reference: <em>"Pair Programming at Handshake"</em> blog post.</li>
+        <li><strong>Olympic pace</strong> — Garrett's own framing. High-intensity, high-standards. He calls this "transparency about high standards so the right people self-select."</li>
+        <li><strong>"Micro-interested" leadership</strong> — Garrett's distinction. Caring deeply and asking questions, vs. micromanaging.</li>
+        <li><strong>Mixed Glassdoor signal</strong> — culture &amp; values rated 2.1/5 by some software engineers. The fast pace doesn't suit everyone. You don't need to bring this up, but be ready for "how do you handle pace?" Qs.</li>
+        <li><strong>Hiring velocity</strong> after partnering with CodeSignal: time-to-fill dropped from 65 days to 32 days (50% reduction).</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="values">The six values in their own words</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0">
+        <li><strong>Empathy</strong> — "Deeply understand the needs of students and team members."</li>
+        <li><strong>Humility &amp; Hard Work</strong> — "Stay grounded while maintaining intense execution." (The "Midwest values" Garrett often references.)</li>
+        <li><strong>Empowered by Diversity</strong> — "Diverse teams build more thoughtful products."</li>
+        <li><strong>Accountability &amp; Drive</strong> — "Act like you're the only one holding the ball."</li>
+        <li><strong>Adaptability</strong> — "Navigate ambiguity and change."</li>
+        <li><strong>Access &amp; Outcomes First</strong> — "If it doesn't expand opportunity or improve outcomes, it doesn't come first."</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="comp">Who they compete with</h3>
+    <table class="rubric">
+      <tr><th>Competitor</th><th>How Handshake differs</th></tr>
+      <tr><td><strong>LinkedIn</strong></td><td>Owns mid/late career. Handshake owns early-career — embedded in 1,600+ campus career services.</td></tr>
+      <tr><td><strong>Indeed</strong></td><td>Generic. Handshake is curated, student-first, has the university channel.</td></tr>
+      <tr><td><strong>RippleMatch</strong></td><td>Similar early-career niche, but Handshake generates ~12× the revenue.</td></tr>
+      <tr><td><strong>WayUp</strong></td><td>Smaller, less institutional reach.</td></tr>
+      <tr><td><strong>Scale AI / Surge / Mercor</strong></td><td>For Handshake AI specifically. Handshake's edge: zero-CAC expert network already in hand.</td></tr>
+    </table>
+
+    <h3 class="section" id="drop">Things to drop into conversation (proves you did homework)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"The Lenny's Newsletter piece with Garrett — that's what made me apply."</li>
+        <li>"The Taro acquisition is interesting because…" (pick an angle: community moat, engineer-experts, AI training data pipeline)</li>
+        <li>"I noticed your engineering blog post on pair programming — that's the team culture I want."</li>
+        <li>"The 50%-reduction in time-to-fill from the CodeSignal partnership is impressive — clearly a data-driven team."</li>
+        <li>"The fact that you grew Handshake AI from zero to $50M in four months on a zero-CAC expert network is one of the cleanest go-to-market stories I've seen lately."</li>
+        <li>"I read that 10% of internships now mention AI — your platform sees the macro shift before most companies do."</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ TECH / SNIPPETS ============ -->
+  <section class="tab" id="tab-tech" data-toc='[
+    ["Their stack (educated)","stack"],
+    ["Ruby skeleton (universal pattern)","rb"],
+    ["Ruby idioms cheat sheet","idioms"],
+    ["Errors &amp; assertions","errs"],
+    ["In-memory DB pattern (common shape)","db"],
+    ["Strategy / dispatch table pattern","strat"],
+    ["Quick rubric for code review (yours)","rubric"]
+  ]'>
+    <h2>Tech Stack &amp; Snippets <span class="sub">starter code you can paste into the IDE</span></h2>
+
+    <h3 class="section" id="stack">Their stack (educated — not a guarantee for the interview)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">BACKEND</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Ruby on Rails (primary)</li>
+          <li>Puma (app server)</li>
+          <li>Sidekiq (background jobs)</li>
+          <li>Go (selected services)</li>
+          <li>PostgreSQL</li>
+          <li>GraphQL (API layer)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">FRONTEND</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>TypeScript + React</li>
+          <li>Redux</li>
+          <li>Apollo (GraphQL client)</li>
+          <li>Webpack</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">MOBILE</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>iOS: Swift + SwiftUI + Combine</li>
+          <li>Android: Kotlin</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">OPS / OBSERVABILITY</p>
+        <ul class="tight" style="margin:6px 0 0 18px">
+          <li>Shipit-engine (CD)</li>
+          <li>Datadog, Bugsnag, Google Cloud Logging</li>
+          <li>PagerDuty</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="rb">Ruby skeleton — the universal starter</h3>
+    <p style="color:var(--muted);font-size:13px;margin:0 0 8px 0">Memorize this. 90% of pairing problems start as some variation of it. Type it from blank twice tonight.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># 1. Domain object — Struct gives you ==, hash, to_s, accessors for free
+Job = Struct.new(:id, :title, :employer, :skills, keyword_init: true)
+
+# 2. Container — Hash keyed by id is the workhorse
+class JobBoard
+  def initialize
+    @jobs = {}
+  end
+
+  # --- CRUD ---
+  def post(job)
+    raise ArgumentError, "duplicate job id: #{job.id}" if @jobs.key?(job.id)
+    @jobs[job.id] = job
+  end
+
+  def get(id)
+    @jobs.fetch(id) { raise KeyError, "no such job: #{id}" }
+  end
+
+  def list
+    @jobs.values
+  end
+
+  def update(id, **attrs)
+    job = get(id)
+    attrs.each { |k, v| job[k] = v }   # Struct supports []= by symbol
+    job
+  end
+
+  def delete(id)
+    @jobs.delete(id) || (raise KeyError, "no such job: #{id}")
+  end
+
+  # --- domain op (the "interesting" method) ---
+  def search(skill)
+    @jobs.values.select { |j| j.skills.include?(skill) }
+  end
+end
+
+# 3. Inline asserts after each method — run constantly
+board = JobBoard.new
+board.post(Job.new(id: "j1", title: "SWE Intern", employer: "Acme", skills: %w[ruby rails]))
+raise "fail" unless board.get("j1").title == "SWE Intern"
+raise "fail" unless board.search("ruby").length == 1
+raise "fail" unless board.search("rust").empty?
+puts "ok — part 1"
+
+# 4. Volunteer edge cases out loud
+begin
+  board.get("nope")
+  raise "should have raised"
+rescue KeyError =&gt; e
+  puts "ok — unknown id raises KeyError: #{e.message}"
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="idioms">Ruby idioms cheat sheet</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">VALUE OBJECTS</p>
+<pre style="margin:6px 0"><code class="language-ruby">Point = Struct.new(:x, :y, keyword_init: true)
+p = Point.new(x: 1, y: 2)
+p.x       # =&gt; 1
+p == Point.new(x: 1, y: 2)   # =&gt; true</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">HASH LOOKUPS</p>
+<pre style="margin:6px 0"><code class="language-ruby">h.fetch(k)                       # raises KeyError if missing
+h.fetch(k, default)              # returns default
+h.fetch(k) { raise "no #{k}" }   # block runs if missing
+h.key?(k)                        # exists?</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">DEFAULT VALUES</p>
+<pre style="margin:6px 0"><code class="language-ruby">counts = Hash.new(0)
+counts["a"] += 1            # works — default is 0
+buckets = Hash.new { |h, k| h[k] = [] }
+buckets["x"] &lt;&lt; 1            # auto-creates []</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">SORTING / RANKING</p>
+<pre style="margin:6px 0"><code class="language-ruby">jobs.sort_by { |j| [-j.upvotes, -j.ts, j.id] }
+# ^ tuple-key sort, all asc; negate for desc
+jobs.min_by { |j| j.deadline }
+jobs.max_by(5) { |j| j.score }   # top-5</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">FILTERING / GROUPING</p>
+<pre style="margin:6px 0"><code class="language-ruby">jobs.select { |j| j.remote? }
+jobs.reject { |j| j.archived? }
+jobs.group_by(&amp;:employer)
+jobs.partition { |j| j.full_time? }
+jobs.count { |j| j.upvotes &gt; 10 }</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">TRANSFORMING</p>
+<pre style="margin:6px 0"><code class="language-ruby">jobs.map(&amp;:title)
+jobs.map { |j| [j.id, j] }.to_h     # =&gt; Hash by id
+jobs.each_with_object({}) { |j, h| h[j.id] = j }
+jobs.flat_map(&amp;:skills).uniq</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">SETS &amp; INTERSECTIONS</p>
+<pre style="margin:6px 0"><code class="language-ruby">require "set"
+required = Set.new(%w[ruby sql])
+profile  = Set.new(%w[ruby react])
+overlap  = required &amp; profile          # Set
+missing  = required - profile</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">TIME</p>
+<pre style="margin:6px 0"><code class="language-ruby">Time.now
+Time.now - 3600   # 1 hour ago (seconds)
+(now - p.created_at) &lt;= 86_400   # within 24h
+# Pass `now:` as a kwarg for testable code!</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">PATTERN: GUARD + EARLY RETURN</p>
+<pre style="margin:6px 0"><code class="language-ruby">def apply(user, job)
+  return :duplicate if applied?(user, job)
+  return :closed    if job.closed?
+  return :missing_skills unless qualified?(user, job)
+  do_apply(user, job)
+end</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">FREEZE / IMMUTABILITY</p>
+<pre style="margin:6px 0"><code class="language-ruby">STATUSES = %i[submitted reviewed offered rejected].freeze
+DENOMS   = [25, 10, 5].freeze
+# Signals "this is a constant" + cheap safety</code></pre>
+      </div>
+    </div>
+
+    <h3 class="section" id="errs">Errors &amp; assertions</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">RAISE WITH TYPE + MESSAGE</p>
+<pre style="margin:6px 0"><code class="language-ruby">raise ArgumentError, "duplicate id: #{id}"
+raise KeyError,      "no such job: #{id}"
+raise RuntimeError,  "cannot vend: out of stock"
+
+# Custom error class — clean for domain rules
+class InsufficientFunds &lt; StandardError; end
+raise InsufficientFunds, "need #{n} more cents"</code></pre>
+      </div>
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">INLINE ASSERTS (no framework)</p>
+<pre style="margin:6px 0"><code class="language-ruby">raise "fail: title" unless job.title == "SWE"
+raise "fail: count" unless board.list.size == 1
+puts "ok — part 1"
+
+# Expect a raise
+begin
+  board.get("nope"); raise "should raise"
+rescue KeyError =&gt; e
+  puts "ok — raised: #{e.message}"
+end</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">MINITEST (if loaded)</p>
+<pre style="margin:6px 0"><code class="language-ruby">require "minitest/autorun"
+
+class JobBoardTest &lt; Minitest::Test
+  def setup; @b = JobBoard.new; end
+
+  def test_post_and_get
+    @b.post(Job.new(id: "j1", title: "x"))
+    assert_equal "x", @b.get("j1").title
+  end
+
+  def test_get_unknown
+    assert_raises(KeyError) { @b.get("nope") }
+  end
+end</code></pre>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--accent);font-size:12px">RSPEC (if loaded)</p>
+<pre style="margin:6px 0"><code class="language-ruby">require "rspec/autorun"
+
+RSpec.describe JobBoard do
+  let(:b) { described_class.new }
+
+  it "stores and fetches by id" do
+    b.post(Job.new(id: "j1", title: "x"))
+    expect(b.get("j1").title).to eq("x")
+  end
+
+  it "raises on unknown id" do
+    expect { b.get("nope") }.to raise_error(KeyError)
+  end
+end</code></pre>
+      </div>
+    </div>
+    <div class="card warn">
+      <p style="margin:0"><strong>Which test framework?</strong> Ask. CodeSignal's Ruby project IDE typically has Minitest available; some Handshake interview templates include a <code class="inline">spec/</code> dir with RSpec pre-wired. Look at the file tree before you start. If you can't tell — <code class="inline">raise "fail" unless ...</code> + <code class="inline">puts "ok"</code> is universal.</p>
+    </div>
+
+    <h3 class="section" id="db">In-memory CRUD pattern (most common problem shape)</h3>
+    <div class="card good">
+      <p style="margin:0 0 8px 0">If the problem is "build a system that does X, Y, Z" — it's almost always this shape:</p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Domain object</strong> — <code class="inline">Struct.new(:fields, keyword_init: true)</code></li>
+        <li><strong>Container class</strong> with a <code class="inline">Hash</code> keyed by id (<code class="inline">@things = {}</code>)</li>
+        <li><strong>Public methods</strong>: <code class="inline">create / get / list / update / delete</code> — plus the domain-specific ops</li>
+        <li><strong>Typed errors</strong>: <code class="inline">ArgumentError</code> / <code class="inline">KeyError</code> with <code class="inline">"message: #{id}"</code></li>
+        <li><strong>Inline <code class="inline">raise "fail" unless ...</code> + <code class="inline">puts "ok"</code></strong> after each method</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="strat">Strategy / dispatch-table pattern (cleans up Part 2 nicely)</h3>
+    <div class="card good">
+      <p style="margin:0 0 8px 0">When Part 2 introduces "different kinds of X" (different job types, different application states, different match algorithms) — <strong>don't write a long if/elif</strong>. Use a dispatch dict.</p>
+    </div>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># BAD — case/when grows with every new type
+def rank(job_type, candidate, job)
+  case job_type
+  when :internship then # ...
+  when :full_time  then # ...
+  when :part_time  then # ...
+  end
+end
+
+# GOOD — dispatch table, easy to extend, easy to test each ranker alone
+RANKERS = {
+  internship: -&gt;(c, j) { c.skills.count { |s| j.skills.include?(s) } * 2 },
+  full_time:  -&gt;(c, j) { c.years_exp * j.weight + c.skills.size },
+  part_time:  -&gt;(c, j) { c.availability_score },
+}.freeze
+
+def rank(job_type, candidate, job)
+  ranker = RANKERS.fetch(job_type) { raise ArgumentError, "unknown job type: #{job_type}" }
+  ranker.call(candidate, job)
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="rubric">Quick rubric for code review (run on yourself, in your head, before "I'm done")</h3>
+    <table class="rubric">
+      <tr><th>Check</th><th>Action if it fails</th></tr>
+      <tr><td>Every function has a type hint / return type</td><td>Add them</td></tr>
+      <tr><td>No function &gt; ~20 lines</td><td>Split by responsibility</td></tr>
+      <tr><td>No magic strings / numbers</td><td>Promote to constant / enum</td></tr>
+      <tr><td>No nested <code class="inline">if</code>/<code class="inline">else</code> &gt; 2 deep</td><td>Flatten with early returns</td></tr>
+      <tr><td>Every "happy path" has at least one inline assert</td><td>Add a one-liner check</td></tr>
+      <tr><td>Errors raise typed exceptions with messages</td><td>Replace bare <code class="inline">raise Exception</code></td></tr>
+      <tr><td>No stale print / debug code at the end</td><td>Delete before "I'm done"</td></tr>
+      <tr><td>No commented-out code</td><td>Delete it</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ QUESTIONS TO ASK ============ -->
+  <section class="tab" id="tab-questions" data-toc='[
+    ["The rule","rule"],
+    ["For the hiring manager","mgr"],
+    ["For the senior engineer / pair-programming partner","ic"],
+    ["Strategic / company-level","strat"],
+    ["The closing question","close"],
+    ["Questions to NOT ask","avoid"]
+  ]'>
+    <h2>Questions to Ask <span class="sub">have 3 ready per round — they signal as much as your answers</span></h2>
+
+    <h3 class="section" id="rule">The rule</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Pick questions that match the interviewer.</strong> Ask a hiring manager about org/team strategy; ask an IC about day-to-day craft; ask leadership about company direction.</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">Don't ask anything you could have Googled. The questions are scored too.</p>
+    </div>
+
+    <h3 class="section" id="mgr">For the hiring manager (leadership round)</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"How do you see this role contributing to the AI pivot — is it core platform work, or AI-adjacent product work?"</li>
+        <li>"What's the team's most ambitious goal over the next two quarters? What's most likely to slip?"</li>
+        <li>"Six months in, what does a successful person in this role have on their reflection? What does an unsuccessful one have stuck?"</li>
+        <li>"How do you personally balance the 'Olympic pace' with sustainable engineering? Where do you draw the line?"</li>
+        <li>"What's the strongest critique someone could fairly make of your team's engineering practices right now? What are you doing about it?"</li>
+        <li>"How does decision-making work between engineering and product here? Who owns roadmap?"</li>
+        <li>"What's the most interesting hiring or organizational decision you've made in the last year?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="ic">For a senior engineer / pair-programming interviewer</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"What's the biggest piece of technical debt the team has right now? How are you approaching it?"</li>
+        <li>"How is the monolith-to-services migration going? Where in the codebase do you still feel the friction?"</li>
+        <li>"What's a recent technical decision your team got wrong and changed?"</li>
+        <li>"How do you actually pair-program in your team — formally scheduled, ad-hoc, on certain kinds of work?"</li>
+        <li>"What's the on-call experience like? How healthy is it?"</li>
+        <li>"What does the gap between a senior and a staff engineer look like on your team?"</li>
+        <li>"What's the most fun thing you've shipped in the last 6 months?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="strat">Strategic / company-level (any interviewer can field)</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"With Handshake AI growing as fast as it is, how is engineering being structured around it? Separate org, or shared platform?"</li>
+        <li>"The Taro acquisition — how is the engineer community being woven into Handshake AI? What does that look like 6 months in?"</li>
+        <li>"How is the original early-career platform evolving alongside the AI business? What's the relationship between them?"</li>
+        <li>"What's the biggest cultural shift you've seen since the AI pivot started?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="close">The closing question (very effective)</h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0;color:var(--good);font-size:12px">ALWAYS GOOD CLOSER</p>
+      <p class="quote" style="margin:0">"Based on what we discussed, do you have any hesitations about my fit for this role? I'd love a chance to address them before we wrap up."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Signals confidence + self-awareness + coachability. Almost no candidates do this and interviewers reliably remember it.</p>
+    </div>
+
+    <h3 class="section" id="avoid">Questions NOT to ask</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li>"What does Handshake do?" / "Who are your competitors?" — Googleable.</li>
+        <li>"How much vacation time do I get?" — Save for recruiter / offer.</li>
+        <li>"Is it remote?" — Same.</li>
+        <li>"How long until I get promoted to staff?" — Reads as transactional.</li>
+        <li>"Do you have layoffs planned?" — Even if you want to know, ask diplomatically: "How has the team been impacted by the strategic shifts?"</li>
+        <li>Anything yes/no — make them open-ended so you actually learn something.</li>
+      </ul>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.textContent = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelectorAll("aside li a").forEach(x => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach(s => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) buildTOC(section);
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("handshake-tab", tabId); } catch (e) {}
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "cheat";
+  try {
+    const saved = localStorage.getItem("handshake-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 1200);
+      } catch (e) {
+        btn.textContent = "Failed";
+      }
+    });
+  });
+
+  // Keyboard shortcuts: 1-7 jumps to tab
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"cheat","2":"leadership","3":"pairing","4":"problems","5":"stories","6":"company","7":"tech","8":"questions" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+</script>
+
+</body>
+</html>

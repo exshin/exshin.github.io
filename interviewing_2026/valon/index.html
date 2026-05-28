@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valon Interview Cheat Sheet</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #fafafa;
+    --panel: #ffffff;
+    --panel-2: #f3f4f6;
+    --border: #e4e6eb;
+    --text: #1f2328;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-2: #7c3aed;
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--accent-2); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #f7f8fa !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  pre[class*="language-"] code { text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Valon · Generic Coding · Ruby</h1>
+  <nav class="tabs">
+    <button data-tab="cheat" class="active">Cheat Sheet</button>
+    <button data-tab="sql">In-Memory SQL DB</button>
+    <button data-tab="payment">Payment Allocation</button>
+    <button data-tab="oo">OO / Pluggable</button>
+    <button data-tab="snippets">Quick Snippets</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab active" id="tab-cheat" data-toc='[
+    ["What they score","score"],
+    ["First 90 seconds","first90"],
+    ["Iteration playbook","iter"],
+    ["Communication phrases","comms"],
+    ["Code quality rubric","rubric"],
+    ["Smells to avoid","smells"],
+    ["When stuck","stuck"],
+    ["Valon-specific framing","valon"]
+  ]'>
+    <h2>Cheat Sheet <span class="sub">scan this between parts</span></h2>
+
+    <h3 class="section" id="score">What they score</h3>
+    <div class="card accent">
+      <p style="margin:0"><strong>Their own brief, decoded:</strong></p>
+      <ul class="tight">
+        <li><strong>"correctness of output"</strong> → match the spec literally; <code class="inline">raise unless</code> as you go.</li>
+        <li><strong>"code quality"</strong> → naming, small methods, single responsibility, idiomatic Ruby.</li>
+        <li><strong>"cleanliness"</strong> → no dead code, no commented-out blocks, no over-abstraction.</li>
+        <li><strong>"do not care about efficiency"</strong> → don't optimize. <code class="inline">O(n)</code> scan over an array is fine.</li>
+        <li><strong>"run your code and iterate"</strong> → multi-part. Don't gold-plate Part 1.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="first90">First 90 seconds (do this every time)</h3>
+    <ol class="tight">
+      <li><strong>Echo the spec back.</strong> "So I'm building X that supports Y, and the input is Z — does that match?"</li>
+      <li><strong>Ask 1–2 clarifying questions max.</strong> Common: input format (string commands vs. method calls), error behavior (raise vs. return nil), case sensitivity.</li>
+      <li><strong>State the data model in one sentence.</strong> "I'll model this as a class with a hash of X keyed by Y."</li>
+      <li><strong>Type the empty skeleton.</strong> Class name, one method stub, one inline <code class="inline">raise unless</code>. Run it. <em>Now</em> implement.</li>
+    </ol>
+
+    <h3 class="section" id="iter">Iteration playbook (when interviewer adds a part)</h3>
+    <ol class="tight">
+      <li><strong>Acknowledge the new requirement aloud</strong> before touching code: "OK — now we need to support partial payments. The behavior is X."</li>
+      <li><strong>Ask: does this change existing behavior, or only add to it?</strong> Determines if you refactor or extend.</li>
+      <li><strong>If refactor needed:</strong> say it. "To support this cleanly I'd pull this <code class="inline">if</code> chain into a strategy. 2 minutes." Then do it.</li>
+      <li><strong>Re-run all prior asserts</strong> after each part to prove you didn't regress.</li>
+    </ol>
+
+    <h3 class="section" id="comms">Communication phrases (memorize 3–4 of these)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">OPENING</p>
+        <p class="quote">"Let me echo back what I heard so we're aligned…"</p>
+        <p class="quote">"Before I code — quick clarifier: when X happens, do you want Y or Z?"</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHILE CODING</p>
+        <p class="quote">"I'm starting with the simplest thing that could possibly work — we can iterate."</p>
+        <p class="quote">"I'm going to skip input validation for now and come back if we have time."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHEN PART 2 LANDS</p>
+        <p class="quote">"This is going to force me to restructure <code class="inline">apply_payment</code>. Bear with me — about 2 minutes."</p>
+        <p class="quote">"I'll do the simple version first, then we can talk about whether to generalize."</p>
+      </div>
+      <div class="card">
+        <p style="margin:0;color:var(--muted);font-size:12px">WHEN STUCK</p>
+        <p class="quote">"Let me walk through this one input by hand to find where my mental model diverges."</p>
+        <p class="quote">"I want to verify my assumption — can you confirm that X behaves like Y?"</p>
+      </div>
+    </div>
+
+    <h3 class="section" id="rubric">Code quality rubric (mental checklist)</h3>
+    <table class="rubric">
+      <tr><th>Dimension</th><th>What "good" looks like</th></tr>
+      <tr><td><strong>Naming</strong></td><td>Verbose &gt; clever. <code class="inline">apply_payment</code> not <code class="inline">apply</code>. <code class="inline">remaining_balance</code> not <code class="inline">r</code>. Snake_case methods, CamelCase classes.</td></tr>
+      <tr><td><strong>Value objects</strong></td><td>Use <code class="inline">Struct.new(..., keyword_init: true)</code> (or <code class="inline">Data.define</code> on Ruby 3.2+) for domain records. Don't pass loose hashes around.</td></tr>
+      <tr><td><strong>Method size</strong></td><td>If a method won't fit on one screen, split it. One reason to exist per method.</td></tr>
+      <tr><td><strong>Mutation</strong></td><td>Don't mutate inputs without saying so. Prefer methods that return new objects, or name mutating methods with a <code class="inline">!</code> suffix where idiomatic.</td></tr>
+      <tr><td><strong>Errors</strong></td><td>Raise specific exceptions with messages. <code class="inline">raise ArgumentError, "no such loan: #{loan_id}"</code>.</td></tr>
+      <tr><td><strong>Tests</strong></td><td>Inline <code class="inline">raise unless</code> after each part. Print "part N ok" on success.</td></tr>
+      <tr><td><strong>Comments</strong></td><td>Almost none. One short line for non-obvious WHY. No "this method does X" comments.</td></tr>
+    </table>
+
+    <h3 class="section" id="smells">Smells to avoid</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>Nested <code class="inline">if</code>/<code class="inline">elsif</code>/<code class="inline">else</code> &gt; 2 deep</strong> — flatten with early returns or a hash dispatch table.</li>
+        <li><strong>Magic numbers/strings</strong> — name them as <code class="inline">CONSTANT</code>s, or use symbols.</li>
+        <li><strong>Passing raw hashes/arrays around</strong> when a <code class="inline">Struct</code> would name the fields.</li>
+        <li><strong>Copy-pasted block</strong> — extract a method even if it's used twice.</li>
+        <li><strong>Global mutable state</strong> — wrap it in a class.</li>
+        <li><strong>One giant method</strong> — break by responsibility (parse → validate → apply → format).</li>
+        <li><strong>Float for money</strong> — use <code class="inline">BigDecimal</code> always.</li>
+        <li><strong>Stale <code class="inline">puts</code> / dead code</strong> — delete before "I'm done."</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="stuck">When stuck (recovery moves)</h3>
+    <ul class="tight">
+      <li><strong>Trace one input by hand.</strong> Talk it through; the bug usually surfaces.</li>
+      <li><strong>Add a <code class="inline">puts</code> right before the failure.</strong> See the actual state, not the imagined one.</li>
+      <li><strong>Re-read the spec aloud.</strong> 70% of bugs are misread requirements.</li>
+      <li><strong>Ask.</strong> "I'm hitting an edge case — when input is X, do you want Y or Z?" Better than thrashing.</li>
+      <li><strong>Don't silently rewrite.</strong> Say "I'm going to scrap this and redo with approach B" before you do it.</li>
+    </ul>
+
+    <h3 class="section" id="valon">Valon-specific framing</h3>
+    <div class="card accent">
+      <p><strong>Domain:</strong> mortgage servicing. They process payments, track loan state, allocate dollars across buckets (interest, principal, escrow, late fees), and handle different loan types (standard, HELOC, ARM, etc.) with different rules.</p>
+      <p><strong>Architectural pattern they're proud of (per their engineering blog):</strong> small, reusable allocation rules assembled in different configurations per loan type — i.e. <strong>strategy pattern with composable rule chains</strong>. If your problem is payment-shaped, lean into this vocabulary.</p>
+      <p style="margin-bottom:0"><strong>Words that will land well:</strong> <em>waterfall, allocation, suspense account, idempotency, audit trail, partial payment, principal vs. interest, escrow.</em></p>
+    </div>
+  </section>
+
+  <!-- ============ SQL DB ============ -->
+  <section class="tab" id="tab-sql" data-toc='[
+    ["Problem shape","shape"],
+    ["Data model","model"],
+    ["Part 1: CREATE / INSERT / SELECT *","p1"],
+    ["Part 2: WHERE filter","p2"],
+    ["Part 3: UPDATE / DELETE","p3"],
+    ["Part 4: Transactions","p4"],
+    ["Variant: string-command REPL","repl"],
+    ["Talking points","tp"]
+  ]'>
+    <h2>In-Memory SQL DB <span class="sub">most-reported Valon problem</span></h2>
+
+    <h3 class="section" id="shape">Problem shape</h3>
+    <p>Build an in-memory database that supports a few SQL-ish operations on tables. Usually 3–4 parts:</p>
+    <ul class="tight">
+      <li><strong>Part 1:</strong> <code class="inline">CREATE TABLE</code>, <code class="inline">INSERT</code>, <code class="inline">SELECT *</code>.</li>
+      <li><strong>Part 2:</strong> <code class="inline">WHERE</code> filter (equality, then ranges).</li>
+      <li><strong>Part 3:</strong> <code class="inline">UPDATE</code> and <code class="inline">DELETE</code>.</li>
+      <li><strong>Part 4:</strong> Transactions (<code class="inline">BEGIN</code>/<code class="inline">COMMIT</code>/<code class="inline">ROLLBACK</code>) — or indexes, or projection (<code class="inline">SELECT col</code>).</li>
+    </ul>
+
+    <h3 class="section" id="model">Data model decision</h3>
+    <div class="card good">
+      <p style="margin:0"><strong>Keep it simple:</strong> rows are hashes keyed by symbol column name, table holds an array of hashes. Don't build a B-tree. Don't parse SQL unless they ask for string input.</p>
+    </div>
+
+    <h3 class="section" id="p1">Part 1 — CREATE / INSERT / SELECT *</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class Table
+  attr_reader :name, :schema, :rows
+
+  def initialize(name, schema)
+    @name   = name
+    @schema = schema       # array of column-name symbols, in order
+    @rows   = []
+  end
+
+  def insert(values)
+    if values.length != @schema.length
+      raise ArgumentError,
+            "#{@name}: expected #{@schema.length} values, got #{values.length}"
+    end
+    @rows << @schema.zip(values).to_h
+  end
+
+  def select_all
+    # Return copies so callers can't mutate our rows by accident.
+    @rows.map(&:dup)
+  end
+end
+
+
+class Database
+  def initialize
+    @tables = {}
+  end
+
+  def create_table(name, schema)
+    raise ArgumentError, "table already exists: #{name}" if @tables.key?(name)
+    @tables[name] = Table.new(name, schema)
+  end
+
+  def table(name)
+    @tables[name] or raise KeyError, "no such table: #{name}"
+  end
+end
+
+
+# Sanity check — run after every part.
+if __FILE__ == $PROGRAM_NAME
+  db = Database.new
+  db.create_table(:users, [:id, :name, :age])
+  users = db.table(:users)
+  users.insert([1, "Alice", 30])
+  users.insert([2, "Bob",   25])
+  users.insert([3, "Carol", 30])
+
+  raise "part 1 failed" unless users.select_all.length == 3
+  puts "part 1 ok"
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="p2">Part 2 — WHERE filter</h3>
+    <p>Add a <code class="inline">where</code> hash and a projection list. Resist the urge to build a query parser.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class Table
+  # SELECT with two optional knobs:
+  #   columns: which columns to return  (nil = all columns from the schema)
+  #   where:   filter hash, e.g. { age: 30 }  (nil or {} = return every row)
+  def select(columns: nil, where: nil)
+    cols = columns || @schema           # default projection = every column
+
+    # Walk the rows, keep the ones that match, project down to requested columns.
+    results = []
+    @rows.each do |row|
+      next unless matches?(row, where)  # skip rows that don't match the filter
+      results << row.slice(*cols)       # Hash#slice returns a copy with only these keys
+    end
+    results
+  end
+
+  private
+
+  # A row matches when every key/value in `where` is also in the row.
+  # No `where` (nil or empty) = no filter, so everything matches.
+  def matches?(row, where)
+    return true if where.nil? || where.empty?
+    where.all? { |column, value| row[column] == value }
+  end
+end
+
+
+# ----- Test cases — each isolates a different SELECT feature -----
+
+# 1. No args = no filter, no projection → every row, every column.
+raise unless users.select.length == 3
+
+# 2. WHERE filter → only rows where age == 30.
+age_30 = users.select(where: { age: 30 })
+raise unless age_30.map { |row| row[:name] }.sort == ["Alice", "Carol"]
+
+# 3. Projection only → every row, but trimmed to just the :name column.
+names = users.select(columns: [:name])
+raise unless names == [{ name: "Alice" }, { name: "Bob" }, { name: "Carol" }]
+
+# 4. Projection + filter combined.
+names_age_30 = users.select(columns: [:name], where: { age: 30 })
+raise unless names_age_30 == [{ name: "Alice" }, { name: "Carol" }]
+
+# 5. Multi-column WHERE is implicit AND — every key/value must match.
+#    Alice is 30, not 25, so this returns nothing.
+raise unless users.select(where: { name: "Alice", age: 25 }) == []
+
+# 6. No matches → empty array, never nil. Callers can safely .each / .map.
+raise unless users.select(where: { name: "Zelda" }) == []
+
+puts "part 2 ok"
+</code></pre>
+    </div>
+
+    <h3 class="section" id="p3">Part 3 — UPDATE / DELETE</h3>
+    <p>Reuse <code class="inline">matches?</code>. Return the count of affected rows — that's what SQL does and it's testable.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class Table
+  # UPDATE rows that match a WHERE filter.
+  #
+  #   set_values: hash of column => new value, e.g. { age: 31 }
+  #   where:      same filter shape as SELECT (nil = update every row)
+  #
+  # Returns the number of rows actually modified (SQL convention — handy in tests).
+  def update(set_values, where: nil)
+    affected = 0
+    @rows.each do |row|
+      # Reuse the same matches? helper as SELECT — single source of truth
+      # for filter logic. Whatever WHERE means for SELECT, it means here too.
+      next unless matches?(row, where)
+
+      # merge! mutates `row` in place: existing keys (like :age) get overwritten,
+      # new keys would get added. Because `row` is a reference into @rows, the
+      # row stored in the table actually changes — no need to write it back.
+      row.merge!(set_values)
+
+      affected += 1
+    end
+    affected
+  end
+
+  # DELETE rows that match a WHERE filter.
+  #
+  #   where: nil = delete every row (yes, really — same as SQL `DELETE FROM users`)
+  #
+  # Returns the number of rows actually removed.
+  def delete(where: nil)
+    # Remember the size before, so we can compute how many we deleted.
+    before = @rows.length
+
+    # reject! filters in place: it KEEPS elements where the block returns false,
+    # and REMOVES elements where it returns true. So we remove rows that DO match.
+    # (Compare to .reject which returns a new array — we'd lose the mutation.)
+    @rows.reject! { |row| matches?(row, where) }
+
+    # If nothing matched, reject! returns nil but doesn't change @rows,
+    # so `before - @rows.length` is just 0. No special case needed.
+    before - @rows.length
+  end
+end
+
+
+# ----- Test cases — each isolates a different UPDATE/DELETE behavior -----
+
+# Setup recap: after Parts 1+2 we have these three rows:
+#   { id: 1, name: "Alice", age: 30 }
+#   { id: 2, name: "Bob",   age: 25 }
+#   { id: 3, name: "Carol", age: 30 }
+
+# 1. UPDATE a single matching row.
+#    Returns the count (1), and the row really did change.
+raise unless users.update({ age: 31 }, where: { name: "Alice" }) == 1
+raise unless users.select(where: { name: "Alice" }).first[:age] == 31
+
+# 2. UPDATE with a filter that matches nothing → count is 0, table unchanged.
+raise unless users.update({ age: 99 }, where: { name: "Zelda" }) == 0
+
+# 3. UPDATE with no WHERE → updates EVERY row.
+#    Same as SQL `UPDATE users SET age = 40`. Mention this gotcha aloud.
+raise unless users.update({ age: 40 }) == 3
+raise unless users.select.all? { |row| row[:age] == 40 }
+
+# 4. DELETE one matching row → returns 1, table shrinks by 1.
+raise unless users.delete(where: { id: 2 }) == 1
+raise unless users.select.length == 2
+
+# 5. DELETE with no matches → returns 0, table unchanged.
+raise unless users.delete(where: { id: 999 }) == 0
+raise unless users.select.length == 2
+
+# (Skipping a "DELETE with no WHERE wipes the table" test so later parts
+#  still have rows to work with — but call it out aloud as a real gotcha.)
+
+puts "part 3 ok"
+</code></pre>
+    </div>
+
+    <h3 class="section" id="p4">Part 4 — Transactions (BEGIN / COMMIT / ROLLBACK)</h3>
+    <p>Snapshot the whole state on <code class="inline">BEGIN</code>. <code class="inline">ROLLBACK</code> restores. <code class="inline">COMMIT</code> discards the snapshot. Nested transactions = a stack of snapshots. Note: <code class="inline">begin</code> is a Ruby keyword, so name the method <code class="inline">begin_tx</code>.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class Database
+  def initialize
+    @tables = {}
+
+    # Stack of snapshots — one entry per currently-open transaction.
+    #   empty stack  = not inside any transaction
+    #   N entries    = N nested transactions are open
+    # Each snapshot is a full deep copy of @tables at the moment BEGIN was called.
+    @snapshots = []
+  end
+
+  # Start a new transaction.
+  # `begin` is a Ruby keyword, so we name this `begin_tx` to avoid the clash.
+  # We save a deep copy of the current state — that's the point we'll roll back to.
+  def begin_tx
+    @snapshots << deep_dup(@tables)
+  end
+
+  # COMMIT just discards the snapshot.
+  # Why? The mutations made since BEGIN already happened directly in @tables,
+  # so "keeping" them means doing nothing — we just drop the now-unneeded
+  # snapshot off the stack.
+  def commit
+    raise "no transaction in progress" if @snapshots.empty?
+    @snapshots.pop
+  end
+
+  # ROLLBACK throws away the current state and restores the snapshot.
+  # Pop the snapshot we took at BEGIN and make it the live state again.
+  # Anything we did since BEGIN is now gone.
+  def rollback
+    raise "no transaction in progress" if @snapshots.empty?
+    @tables = @snapshots.pop
+  end
+
+  # (keep create_table / table from Part 1)
+
+  private
+
+  # Marshal.dump serializes any Ruby object to a binary string;
+  # Marshal.load reads it back into a brand-new object graph.
+  # The round-trip gives us a totally independent deep copy — no references
+  # are shared with the original, so mutating one can't affect the other.
+  # Slow but trivially correct. (A real DB uses a write-ahead log instead;
+  # the spec doesn't care about performance.)
+  def deep_dup(obj)
+    Marshal.load(Marshal.dump(obj))
+  end
+end
+
+
+# ----- Test cases — each isolates a different transaction behavior -----
+
+# Setup recap: coming into Part 4 the `users` table has 2 rows
+# (Bob was deleted in Part 3; Alice and Carol both got age 40).
+
+# 1. ROLLBACK undoes every mutation made since BEGIN.
+db.begin_tx
+users.insert([99, "Dave", 40])
+raise unless db.table(:users).select.length == 3       # +1 inside the tx
+db.rollback
+# After rollback, @tables has been REPLACED with the snapshot, so any
+# local references to the old Table object are now stale. Always re-fetch
+# via db.table(...) after a rollback.
+users = db.table(:users)
+raise unless users.select.length == 2                  # back to pre-tx state
+
+# 2. COMMIT keeps the mutations.
+db.begin_tx
+users.insert([99, "Dave", 40])
+db.commit
+raise unless db.table(:users).select.length == 3       # Dave stayed
+
+# 3. Nested transactions — the snapshot stack handles them naturally.
+db.begin_tx                                            # outer tx — snapshot = 3 rows
+users = db.table(:users)
+users.insert([100, "Eve", 50])                         # state is now 4 rows
+raise unless db.table(:users).select.length == 4
+
+db.begin_tx                                            # inner tx — snapshot = 4 rows
+# Note: begin_tx only snapshots; it doesn't replace @tables, so the local
+# `users` reference above is still valid here.
+users.delete(where: { id: 100 })                       # remove Eve → 3 rows
+raise unless db.table(:users).select.length == 3
+
+db.rollback                                            # inner rollback — restores 4 rows
+users = db.table(:users)                               # MUST re-fetch after a rollback
+raise unless users.select.length == 4                  # Eve is back
+
+db.rollback                                            # outer rollback — restores 3 rows
+users = db.table(:users)
+raise unless users.select.length == 3                  # back to the post-commit-2 state
+
+# 4. COMMIT or ROLLBACK with no open transaction → raises.
+#    Defensive — catches double-commit bugs and stray rollback calls.
+raised = false
+begin
+  db.commit                                            # stack is empty here
+rescue RuntimeError
+  raised = true
+end
+raise unless raised
+
+puts "part 4 ok"
+</code></pre>
+    </div>
+    <div class="card warn">
+      <strong>Watch out:</strong> after rollback, the caller's local <code class="inline">users</code> variable still points to the old <code class="inline">Table</code> object. Re-fetch via <code class="inline">db.table(:users)</code> after rollback, or document the gotcha aloud.
+    </div>
+
+    <h3 class="section" id="repl">Variant — string-command REPL</h3>
+    <p>If the interviewer hands you commands as strings (<code class="inline">"INSERT users 1 Alice 30"</code>), add a thin parser layer that splits on whitespace and dispatches to the methods above. Keep parsing separate from execution.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">def execute(db, command)
+  parts = command.split
+  op = parts[0].upcase
+
+  case op
+  when "CREATE"               # CREATE users id name age
+    name, *schema = parts[1..]
+    db.create_table(name.to_sym, schema.map(&:to_sym))
+  when "INSERT"               # INSERT users 1 Alice 30
+    name, *raw = parts[1..]
+    db.table(name.to_sym).insert(raw.map { |v| coerce(v) })
+  when "SELECT"               # SELECT users
+    name = parts[1]
+    db.table(name.to_sym).select
+  else
+    raise ArgumentError, "unknown command: #{op}"
+  end
+end
+
+
+def coerce(token)
+  return Integer(token) if token.match?(/\A-?\d+\z/)
+  return Float(token)   if token.match?(/\A-?\d+\.\d+\z/)
+  token
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="tp">Talking points</h3>
+
+    <div class="card">
+      <p style="margin:0"><strong>1. Storage choice — array of hashes</strong></p>
+      <p class="quote">"I'm using an array of hashes for rows — fine at this scale, easy to read. If we needed range queries on a hot column we could add an index, but we're not there yet."</p>
+      <ul class="tight">
+        <li><strong>Hot column</strong> = a column that gets queried, filtered, or joined on far more often than the others. If 90% of WHERE clauses touch <code class="inline">user_id</code>, then <code class="inline">user_id</code> is hot. "Hot" just means "high traffic" — same metaphor as "hot path" in code.</li>
+        <li><strong>How to add an index if pushed:</strong> keep a second hash alongside <code class="inline">@rows</code>: <code class="inline">@indexes = { user_id: { 42 =&gt; [row_ref, row_ref], ... } }</code>. Update it on every insert / update / delete. SELECT with a WHERE on an indexed column does a <code class="inline">O(1)</code> hash lookup instead of an <code class="inline">O(n)</code> scan.</li>
+        <li><strong>Trade-off to name out loud:</strong> indexes speed up reads but slow down writes (extra bookkeeping per mutation) and use more memory. You don't index every column — you index the hot ones.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <p style="margin:0"><strong>2. <code class="inline">matches?</code> as single source of truth</strong></p>
+      <p class="quote">"<code class="inline">matches?</code> centralizes the WHERE logic so UPDATE and DELETE reuse SELECT's filter. Single source of truth."</p>
+      <ul class="tight">
+        <li><strong>Single source of truth</strong> = exactly one place in the code defines a rule; everything else refers to that place. If the rule changes, you change it once and every caller picks it up.</li>
+        <li><strong>Concrete payoff:</strong> if a later part asks for range filters (e.g. <code class="inline">where: { age: 25..30 }</code>), we change <code class="inline">matches?</code> alone — SELECT, UPDATE, DELETE all inherit the new semantics. Without centralization that's three copies to keep in sync, and three places a bug can hide.</li>
+        <li><strong>How to extend it for ranges:</strong> <code class="inline">where.all? { |col, cond| cond.is_a?(Range) ? cond.cover?(row[col]) : row[col] == cond }</code>. Same shape — different per-condition predicate.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <p style="margin:0"><strong>3. Transactions — Marshal deep-clone vs a real WAL</strong></p>
+      <p class="quote">"For transactions I'm using <code class="inline">Marshal.dump</code>/<code class="inline">load</code> to deep-clone state — slow but correct. A real DB does this with a journal or WAL; the spec doesn't care about performance."</p>
+      <ul class="tight">
+        <li><strong>WAL</strong> = write-ahead log. Before mutating state, the DB appends a record describing the change to a durable log on disk. If we crash mid-transaction, on restart we replay or undo the log to recover. Used by Postgres, SQLite, MySQL/InnoDB.</li>
+        <li><strong>Journal</strong> = the older name for the same idea (filesystem journals work this way too).</li>
+        <li><strong>Why Marshal is slow:</strong> it serializes the entire <code class="inline">@tables</code> object graph to a binary string and reads it back into new objects. For a 10 MB table that's 10 MB of work on every BEGIN, even if the transaction only touches one row. A WAL writes only the <em>delta</em> — usually tiny.</li>
+        <li><strong>Why Marshal is "trivially correct":</strong> works for any data shape, any mutation pattern. We don't have to track which rows were touched or worry about partial writes. Wrong tool at scale, right tool for an interview.</li>
+        <li><strong>If they push for something faster:</strong> <em>copy-on-write</em> (only deep-clone a row the first time the tx mutates it) or <em>undo logs</em> (record the inverse of each operation; on rollback, run the inverses in reverse order).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <p style="margin:0"><strong>4. Separating parsing from execution</strong></p>
+      <p class="quote">"I'm <em>not</em> parsing SQL syntax — the interface is a Ruby method API. If you want a string REPL I can add a thin parser, but I'd keep parsing separate from execution."</p>
+      <ul class="tight">
+        <li><strong>Why separation matters:</strong> the executor can be unit-tested without writing any strings; the parser can be tested without standing up a database. They fail in different ways, so they should be isolated.</li>
+        <li><strong>Swappability:</strong> one executor, multiple front-ends. Strings now, JSON over HTTP later, a Ruby DSL on top — all valid input forms that funnel into the same internal call.</li>
+        <li><strong>Validation locality:</strong> parse errors ("you wrote an unknown keyword") are a different class of bug from execution errors ("no such table"). Catching parse errors up front means execution code can assume well-formed input.</li>
+        <li><strong>How:</strong> the parser produces a plain Ruby object — a hash like <code class="inline">{ op: :insert, table: :users, values: [1, "Alice"] }</code>, or a Command struct. The executor pattern-matches on <code class="inline">op</code> and dispatches to the right method. This is the <em>command pattern</em> in a hat.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <p style="margin:0"><strong>5. Symbols vs strings for column names</strong></p>
+      <p class="quote">"Symbols for column names because they're identifiers; strings for user-supplied values."</p>
+      <ul class="tight">
+        <li><strong>Interning</strong> = the runtime keeps exactly one copy of a value in memory and reuses it. Ruby interns all symbols: <code class="inline">:name</code> written in two different files is the <em>same object</em> in memory (<code class="inline">==</code> and <code class="inline">equal?</code> both return true).</li>
+        <li><strong>Strings are not interned by default.</strong> Every <code class="inline">"name"</code> literal allocates a fresh object; two of them are equal by content but distinct objects. (Ruby 3+ can freeze string literals, which helps memory but not equality semantics.)</li>
+        <li><strong>Speed difference:</strong> symbol equality is pointer comparison — one CPU op. String equality compares bytes — proportional to length. For a hash with thousands of lookups per second, that adds up.</li>
+        <li><strong>Rule of thumb:</strong> symbols for things that look like code you wrote (method names, hash keys you control, column names, enum-like states). Strings for data from outside (user input, file contents, network responses).</li>
+        <li><strong>Why it matters here:</strong> <code class="inline">row[:name]</code> is a hash lookup against an interned key — fast and identity-checked. If columns were strings, we'd be allocating throwaway lookup keys and comparing bytes on every access.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ PAYMENT ALLOCATION ============ -->
+  <section class="tab" id="tab-payment" data-toc='[
+    ["Problem shape","shape"],
+    ["Domain model","model"],
+    ["Part 1: Apply a payment, simple waterfall","p1"],
+    ["Part 2: Multiple buckets","p2"],
+    ["Part 3: Partial payment → suspense","p3"],
+    ["Part 4: Different loan types","p4"],
+    ["Talking points","tp"]
+  ]'>
+    <h2>Payment Allocation <span class="sub">Valon-domain flavored</span></h2>
+
+    <h3 class="section" id="shape">Problem shape</h3>
+    <p>A loan has outstanding balances across several buckets. A payment comes in for some dollar amount. Allocate that amount across the buckets following a <strong>waterfall</strong> (a priority order). Later parts add: partial payments, different loan types with different waterfalls, fees, escrow.</p>
+
+    <h3 class="section" id="model">Domain model</h3>
+    <div class="card good">
+      <p style="margin:0"><strong>Always:</strong> use <code class="inline">BigDecimal</code> for money (require <code class="inline">"bigdecimal"</code>). Never <code class="inline">Float</code>. Float rounding in finance code is exactly the kind of thing they're watching for.</p>
+    </div>
+
+    <h3 class="section" id="p1">Part 1 — Apply a payment with a simple waterfall</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">require "bigdecimal"
+
+
+# A record of "this much of the payment went into this bucket."
+# Struct + keyword_init makes the call site self-documenting:
+#   Allocation.new(bucket: :interest, amount: BigDecimal("100"))
+# vs the positional form, which forces the reader to remember field order.
+Allocation = Struct.new(:bucket, :amount, keyword_init: true)
+
+
+class Loan
+  # The waterfall is the PRIORITY ORDER in which a payment is consumed.
+  # Standard rule for mortgages: pay interest before principal.
+  # Pulling it out as a constant means the policy is visible at the top
+  # of the class, and we can override it per loan type later.
+  # .freeze on the array prevents accidental mutation — without it, any
+  # caller could do `DEFAULT_WATERFALL.push(:something)` and break us
+  # globally.
+  DEFAULT_WATERFALL = [:interest, :principal].freeze
+
+  # id is set once at construction → expose only the reader.
+  # balances changes with every payment → expose a writer too.
+  # waterfall might be swapped (e.g. for testing) → also writable.
+  attr_reader   :id
+  attr_accessor :balances, :waterfall
+
+  def initialize(id:, balances:, waterfall: DEFAULT_WATERFALL)
+    @id = id
+    # balances is a hash from bucket symbol → BigDecimal owed in that bucket.
+    # e.g. { interest: BigDecimal("100"), principal: BigDecimal("900") }
+    @balances  = balances
+    @waterfall = waterfall
+  end
+
+  # Consume `amount` against the loan's balances, in waterfall order.
+  # Returns an array of Allocation records describing where the money went.
+  # Mutates @balances in place — afterwards, each bucket reflects what's still owed.
+  def apply_payment(amount)
+    remaining   = amount   # how much of the payment is still unspent
+    allocations = []       # the audit trail we'll return
+
+    # Walk buckets in waterfall order. Each bucket takes as much as it needs,
+    # capped by what's left of the payment.
+    @waterfall.each do |bucket|
+      # .fetch with a default gracefully handles buckets that aren't on this
+      # particular loan (e.g. a HELOC has no :escrow bucket). Returns
+      # BigDecimal("0") instead of nil, so the comparisons below don't blow up.
+      owed = @balances.fetch(bucket, BigDecimal("0"))
+
+      # Skip buckets that are already paid off; stop early when the payment
+      # is exhausted. `next` jumps to the next iteration with no else branch.
+      next if owed <= 0 || remaining <= 0
+
+      # PARTIAL-ALLOCATION TRICK: take the smaller of "what's owed" and
+      # "what's left to spend." If the payment can fully cover this bucket,
+      # `owed` wins; otherwise `remaining` wins and the bucket gets a partial.
+      applied = [owed, remaining].min
+
+      # Subtract from the bucket (what's still owed) and the payment (what's
+      # left to spend). Both are BigDecimal arithmetic — exact, no rounding.
+      @balances[bucket] = owed - applied
+      remaining -= applied
+
+      allocations << Allocation.new(bucket: bucket, amount: applied)
+    end
+
+    allocations
+  end
+end
+
+
+# ----- Test: pay $250 against $100 interest + $900 principal -----
+# Expected: $100 fully clears interest, the remaining $150 cuts into principal.
+loan = Loan.new(
+  id: "L1",
+  balances: { interest: BigDecimal("100"), principal: BigDecimal("900") }
+)
+allocs = loan.apply_payment(BigDecimal("250"))
+
+# Two allocations in waterfall order — interest first, principal second.
+raise unless allocs == [
+  Allocation.new(bucket: :interest,  amount: BigDecimal("100")),
+  Allocation.new(bucket: :principal, amount: BigDecimal("150"))
+]
+# Balances reflect the payment: interest cleared, principal reduced by $150.
+raise unless loan.balances[:interest]  == BigDecimal("0")
+raise unless loan.balances[:principal] == BigDecimal("750")
+puts "part 1 ok"
+</code></pre>
+    </div>
+    <div class="card accent">
+      <p style="margin:0"><strong>Talking points for Part 1</strong></p>
+      <ul class="tight">
+        <li><strong>BigDecimal, never Float, for money.</strong> Floats round silently — <code class="inline">0.1 + 0.2</code> isn't <code class="inline">0.3</code> in IEEE 754. BigDecimal stores exact decimal values, which is what a bank statement looks like.</li>
+        <li><strong><code class="inline">apply_payment</code> is an instance method on Loan</strong> — the loan knows how to update itself. <code class="inline">loan.apply_payment(amount)</code> reads better than <code class="inline">Allocator.apply(loan, amount)</code>. <em>Tell, Don't Ask.</em></li>
+        <li><strong>The waterfall is data, not branching code.</strong> If we wrote four <code class="inline">if</code>/<code class="inline">elsif</code> branches instead, adding a fifth bucket means editing the method body. As a list, adding a bucket is a one-line constant change — and Part 2 demonstrates that directly.</li>
+        <li><strong>The <code class="inline">[owed, remaining].min</code> trick</strong> unifies the "full pay" and "partial pay" cases into one expression. The two cases used to be two branches; the <code class="inline">min</code> collapses them.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="p2">Part 2 — Add more buckets (late fees, escrow)</h3>
+    <p>Only the default waterfall changes. The <code class="inline">apply_payment</code> method stays the same — that's the win from modeling it as a list of buckets.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class Loan
+  # Standard mortgage waterfall:
+  #   late_fee   — borrower can't dodge late fees by sending a partial
+  #   interest   — accrued interest cleared before principal (the lender's rule)
+  #   principal  — pay down the actual loan balance
+  #   escrow     — money set aside for taxes/insurance; lowest priority
+  #                because a missed escrow is less urgent than missed interest
+  DEFAULT_WATERFALL = [:late_fee, :interest, :principal, :escrow].freeze
+
+  # (initialize and apply_payment unchanged from Part 1 —
+  #  this constant swap is the ENTIRE diff for Part 2)
+end
+
+
+# ----- Test: pay the full $1,000 amount, expect every bucket cleared -----
+loan = Loan.new(
+  id: "L2",
+  balances: {
+    late_fee:  BigDecimal("25"),
+    interest:  BigDecimal("100"),
+    principal: BigDecimal("800"),
+    escrow:    BigDecimal("75")
+  }
+)
+# Total owed = $1,000. Payment = $1,000. Should clear everything exactly.
+allocs = loan.apply_payment(BigDecimal("1000"))
+
+# Total allocated equals the full payment — nothing left over.
+# `sum(BigDecimal("0"), &:amount)` is shorthand for `allocs.sum { |a| a.amount }`
+# with a BigDecimal seed. The seed matters: without it, Array#sum starts at
+# Integer 0, and mixing Integer + BigDecimal in the reduce gets weird.
+# `&:amount` is the symbol-to-proc shortcut for `{ |a| a.amount }`.
+raise unless allocs.sum(BigDecimal("0"), &:amount) == BigDecimal("1000")
+
+# Every bucket fully paid off — all balances are zero.
+raise unless loan.balances.values.all? { |v| v == 0 }
+puts "part 2 ok"
+</code></pre>
+    </div>
+    <div class="card accent">
+      <p style="margin:0"><strong>Talking points for Part 2</strong></p>
+      <ul class="tight">
+        <li><strong>"Only the constant changed; the method didn't."</strong> Say this out loud right after you make the edit. It's the dividend of modeling the waterfall as data, and naming it earns interview points.</li>
+        <li><strong>The order of buckets IS the business policy.</strong> Reordering changes the economics for both borrower and lender. Late-fee-first is a borrower-unfriendly rule that prevents the borrower from "starving" the late fee bucket; interest-before-principal is the standard mortgage convention. If you're asked "why this order?" — that's the answer.</li>
+        <li><strong>Symbols for bucket names</strong> for the same reason we used symbols for column names in the SQL DB tab — they're identifiers we control, not user data, and Ruby interns them so comparison is pointer equality.</li>
+        <li><strong>The Array#sum seed argument</strong> is a subtle Ruby gotcha worth knowing: <code class="inline">[BigDecimal("1")].sum</code> is fine because Array#sum reduces with <code class="inline">+</code>, but the initial accumulator is Integer 0 by default. Passing <code class="inline">BigDecimal("0")</code> as the seed keeps the accumulator type consistent.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="p3">Part 3 — Partial payments → suspense account</h3>
+    <p>If the payment is less than the full required amount, <strong>don't allocate anything</strong> — hold it in a suspense account until enough has accumulated to cover the required payment. This is real mortgage servicing behavior.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># apply_payment used to return just an array of Allocations.
+# Now it needs to communicate three possible outcomes: what was allocated,
+# what got held in suspense, and any overpayment. A Struct with named fields
+# is self-documenting at the call site — much better than a 3-tuple where
+# the reader has to remember position.
+PaymentResult = Struct.new(:allocations, :held_in_suspense, :overpayment, keyword_init: true)
+
+
+class Loan
+  DEFAULT_WATERFALL = [:late_fee, :interest, :principal, :escrow].freeze
+
+  attr_reader   :id
+  attr_accessor :balances, :waterfall, :suspense
+
+  def initialize(id:, balances:, waterfall: DEFAULT_WATERFALL)
+    @id        = id
+    @balances  = balances
+    @waterfall = waterfall
+    # Suspense is money the loan has RECEIVED but not yet APPLIED. It sits
+    # in a holding account because the borrower didn't send enough to cover
+    # a full required payment. Starts at zero; grows when partials come in;
+    # resets to zero the moment a payment finally clears the threshold.
+    @suspense = BigDecimal("0")
+  end
+
+  # Total dollars currently owed across every bucket.
+  # Used to decide whether an incoming payment is "enough" to apply or
+  # whether we should hold it in suspense.
+  def total_owed
+    @balances.values.sum(BigDecimal("0"))
+  end
+
+  def apply_payment(amount)
+    # Combine any previously-held suspense with the new payment.
+    # Example: borrower previously sent $200 (held in suspense) and now sends
+    # $300 — together we have $500 to consider against `total_owed`.
+    funds = @suspense + amount
+
+    # ---- PARTIAL-PAYMENT RULE ----
+    # If combined funds STILL don't cover the full required payment, don't
+    # allocate ANYTHING. Park it in suspense until enough has accumulated.
+    #
+    # Why hold rather than apply a partial?
+    # Because applying a partial would make the loan look partially current
+    # when it isn't. Downstream systems that ask "is this loan delinquent?"
+    # would get a misleading answer. Holding preserves the honest state.
+    if funds < total_owed
+      @suspense = funds
+      return PaymentResult.new(
+        allocations:      [],
+        held_in_suspense: funds,
+        overpayment:      BigDecimal("0")
+      )
+    end
+
+    # ---- ENOUGH FUNDS — RELEASE SUSPENSE AND APPLY ----
+    # Reset suspense to zero now that we're about to flush it through the
+    # waterfall. After this point the code is the same shape as Part 1/2,
+    # except `remaining` starts at `funds` (suspense + payment) instead of
+    # just `amount`.
+    @suspense = BigDecimal("0")
+
+    allocations = []
+    remaining   = funds
+
+    @waterfall.each do |bucket|
+      owed = @balances.fetch(bucket, BigDecimal("0"))
+      next if owed <= 0 || remaining <= 0
+      applied = [owed, remaining].min
+      @balances[bucket] = owed - applied
+      remaining -= applied
+      allocations << Allocation.new(bucket: bucket, amount: applied)
+    end
+
+    # Whatever's left in `remaining` after every bucket is paid is an
+    # OVERPAYMENT — the borrower sent more than was owed. Real systems put
+    # this somewhere (a credit on the next bill, a refund, or applied to
+    # additional principal). We just surface it in the result and let the
+    # caller decide.
+    PaymentResult.new(
+      allocations:      allocations,
+      held_in_suspense: BigDecimal("0"),
+      overpayment:      remaining
+    )
+  end
+end
+
+
+# ----- Test: two partial payments combine to clear the loan -----
+loan = Loan.new(
+  id: "L3",
+  balances: { interest: BigDecimal("100"), principal: BigDecimal("400") }
+)
+# Total owed = $500.
+
+# First payment: $200. Not enough to cover $500 — held in suspense.
+# Nothing gets allocated; the balances are unchanged.
+r1 = loan.apply_payment(BigDecimal("200"))
+raise unless r1.allocations.empty?
+raise unless r1.held_in_suspense == BigDecimal("200")
+
+# Second payment: $300. Combined with $200 already in suspense = $500.
+# Now we hit the threshold — suspense releases and $500 flows through
+# the waterfall.
+r2 = loan.apply_payment(BigDecimal("300"))
+raise unless r2.allocations.sum(BigDecimal("0"), &:amount) == BigDecimal("500")
+raise unless loan.suspense == BigDecimal("0")
+raise unless loan.balances.values.all? { |v| v == 0 }
+puts "part 3 ok"
+</code></pre>
+    </div>
+    <div class="card accent">
+      <p style="margin:0"><strong>Talking points for Part 3</strong></p>
+      <ul class="tight">
+        <li><strong>Suspense is a real mortgage-servicing concept</strong>, not just a design choice. Valon's own customer help pages describe it: a partial payment "isn't enough to satisfy the monthly amount due, so it's held in a suspense account until enough has accumulated." Saying "this matches how Valon explains payments on their help center" is a strong move that signals you did domain homework.</li>
+        <li><strong>Why hold instead of apply:</strong> if we applied a $200 partial across buckets, the loan would look 40% paid even though the borrower still owes a full month. Downstream "is this loan delinquent?" systems would give a misleading answer. Holding keeps the delinquency state honest, which is what compliance and collections workflows depend on.</li>
+        <li><strong>Why <code class="inline">PaymentResult</code> instead of a tuple:</strong> apply_payment now has three possible outcomes to communicate (allocations, suspense, overpayment). Named fields read better at the call site (<code class="inline">result.held_in_suspense</code>) and don't break callers if a fourth field is added later. With a positional tuple, every caller has to flip back to the function definition.</li>
+        <li><strong>Overpayment vs. prepayment:</strong> mention you'd typically route overpayment to additional principal (an "extra principal payment"), but you're surfacing it in the result instead so the caller can decide. Shows you've thought about the next layer up.</li>
+        <li><strong>Why <code class="inline">total_owed</code> is its own method:</strong> it's used twice (in the if-check and conceptually in the test), and naming the concept ("total currently owed") makes the code readable. If asked "what if total_owed got expensive?" — you'd memoize it, but at this scale just computing it each time is fine.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="p4">Part 4 — Different loan types (HELOC etc.)</h3>
+    <p>HELOC follows a different waterfall (interest → late fees → principal), and applies partials immediately (no suspense hold). Different loan type = different <code class="inline">Rules</code> object. <strong>The core <code class="inline">apply_payment</code> stays the same.</strong></p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># A LoanRules object captures the policy bits that VARY between loan types.
+# It's a Struct because rules are DATA, not behavior: we don't need
+# subclasses with overridden methods, we just need a record that holds
+# the configs.
+#
+# The `do ... end` block at the end of Struct.new lets us add methods to
+# the resulting class. alias_method gives us a `.hold_partials?` predicate
+# — Ruby's convention is that boolean methods end in `?`.
+# Without the alias, callers would write `rules.hold_partials` which doesn't
+# read as a boolean question.
+LoanRules = Struct.new(:waterfall, :hold_partials, keyword_init: true) do
+  alias_method :hold_partials?, :hold_partials
+end
+
+# Standard mortgage: full four-bucket waterfall, holds partials in suspense.
+STANDARD_RULES = LoanRules.new(
+  waterfall:     [:late_fee, :interest, :principal, :escrow].freeze,
+  hold_partials: true
+)
+
+# HELOC (Home Equity Line Of Credit) servicing rules differ:
+#   - The waterfall is shorter (no separate escrow bucket).
+#   - Interest goes first, even before late fees.
+#   - Partials are applied IMMEDIATELY — the lender wants to collect
+#     whatever the borrower sends right away, not park it in suspense.
+HELOC_RULES = LoanRules.new(
+  waterfall:     [:interest, :late_fee, :principal].freeze,
+  hold_partials: false
+)
+
+
+class Loan
+  # rules is set at construction and shouldn't change — reader only.
+  attr_reader   :id, :rules
+  attr_accessor :balances, :suspense
+
+  def initialize(id:, rules:, balances:)
+    @id       = id
+    @rules    = rules            # the LoanRules object that controls behavior
+    @balances = balances
+    @suspense = BigDecimal("0")
+  end
+
+  def total_owed
+    @balances.values.sum(BigDecimal("0"))
+  end
+
+  # Same shape as Part 3, but the policy bits read from @rules instead of
+  # being hard-coded. The allocation engine itself is UNCHANGED.
+  def apply_payment(amount)
+    funds = @suspense + amount
+
+    # The ONLY behavior change between loan types: do we hold partials?
+    # A standard mortgage says yes; a HELOC says no.
+    if @rules.hold_partials? && funds < total_owed
+      @suspense = funds
+      return PaymentResult.new(
+        allocations:      [],
+        held_in_suspense: funds,
+        overpayment:      BigDecimal("0")
+      )
+    end
+
+    @suspense = BigDecimal("0")
+    allocations = []
+    remaining   = funds
+
+    # The OTHER policy bit: which buckets, in what order. Read from rules.
+    # The loop body itself is identical to every prior part.
+    @rules.waterfall.each do |bucket|
+      owed = @balances.fetch(bucket, BigDecimal("0"))
+      next if owed <= 0 || remaining <= 0
+      applied = [owed, remaining].min
+      @balances[bucket] = owed - applied
+      remaining -= applied
+      allocations << Allocation.new(bucket: bucket, amount: applied)
+    end
+
+    PaymentResult.new(
+      allocations:      allocations,
+      held_in_suspense: BigDecimal("0"),
+      overpayment:      remaining
+    )
+  end
+end
+
+
+# ----- Test: HELOC accepts a partial and applies it immediately -----
+heloc = Loan.new(
+  id: "H1",
+  rules: HELOC_RULES,
+  balances: { interest: BigDecimal("50"), principal: BigDecimal("450") }
+)
+# Total owed = $500. Send only $100 (clearly a partial).
+# Because HELOC_RULES.hold_partials? is false, we DON'T suspense it —
+# we run it through the waterfall right away.
+r = heloc.apply_payment(BigDecimal("100"))
+
+# All $100 of the payment flowed through allocations (nothing held).
+raise unless r.allocations.sum(BigDecimal("0"), &:amount) == BigDecimal("100")
+# Interest ($50) was first in the HELOC waterfall and got fully cleared.
+# The remaining $50 went to principal ($450 → $400).
+raise unless heloc.balances[:interest]  == BigDecimal("0")
+raise unless heloc.balances[:principal] == BigDecimal("400")
+puts "part 4 ok"
+</code></pre>
+    </div>
+    <div class="card accent">
+      <p style="margin:0"><strong>Talking points for Part 4</strong></p>
+      <ul class="tight">
+        <li><strong>"The engine didn't change."</strong> All four parts share the exact same waterfall loop. New loan types are new <code class="inline">Rules</code> objects, not new branches inside <code class="inline">apply_payment</code>. This is the modular-rules approach Valon's engineering blog calls out — name-drop it: <em>"this is the same composable-rules pattern your blog describes."</em></li>
+        <li><strong>Why duck-typed Rules instead of a class hierarchy:</strong> any object that responds to <code class="inline">.waterfall</code> and <code class="inline">.hold_partials?</code> works. Inheritance would have locked us into a particular shape and made testing harder (you'd need test doubles for the abstract base class). With duck typing, you can pass a plain Struct, a custom class, or even a stub in tests — whatever has the right shape.</li>
+        <li><strong>The <code class="inline">?</code> convention</strong> in Ruby: boolean methods conventionally end in <code class="inline">?</code> (<code class="inline">empty?</code>, <code class="inline">nil?</code>, <code class="inline">include?</code>). The <code class="inline">alias_method :hold_partials?, :hold_partials</code> trick gets us that without writing a second method body. The <code class="inline">do</code> block on <code class="inline">Struct.new</code> is the place to add methods to the resulting class.</li>
+        <li><strong>What you'd add next:</strong> <code class="inline">ARM_RULES</code> for adjustable-rate (waterfall might depend on the current rate period), <code class="inline">REVERSE_MORTGAGE_RULES</code> (no monthly payment at all), <code class="inline">FHA_RULES</code> (extra mortgage-insurance bucket). Each is one new constant. The engine doesn't care.</li>
+        <li><strong>If they push on extensibility:</strong> the limit of this design is when rules need to express things that aren't just "a list of buckets and a boolean." E.g. "for FHA loans, route MIP partials to escrow even if late fees are owed." That's a per-bucket conditional, not a per-loan one — you'd grow <code class="inline">LoanRules</code> to hold a small set of named predicates, or extract bucket-level allocation strategies. <em>Worth flagging as the next refactor without doing it preemptively.</em></li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="tp">Talking points</h3>
+    <ul class="tight">
+      <li>"I'm using <code class="inline">BigDecimal</code> everywhere — never <code class="inline">Float</code> for money. Float rounding errors compound silently."</li>
+      <li>"The waterfall is data, not code — adding a new loan type is a new <code class="inline">Rules</code> object, not a new branch in <code class="inline">apply_payment</code>. This matches Valon's modular-loan-rules approach." <em>(Says you've read their engineering blog without making it weird.)</em></li>
+      <li>"Suspense is a real-world mortgage concept — partial payments aren't applied because the loan would otherwise look 'cured' when it isn't. Holding in suspense preserves the delinquency state."</li>
+      <li>"<code class="inline">PaymentResult</code> is a <code class="inline">Struct</code> with named fields rather than a raw hash, because callers shouldn't have to remember keys or risk typos."</li>
+      <li>"<code class="inline">apply_payment</code> is an instance method on <code class="inline">Loan</code> — Tell, Don't Ask. The loan knows how to apply a payment to itself."</li>
+      <li>"I'm not handling currency conversion, posting dates, or backdating — those are real concerns but out of scope for this hour."</li>
+    </ul>
+  </section>
+
+  <!-- ============ OO PATTERN ============ -->
+  <section class="tab" id="tab-oo" data-toc='[
+    ["Problem shape","shape"],
+    ["Part 1: Basic logger + handler","p1"],
+    ["Part 2: Multiple handlers","p2"],
+    ["Part 3: Filtering / redaction (decorator)","p3"],
+    ["Part 4: Batched / fan-out handlers","p4"],
+    ["Talking points","tp"]
+  ]'>
+    <h2>OO / Pluggable Components <span class="sub">Rippling-style; common shape across companies</span></h2>
+
+    <h3 class="section" id="shape">Problem shape</h3>
+    <p>Build a system with a core orchestrator (<code class="inline">Logger</code>) and pluggable workers (<code class="inline">Handler</code>s). Later parts add filter/transform layers and combinations. The point is <strong>composition over inheritance</strong> — small handlers that wrap other handlers, like middleware.</p>
+
+    <h3 class="section" id="p1">Part 1 — Basic logger + console handler</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">LogEvent = Struct.new(:level, :message, keyword_init: true)
+
+
+# Base "interface" — duck-typed; subclasses must implement #handle.
+class Handler
+  def handle(event)
+    raise NotImplementedError, "#{self.class} must implement #handle"
+  end
+end
+
+
+class ConsoleHandler < Handler
+  attr_reader :received
+
+  def initialize
+    @received = []           # captured for tests
+  end
+
+  def handle(event)
+    @received << event
+    puts "[#{event.level}] #{event.message}"
+  end
+end
+
+
+class Logger
+  def initialize
+    @handlers = []
+  end
+
+  def add(handler)
+    @handlers << handler
+    self                      # chainable
+  end
+
+  def log(level, message)
+    event = LogEvent.new(level: level, message: message)
+    @handlers.each { |h| h.handle(event) }
+  end
+end
+
+
+# Test
+console = ConsoleHandler.new
+log = Logger.new.add(console)
+log.log("INFO", "hello")
+raise unless console.received == [LogEvent.new(level: "INFO", message: "hello")]
+puts "part 1 ok"
+</code></pre>
+    </div>
+
+    <h3 class="section" id="p2">Part 2 — Multiple handlers (in-memory, file)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class MemoryHandler < Handler
+  # Useful for tests and for buffering before flushing somewhere else.
+  attr_reader :events
+
+  def initialize
+    @events = []
+  end
+
+  def handle(event)
+    @events << event
+  end
+end
+
+
+class FileHandler < Handler
+  def initialize(path)
+    @path = path
+  end
+
+  def handle(event)
+    File.open(@path, "a") { |f| f.puts "[#{event.level}] #{event.message}" }
+  end
+end
+
+
+# Test — same event goes to two places.
+mem     = MemoryHandler.new
+console = ConsoleHandler.new
+log = Logger.new.add(mem).add(console)
+log.log("WARN", "disk space low")
+raise unless mem.events == console.received
+puts "part 2 ok"
+</code></pre>
+    </div>
+
+    <h3 class="section" id="p3">Part 3 — Filter / transform layers (decorator pattern)</h3>
+    <p>The key move: a handler that <strong>wraps another handler</strong>. This is composition, not inheritance — you can stack filters and transforms in any order.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">LEVEL_RANK = { "DEBUG" => 0, "INFO" => 1, "WARN" => 2, "ERROR" => 3 }.freeze
+
+
+class LevelFilter < Handler
+  # Forwards events at or above min_level to the wrapped handler.
+  def initialize(inner, min_level:)
+    @inner = inner
+    @min   = LEVEL_RANK.fetch(min_level)
+  end
+
+  def handle(event)
+    @inner.handle(event) if LEVEL_RANK.fetch(event.level) >= @min
+  end
+end
+
+
+class Redactor < Handler
+  # Transform: replace each pattern in the message with [REDACTED].
+  def initialize(inner, patterns:)
+    @inner    = inner
+    @patterns = patterns
+  end
+
+  def handle(event)
+    msg = event.message
+    @patterns.each { |p| msg = msg.gsub(p, "[REDACTED]") }
+    @inner.handle(LogEvent.new(level: event.level, message: msg))
+  end
+end
+
+
+# Test — stack the layers. INFO+ goes to memory, with SSN redacted.
+mem = MemoryHandler.new
+pipeline = LevelFilter.new(
+  Redactor.new(mem, patterns: ["123-45-6789"]),
+  min_level: "INFO"
+)
+log = Logger.new.add(pipeline)
+
+log.log("DEBUG", "ignored")                          # filtered out
+log.log("INFO",  "user ssn=123-45-6789 logged in")   # redacted, kept
+raise unless mem.events.length == 1
+raise unless mem.events.first.message == "user ssn=[REDACTED] logged in"
+puts "part 3 ok"
+</code></pre>
+    </div>
+
+    <h3 class="section" id="p4">Part 4 — Batched / fan-out handlers</h3>
+    <p>If they ask for batching: a handler that buffers and flushes every N events. If they ask for fan-out: a handler that holds a list of inner handlers.</p>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class BatchHandler < Handler
+  # Buffer events; flush to inner in batches of size N.
+  def initialize(inner, batch_size:)
+    @inner      = inner
+    @batch_size = batch_size
+    @buffer     = []
+  end
+
+  def handle(event)
+    @buffer << event
+    flush if @buffer.length >= @batch_size
+  end
+
+  def flush
+    @buffer.each { |event| @inner.handle(event) }
+    @buffer.clear
+  end
+end
+
+
+class FanOut < Handler
+  # Send every event to all inner handlers.
+  def initialize(*inners)
+    @inners = inners
+  end
+
+  def handle(event)
+    @inners.each { |inner| inner.handle(event) }
+  end
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="tp">Talking points</h3>
+    <ul class="tight">
+      <li>"<code class="inline">Handler</code> is the only abstraction — filters, transforms, batchers, and fan-outs are all just handlers that wrap another handler. That's composition over inheritance."</li>
+      <li>"The order matters: <code class="inline">LevelFilter.new(Redactor.new(mem))</code> redacts before filtering; <code class="inline">Redactor.new(LevelFilter.new(mem))</code> filters before redacting. I'd make this explicit in real code with a builder."</li>
+      <li>"<code class="inline">LogEvent</code> is a <code class="inline">Struct</code>; if I wanted enforced immutability I'd use <code class="inline">Data.define</code> on Ruby 3.2+."</li>
+      <li>"Ruby is duck-typed so I don't strictly need a <code class="inline">Handler</code> base class — anything that responds to <code class="inline">#handle</code> works. I'm including one to make the contract explicit and to fail loudly if a subclass forgets to implement it."</li>
+      <li>"If we needed async fan-out I'd put a queue in front of the workers — but the spec is sync so I'm not building that."</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUICK SNIPPETS ============ -->
+  <section class="tab" id="tab-snippets" data-toc='[
+    ["Ruby skeleton","skel"],
+    ["Value objects: Struct / Data","val"],
+    ["BigDecimal money","dec"],
+    ["Inline asserts","assert"],
+    ["String parser","parser"],
+    ["Hash dispatch table","strat"],
+    ["Useful stdlib / idioms","stdlib"]
+  ]'>
+    <h2>Quick Snippets <span class="sub">copy-paste muscle memory</span></h2>
+
+    <h3 class="section" id="skel">Ruby skeleton (start every problem like this)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">class Thing
+  attr_reader :name
+  attr_accessor :items
+
+  def initialize(name, items: [])
+    @name  = name
+    @items = items
+  end
+end
+
+
+def do_something(thing, arg)
+  thing.items.length + arg
+end
+
+
+if __FILE__ == $PROGRAM_NAME
+  t = Thing.new("test")
+  raise unless do_something(t, 3) == 3
+  puts "ok"
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="val">Value objects (Struct / Data)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># Struct — universal, mutable record with optional kwargs.
+Cart = Struct.new(:items, keyword_init: true)
+c = Cart.new(items: [])
+c.items << "book"
+
+# Struct can also hold methods.
+LoanRules = Struct.new(:waterfall, :hold_partials, keyword_init: true) do
+  alias_method :hold_partials?, :hold_partials
+end
+
+# Data.define — Ruby 3.2+. Frozen, immutable value object.
+Money = Data.define(:amount, :currency)
+m = Money.new(amount: 100, currency: "USD")
+# m.amount = 200       # NoMethodError — frozen
+
+# Validation in plain-class initialize.
+class Loan
+  attr_reader :rate
+
+  def initialize(rate:)
+    raise ArgumentError, "negative rate: #{rate}" if rate < 0
+    @rate = rate
+  end
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="dec">BigDecimal money (never use Float!)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">require "bigdecimal"
+require "bigdecimal/util"               # for "100.50".to_d shortcut
+
+a = BigDecimal("100.50")
+b = BigDecimal("0.30")
+total = a + b                           # 100.80, exact
+
+# Round to cents when displaying/storing.
+total.round(2, BigDecimal::ROUND_HALF_UP)
+
+# DON'T:
+0.1 + 0.2 == 0.3                        # false!  Use BigDecimal.
+</code></pre>
+    </div>
+
+    <h3 class="section" id="assert">Inline assert pattern (run after every part)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">if __FILE__ == $PROGRAM_NAME
+  # Part 1
+  db = Database.new
+  db.create_table(:users, [:id, :name])
+  db.table(:users).insert([1, "Alice"])
+  raise unless db.table(:users).select == [{ id: 1, name: "Alice" }]
+  puts "part 1 ok"
+
+  # Part 2
+  db.table(:users).insert([2, "Bob"])
+  bob = db.table(:users).select(where: { name: "Bob" })
+  raise unless bob == [{ id: 2, name: "Bob" }]
+  puts "part 2 ok"
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="parser">String-command parser (when input is text)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby">HANDLERS = {
+  "ADD" => ->(state, k, v) { state.add(k, coerce(v)) },
+  "GET" => ->(state, k)    { state.get(k) },
+  "DEL" => ->(state, k)    { state.delete(k) }
+}.freeze
+
+
+def execute(state, command)
+  op, *args = command.split
+  handler = HANDLERS[op.upcase] or raise ArgumentError, "unknown command: #{op}"
+  handler.call(state, *args)
+end
+
+
+def coerce(token)
+  return Integer(token) if token.match?(/\A-?\d+\z/)
+  return Float(token)   if token.match?(/\A-?\d+\.\d+\z/)
+  token
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="strat">Hash dispatch table (instead of long <code class="inline">case</code> / <code class="inline">if</code>/<code class="inline">elsif</code>)</h3>
+    <div class="code-wrap">
+      <button class="copy-btn">Copy</button>
+<pre><code class="language-ruby"># BAD — grows linearly with each new case.
+def discount(category, price)
+  case category
+  when "book"        then price * 0.9
+  when "food"        then price * 0.95
+  when "electronics" then price * 0.85
+  else                    price
+  end
+end
+
+
+# GOOD — data-driven, easy to extend.
+DISCOUNTS = { "book" => 0.9, "food" => 0.95, "electronics" => 0.85 }.freeze
+
+def discount(category, price)
+  price * DISCOUNTS.fetch(category, 1.0)
+end
+</code></pre>
+    </div>
+
+    <h3 class="section" id="stdlib">Useful stdlib / idioms</h3>
+    <ul class="tight">
+      <li><code class="inline">require "bigdecimal"</code> — money</li>
+      <li><code class="inline">require "bigdecimal/util"</code> — <code class="inline">"100".to_d</code> shortcut</li>
+      <li><code class="inline">require "set"</code> — <code class="inline">Set.new</code> (auto-loaded on Ruby 3.2+)</li>
+      <li><code class="inline">require "date"</code> — <code class="inline">Date</code>, <code class="inline">DateTime</code> (useful for mortgage problems with posting dates)</li>
+      <li><code class="inline">Struct.new(...)</code> — mutable records with named fields</li>
+      <li><code class="inline">Data.define(...)</code> — frozen value objects (Ruby 3.2+)</li>
+      <li><code class="inline">Marshal.load(Marshal.dump(obj))</code> — deep clone for transaction snapshots</li>
+      <li><code class="inline">obj.dup</code> / <code class="inline">obj.clone</code> — shallow copy</li>
+      <li><code class="inline">include Comparable; def &lt;=&gt;(other) ... end</code> — get <code class="inline">==</code>, <code class="inline">&lt;</code>, <code class="inline">.sort</code> for free</li>
+      <li><code class="inline">arr.sum(BigDecimal("0"), &amp;:amount)</code> — sum with initial value + block</li>
+      <li><code class="inline">hash.fetch(key, default)</code> — safer than <code class="inline">hash[key] || default</code> (which fails on falsy values)</li>
+      <li><code class="inline">arr.each_with_object({}) { |x, h| h[x] = ... }</code> — build a hash via reduce</li>
+    </ul>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script>
+  // Tab switching + TOC update
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.textContent = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelectorAll("aside li a").forEach(x => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach(s => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) buildTOC(section);
+    window.scrollTo({ top: 0 });
+    // Persist
+    try { localStorage.setItem("valon-tab", tabId); } catch (e) {}
+  }
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  // Restore last-viewed tab
+  let initial = "cheat";
+  try {
+    const saved = localStorage.getItem("valon-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  // Copy buttons
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 1200);
+      } catch (e) {
+        btn.textContent = "Failed";
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1615,6 +1615,55 @@ a:hover {
   color: rgba(255,255,255,0.88);
   text-shadow: 0 1px 6px rgba(0,0,0,0.6);
 }
+.wordblok-appstore-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  margin-top: 16px;
+  padding: 8px 16px 8px 12px;
+  background: #000;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  pointer-events: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.wordblok-appstore-badge:hover,
+.wordblok-appstore-badge:focus {
+  color: #fff;
+  text-decoration: none;
+  background: #1a1a1a;
+  transform: translateY(-1px);
+}
+.wordblok-appstore-badge:focus-visible {
+  outline: 2px solid var(--wordblok-yellow);
+  outline-offset: 2px;
+}
+.wordblok-appstore-badge-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+.wordblok-appstore-badge-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-align: left;
+}
+.wordblok-appstore-badge-pretitle {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+}
+.wordblok-appstore-badge-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-top: 1px;
+}
 
 /* Generic section panel */
 .wordblok-section {

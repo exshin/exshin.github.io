@@ -66,6 +66,29 @@ function WordBlokHero({ onOpen }) {
       <div className="wordblok-hero-overlay">
         <div className="wordblok-hero-quote">Place tiles. Make words. Score big.</div>
         <div className="wordblok-hero-sub">Polyomino puzzling meets Scrabble scoring — built for iOS.</div>
+        <a
+          className="wordblok-appstore-badge"
+          href="https://apps.apple.com/us/app/wordbloks/id6771600251"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Download WordBloks on the App Store"
+        >
+          <svg
+            className="wordblok-appstore-badge-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              fill="currentColor"
+              d="M17.05 12.04c-.02-2.05 1.67-3.04 1.75-3.09-.96-1.4-2.45-1.59-2.98-1.61-1.26-.13-2.47.74-3.11.74-.65 0-1.64-.72-2.7-.7-1.39.02-2.67.8-3.39 2.04-1.45 2.51-.37 6.22 1.04 8.26.69.99 1.51 2.11 2.58 2.07 1.04-.04 1.43-.67 2.69-.67 1.25 0 1.6.67 2.69.64 1.11-.02 1.81-1.01 2.49-2.01.78-1.16 1.11-2.28 1.13-2.34-.03-.01-2.16-.83-2.18-3.29Zm-2.07-6.05c.57-.69.95-1.66.84-2.62-.83.03-1.83.55-2.42 1.24-.52.61-.98 1.59-.86 2.53.92.07 1.87-.47 2.44-1.15Z"
+            />
+          </svg>
+          <span className="wordblok-appstore-badge-text">
+            <span className="wordblok-appstore-badge-pretitle">Download on the</span>
+            <span className="wordblok-appstore-badge-title">App Store</span>
+          </span>
+        </a>
       </div>
     </div>
   )

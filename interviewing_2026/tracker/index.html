@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Tracker · 2026</title>
+<style>
+  :root {
+    --bg: #f6f8f7;
+    --panel: #ffffff;
+    --panel-2: #eef3f0;
+    --border: #d8e1dd;
+    --text: #1a2421;
+    --muted: #6b7470;
+    --accent: #0e7a4f;
+    --accent-2: #1cab6b;
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.5;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--accent); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  header .spacer { flex: 1; }
+  .btn {
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.12s ease;
+  }
+  .btn:hover { background: #e3ebe6; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { background: #0c6843; }
+  .btn.ghost { background: transparent; }
+  main { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .stat { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; box-shadow: var(--shadow); }
+  .stat .num { font-size: 24px; font-weight: 700; color: var(--accent); line-height: 1.1; }
+  .stat .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-top: 2px; }
+  .stat.bad .num { color: var(--bad); }
+  .stat.warn .num { color: var(--warn); }
+  .stat.good .num { color: var(--good); }
+
+  /* Funnel */
+  .funnel { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .funnel .seg { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; box-shadow: var(--shadow); cursor: pointer; transition: all 0.12s; }
+  .funnel .seg:hover { border-color: var(--accent); }
+  .funnel .seg.active { border-color: var(--accent); background: var(--panel-2); }
+  .funnel .seg .c { font-size: 18px; font-weight: 700; }
+  .funnel .seg .n { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Controls */
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .controls input[type="search"], .controls select {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    padding: 7px 10px; border-radius: 6px; font-size: 13px;
+  }
+  .controls input[type="search"] { min-width: 220px; }
+  .controls .count { color: var(--muted); font-size: 12px; margin-left: auto; }
+
+  /* Table */
+  .table-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; padding: 9px 10px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--muted); font-weight: 600;
+    border-bottom: 1px solid var(--border); background: var(--panel-2);
+    cursor: pointer; user-select: none; white-space: nowrap; position: sticky; top: var(--header-h, 56px); z-index: 5;
+  }
+  thead th:hover { color: var(--text); }
+  thead th .arrow { font-size: 9px; opacity: 0.5; }
+  tbody td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f9fbfa; }
+  tbody tr.rejected { opacity: 0.55; }
+  tbody tr.rejected:hover { opacity: 0.8; }
+  tbody tr.stale td.company::after { content: "stale"; font-size: 9px; color: var(--warn); background: #fef3e2; border: 1px solid #f5d9a8; padding: 0 5px; border-radius: 8px; margin-left: 6px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em; }
+  td.company { font-weight: 600; white-space: nowrap; }
+  td.company a { color: var(--text); text-decoration: none; }
+  td.company a:hover { color: var(--accent); text-decoration: underline; }
+  td.company .nolink { color: var(--text); }
+  td.role { color: var(--text); max-width: 200px; }
+  td.role .ind { display: block; font-size: 11px; color: var(--muted); }
+  td.notes { max-width: 240px; color: var(--muted); font-size: 12px; }
+  td.notes .clip { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  td.actions { white-space: nowrap; text-align: right; }
+  td.actions button { background: none; border: none; cursor: pointer; font-size: 13px; padding: 2px 5px; border-radius: 4px; color: var(--muted); }
+  td.actions button:hover { background: var(--panel-2); color: var(--text); }
+
+  select.inline { background: transparent; border: 1px solid transparent; border-radius: 5px; padding: 3px 5px; font-size: 12px; font-weight: 600; cursor: pointer; -webkit-appearance: none; appearance: none; }
+  select.inline:hover { border-color: var(--border); background: var(--panel); }
+
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .meta-row { font-size: 11px; color: var(--muted); }
+
+  /* Modal */
+  .overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.35); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .overlay.open { display: flex; }
+  .modal { background: var(--panel); border-radius: 12px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+  .modal h2 { margin: 0; padding: 18px 22px; font-size: 16px; border-bottom: 1px solid var(--border); }
+  .modal .body { padding: 18px 22px; }
+  .modal .field { margin-bottom: 14px; }
+  .modal label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 4px; }
+  .modal input, .modal select, .modal textarea {
+    width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    padding: 8px 10px; border-radius: 6px; font-size: 13px; font-family: inherit;
+  }
+  .modal textarea { resize: vertical; min-height: 64px; }
+  .modal .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal .foot { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+  .modal .foot .del { margin-right: auto; color: var(--bad); border-color: #f0c9c9; }
+  .modal .foot .del:hover { background: #fdeaea; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 200; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 720px) {
+    td.notes, th.notes, td.role .ind { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Application Tracker <span class="badge">2026</span></h1>
+  <span id="saveState" style="font-size:12px;color:var(--muted)"></span>
+  <div class="spacer"></div>
+  <button class="btn primary" id="addBtn">+ Add company</button>
+  <button class="btn" id="exportBtn">Export JSON</button>
+  <button class="btn" id="importBtn">Import</button>
+  <button class="btn ghost" id="resetBtn">Reload</button>
+</header>
+
+<main>
+  <div class="stats" id="stats"></div>
+  <div class="funnel" id="funnel"></div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search company, role, notes, tech…">
+    <select id="fStatus"><option value="">All statuses</option></select>
+    <select id="fStage"><option value="">All stages</option></select>
+    <select id="fIndustry"><option value="">All industries</option></select>
+    <label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;cursor:pointer;">
+      <input type="checkbox" id="hideRejected"> hide rejected
+    </label>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="company">Company <span class="arrow"></span></th>
+          <th data-sort="role">Role / Industry <span class="arrow"></span></th>
+          <th data-sort="dateStarted">Started <span class="arrow"></span></th>
+          <th data-sort="remote">Remote <span class="arrow"></span></th>
+          <th data-sort="tech">Tech <span class="arrow"></span></th>
+          <th data-sort="size">Size <span class="arrow"></span></th>
+          <th data-sort="stageRank">Stage <span class="arrow"></span></th>
+          <th data-sort="status">Status <span class="arrow"></span></th>
+          <th class="notes" data-sort="notes">Notes <span class="arrow"></span></th>
+          <th data-sort="updatedAt">Updated <span class="arrow"></span></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <p class="hint">Edits save automatically to <b>data.json</b> on disk (via <code>serve.py</code>) — commit it to keep history. <b>Reload</b> re-reads the file; <b>Export</b>/<b>Import</b> move the JSON around manually. Apps marked <b>stale</b> are still at "Applied" and were started &gt;14 days ago.</p>
+</main>
+
+<!-- Edit modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Edit company</h2>
+    <div class="body">
+      <div class="field"><label>Company</label><input id="m_company"></div>
+      <div class="row2">
+        <div class="field"><label>Role / Team</label><input id="m_role"></div>
+        <div class="field"><label>Industry</label><input id="m_industry"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Date started (M/D)</label><input id="m_dateStarted" placeholder="6/4"></div>
+        <div class="field"><label>Remote?</label><input id="m_remote" placeholder="Remote / Hybrid / 3 days office"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Tech stack</label><input id="m_tech"></div>
+        <div class="field"><label>Company size</label><input id="m_size" placeholder="Mid · 1.6k"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Stage</label><input id="m_stage" list="stageList" placeholder="Website / Recruiter / Onsite…">
+          <datalist id="stageList"></datalist>
+        </div>
+        <div class="field"><label>Status</label><select id="m_status"></select></div>
+      </div>
+      <div class="field"><label>Next stage</label><input id="m_nextStage"></div>
+      <div class="field"><label>Link</label><input id="m_link" placeholder="https://…"></div>
+      <div class="field"><label>Notes</label><textarea id="m_notes"></textarea></div>
+    </div>
+    <div class="foot">
+      <button class="btn del" id="modalDel">Delete</button>
+      <button class="btn ghost" id="modalCancel">Cancel</button>
+      <button class="btn primary" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import modal -->
+<div class="overlay" id="importOverlay">
+  <div class="modal">
+    <h2>Import JSON</h2>
+    <div class="body">
+      <p class="hint" style="margin-top:0">Paste a previously exported JSON array. This replaces all current data.</p>
+      <textarea id="importText" style="width:100%;min-height:240px;font-family:monospace;font-size:12px;" placeholder="[ ... ]"></textarea>
+    </div>
+    <div class="foot">
+      <button class="btn ghost" id="importCancel">Cancel</button>
+      <button class="btn primary" id="importDo">Import</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------- Config ----------
+const TODAY = new Date(2026, 5, 4); // 2026-06-04 (month is 0-indexed)
+const YEAR = 2026;
+const STATUSES = ["To apply", "Applied", "In progress", "Likely rejected", "Rejected", "Offer", "Withdrawn", "Won't apply"];
+const LIKELY_REJECT_DAYS = 20; // an Active app older than this auto-moves to "Likely rejected"
+const STATUS_COLORS = {
+  "To apply":        { bg: "#f3eafd", fg: "#7c3aed" },
+  "Applied":          { bg: "#e6f4ec", fg: "#0e7a4f" },
+  "In progress":     { bg: "#e2effb", fg: "#1d6fb8" },
+  "Likely rejected": { bg: "#fef3e2", fg: "#b45309" },
+  "Rejected":        { bg: "#fdeaea", fg: "#b91c1c" },
+  "Offer":           { bg: "#e9f9ee", fg: "#15803d" },
+  "Withdrawn":       { bg: "#eef0ef", fg: "#6b7470" },
+  "Won't apply":     { bg: "#eceef1", fg: "#5b6b7a" },
+};
+// stage normalization -> rank + label color
+function stageRank(stage) {
+  const s = (stage || "").toLowerCase();
+  if (!s) return 0;
+  if (s.includes("offer")) return 8;
+  if (s.includes("onsite")) return 6;
+  if (s.includes("technical") || s.includes("interview")) return 5;
+  if (s.includes("assessment") || s.includes("oa")) return 4;
+  if (s.includes("recruiter")) return 3;
+  if (s.includes("referral")) return 2;
+  if (s.includes("website") || s.includes("applied")) return 1;
+  return 1;
+}
+function stageColor(rank) {
+  return [
+    { bg: "#eef0ef", fg: "#6b7470" }, // 0 none
+    { bg: "#eef0ef", fg: "#6b7470" }, // 1 website
+    { bg: "#f3eafd", fg: "#7c3aed" }, // 2 referral
+    { bg: "#e2effb", fg: "#1d6fb8" }, // 3 recruiter
+    { bg: "#fef3e2", fg: "#b45309" }, // 4 assessment
+    { bg: "#fff7e0", fg: "#a16207" }, // 5 technical
+    { bg: "#e6f4ec", fg: "#0e7a4f" }, // 6 onsite
+    { bg: "#e6f4ec", fg: "#0e7a4f" }, // 7
+    { bg: "#e9f9ee", fg: "#15803d" }, // 8 offer
+  ][rank] || { bg: "#eef0ef", fg: "#6b7470" };
+}
+function sizeColor(size) {
+  const s = (size || "").toLowerCase();
+  if (s.startsWith("large")) return { bg: "#e2effb", fg: "#1d6fb8" };
+  if (s.startsWith("mid"))   return { bg: "#e6f4ec", fg: "#0e7a4f" };
+  if (s.startsWith("small")) return { bg: "#fff7e0", fg: "#a16207" };
+  if (s.startsWith("startup")) return { bg: "#f3eafd", fg: "#7c3aed" };
+  return { bg: "#eef0ef", fg: "#6b7470" };
+}
+function parseDate(str) {
+  if (!str) return null;
+  const m = str.match(/(\d{1,2})\/(\d{1,2})/);
+  if (!m) return null;
+  return new Date(YEAR, parseInt(m[1]) - 1, parseInt(m[2]));
+}
+function daysSince(str) {
+  const d = parseDate(str);
+  if (!d) return null;
+  return Math.round((TODAY - d) / 86400000);
+}
+function nowISO() { return new Date().toISOString(); }   // real wall-clock time of an edit
+function fmtUpdated(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d)) return "—";
+  let h = d.getHours(), m = d.getMinutes();
+  const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; m = (m < 10 ? "0" : "") + m;
+  return `${d.getMonth() + 1}/${d.getDate()}<div class="meta-row">${h}:${m} ${ap}</div>`;
+}
+
+// ---------- Data ----------
+// Application data now lives in data.json (served + written by serve.py).
+
+// ---------- State ----------
+// Data lives in data.json on disk, served + written by serve.py.
+//   load:  GET  data.json   (assign ids, apply >20-day aging)
+//   save:  POST /save       (debounced; writes data.json)
+const LOAD_URL = "/load";
+const SAVE_URL = "/save";
+const VERSION_URL = "/version";
+const LS_BACKUP = "appTracker2026_backup"; // only used if a save can't reach the server
+let data = [];
+let dataVersion = null;   // fingerprint of data.json this page last loaded/saved
+let saving = false;       // true while a /save request is in flight
+let sortKey = "smart", sortDir = -1;
+let editingId = null;
+
+// status grouping for the default "smart" sort: live apps on top, dead ones at bottom
+function statusGroup(s) {
+  return ({ "Offer": 0, "In progress": 1, "Applied": 2, "To apply": 3, "Likely rejected": 4, "Won't apply": 5, "Withdrawn": 6, "Rejected": 7 })[s] ?? 2;
+}
+// auto-age: Applied applications older than LIKELY_REJECT_DAYS -> "Likely rejected".
+// Returns how many rows changed so the caller can persist the result.
+function applyAging(arr) {
+  let changed = 0;
+  arr.forEach(r => {
+    if (r.status === "Applied") {
+      const d = daysSince(r.dateStarted);
+      if (d !== null && d > LIKELY_REJECT_DAYS) { r.status = "Likely rejected"; changed++; }
+    }
+  });
+  return changed;
+}
+
+async function loadData() {
+  const res = await fetch(LOAD_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const body = await res.json();
+  if (!body || !Array.isArray(body.data)) throw new Error("bad /load response");
+  dataVersion = body.version;                       // remember exactly what we loaded
+  return body.data.map((r, i) => ({ id: i + 1, ...r }));
+}
+
+// Re-read data.json from disk (used by the Reload button and the change-poll).
+async function reloadFromDisk() {
+  data = await loadData();
+  applyAging(data);
+  rebuildFilters(); render(); renderFunnel();
+}
+
+let saveTimer = null;
+function save() {            // debounced write so dropdown spamming = one request
+  setSaveState("saving");
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => persist(false), 250);
+}
+async function persist(force) {
+  saving = true;
+  const payload = JSON.stringify({
+    version: dataVersion, force: !!force, data: data.map(({ id, ...r }) => r),
+  });
+  try {
+    const res = await fetch(SAVE_URL, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: payload,
+    });
+    if (res.status === 409) {                        // file changed under us
+      const j = await res.json().catch(() => ({}));
+      await handleConflict(j.version);
+      return;
+    }
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    dataVersion = j.version;                          // adopt the new fingerprint
+    setSaveState("saved");
+  } catch (e) {
+    setSaveState("error");
+    try { localStorage.setItem(LS_BACKUP, JSON.stringify(data.map(({ id, ...r }) => r))); } catch (_) {}
+  } finally {
+    saving = false;
+  }
+}
+async function handleConflict(diskVersion) {
+  const reload = confirm(
+    "data.json was changed on disk (edited elsewhere) since this page loaded.\n\n" +
+    "OK      = reload from disk and discard your last change\n" +
+    "Cancel  = overwrite the file with this page's version"
+  );
+  if (reload) {
+    await reloadFromDisk();
+    toast("Reloaded from disk");
+  } else {
+    dataVersion = diskVersion;                        // match disk, then force the write through
+    await persist(true);
+  }
+}
+
+// Poll the file fingerprint; if it changed on disk while we're idle, pull it in.
+async function checkVersion() {
+  if (saving) return;                                 // don't fight an in-flight save
+  if (document.querySelector(".overlay.open")) return; // don't yank the table mid-edit
+  try {
+    const res = await fetch(VERSION_URL, { cache: "no-store" });
+    const j = await res.json();
+    if (j.version && j.version !== dataVersion) {
+      await reloadFromDisk();
+      toast("Reloaded — data.json changed on disk");
+    }
+  } catch (e) { /* server down; ignore */ }
+}
+
+function nextId() { return data.reduce((m, r) => Math.max(m, r.id || 0), 0) + 1; }
+
+function setSaveState(state) {
+  const el = $("#saveState");
+  if (!el) return;
+  if (state === "saved") { el.textContent = "✓ saved to data.json"; el.style.color = "var(--good)"; }
+  else if (state === "saving") { el.textContent = "saving…"; el.style.color = "var(--muted)"; }
+  else { el.textContent = "⚠ save failed — is serve.py running?"; el.style.color = "var(--bad)"; }
+}
+
+// ---------- Rendering ----------
+const $ = s => document.querySelector(s);
+function isStale(r) {
+  const d = daysSince(r.dateStarted);
+  return r.status === "Applied" && stageRank(r.stage) <= 1 && d !== null && d > 14;
+}
+
+function renderStats() {
+  const total = data.length;
+  const toApply = data.filter(r => r.status === "To apply").length;
+  const rejected = data.filter(r => r.status === "Rejected").length;
+  const active = data.filter(r => r.status === "Applied").length;
+  const inProg = data.filter(r => r.status === "In progress").length;
+  const offers = data.filter(r => r.status === "Offer").length;
+  const likely = data.filter(r => r.status === "Likely rejected").length;
+  const cards = [
+    { num: total, lbl: "Total", cls: "" },
+    { num: toApply, lbl: "To apply", cls: "" },
+    { num: active, lbl: "Applied", cls: "good" },
+    { num: inProg, lbl: "In progress", cls: "good" },
+    { num: offers, lbl: "Offers", cls: "good" },
+    { num: likely, lbl: "Likely rej. (>20d)", cls: "warn" },
+    { num: rejected, lbl: "Rejected", cls: "bad" },
+  ];
+  $("#stats").innerHTML = cards.map(c =>
+    `<div class="stat ${c.cls}"><div class="num">${c.num}</div><div class="lbl">${c.lbl}</div></div>`
+  ).join("");
+}
+
+const FUNNEL_STAGES = [
+  { rank: 1, label: "Applied" },
+  { rank: 2, label: "Referral" },
+  { rank: 3, label: "Recruiter" },
+  { rank: 4, label: "Assessment" },
+  { rank: 5, label: "Technical" },
+  { rank: 6, label: "Onsite" },
+  { rank: 8, label: "Offer" },
+];
+let stageFilterRank = null;
+function renderFunnel() {
+  const dead = ["Rejected", "Withdrawn", "Likely rejected", "Won't apply"];
+  const live = data.filter(r => !dead.includes(r.status));
+  $("#funnel").innerHTML = FUNNEL_STAGES.map(s => {
+    const c = live.filter(r => stageRank(r.stage) === s.rank).length;
+    const col = stageColor(s.rank);
+    const active = stageFilterRank === s.rank ? "active" : "";
+    return `<div class="seg ${active}" data-rank="${s.rank}">
+      <div class="c" style="color:${col.fg}">${c}</div>
+      <div class="n">${s.label}</div>
+    </div>`;
+  }).join("");
+  $("#funnel").querySelectorAll(".seg").forEach(el => {
+    el.onclick = () => {
+      const r = parseInt(el.dataset.rank);
+      stageFilterRank = stageFilterRank === r ? null : r;
+      renderFunnel(); render();
+    };
+  });
+}
+
+function populateFilters() {
+  const stat = $("#fStatus");
+  STATUSES.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; stat.appendChild(o); });
+  const stages = [...new Set(data.map(r => r.stage).filter(Boolean))].sort();
+  const stg = $("#fStage");
+  stages.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; stg.appendChild(o); });
+  const inds = [...new Set(data.map(r => r.industry).filter(Boolean))].sort();
+  const ind = $("#fIndustry");
+  inds.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; ind.appendChild(o); });
+  // modal status options + stage datalist
+  const ms = $("#m_status");
+  STATUSES.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; ms.appendChild(o); });
+  const dl = $("#stageList");
+  ["Website","Referral","Recruiter","Recruiter call","Assessment","Technical","Onsite","Remote Onsite","Virtual Onsite","Offer"].forEach(s => {
+    const o = document.createElement("option"); o.value = s; dl.appendChild(o);
+  });
+}
+
+function filtered() {
+  const q = $("#search").value.trim().toLowerCase();
+  const fStatus = $("#fStatus").value;
+  const fStage = $("#fStage").value;
+  const fInd = $("#fIndustry").value;
+  const hideRej = $("#hideRejected").checked;
+  let rows = data.filter(r => {
+    if (fStatus && r.status !== fStatus) return false;
+    if (fStage && r.stage !== fStage) return false;
+    if (fInd && r.industry !== fInd) return false;
+    if (hideRej && r.status === "Rejected") return false;
+    if (stageFilterRank !== null && stageRank(r.stage) !== stageFilterRank) return false;
+    if (q) {
+      const hay = [r.company, r.role, r.industry, r.notes, r.tech, r.stage, r.remote].join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  rows.sort((a, b) => {
+    if (sortKey === "smart") {
+      const g = statusGroup(a.status) - statusGroup(b.status);
+      if (g !== 0) return g;                       // active group at top, rejected at bottom
+      const ad = parseDate(a.dateStarted)?.getTime() || 0;
+      const bd = parseDate(b.dateStarted)?.getTime() || 0;
+      return bd - ad;                              // then most-recently-started first
+    }
+    let av, bv;
+    if (sortKey === "stageRank") { av = stageRank(a.stage); bv = stageRank(b.stage); }
+    else if (sortKey === "dateStarted") { av = parseDate(a.dateStarted)?.getTime() || 0; bv = parseDate(b.dateStarted)?.getTime() || 0; }
+    else if (sortKey === "updatedAt") { av = a.updatedAt ? Date.parse(a.updatedAt) : 0; bv = b.updatedAt ? Date.parse(b.updatedAt) : 0; }
+    else { av = (a[sortKey] || "").toString().toLowerCase(); bv = (b[sortKey] || "").toString().toLowerCase(); }
+    if (av < bv) return -1 * sortDir;
+    if (av > bv) return 1 * sortDir;
+    return 0;
+  });
+  return rows;
+}
+
+function render() {
+  renderStats();
+  const rows = filtered();
+  $("#count").textContent = `${rows.length} of ${data.length} shown`;
+  const tb = $("#tbody");
+  tb.innerHTML = rows.map(r => {
+    const sr = stageRank(r.stage);
+    const sc = stageColor(sr);
+    const stc = STATUS_COLORS[r.status] || STATUS_COLORS["Applied"];
+    const stale = isStale(r);
+    const days = daysSince(r.dateStarted);
+    const companyCell = r.link
+      ? `<a href="${r.link}" target="_blank" rel="noopener">${r.company}</a>`
+      : `<span class="nolink">${r.company}</span>`;
+    const stageOpts = ["Website","Referral","Recruiter","Recruiter call","Assessment","Technical","Onsite","Remote Onsite","Virtual Onsite","Offer"];
+    if (r.stage && !stageOpts.includes(r.stage)) stageOpts.unshift(r.stage);
+    const stageSel = `<select class="inline" data-id="${r.id}" data-field="stage" style="color:${sc.fg};background:${sc.bg}">
+      <option value="" ${!r.stage?"selected":""}>—</option>
+      ${stageOpts.map(s => `<option ${s===r.stage?"selected":""}>${s}</option>`).join("")}
+    </select>`;
+    const statusSel = `<select class="inline" data-id="${r.id}" data-field="status" style="color:${stc.fg};background:${stc.bg}">
+      ${STATUSES.map(s => `<option ${s===r.status?"selected":""}>${s}</option>`).join("")}
+    </select>`;
+    return `<tr class="${r.status==='Rejected'?'rejected':''} ${stale?'stale':''}">
+      <td class="company">${companyCell}</td>
+      <td class="role">${r.role || "—"}${r.industry?`<span class="ind">${r.industry}</span>`:""}</td>
+      <td>${r.dateStarted || "—"}${days!==null?`<div class="meta-row">${days}d ago</div>`:""}</td>
+      <td style="font-size:12px;color:var(--muted)">${r.remote || "—"}</td>
+      <td style="font-size:12px;color:var(--muted)">${r.tech || "—"}</td>
+      <td>${r.size ? `<span class="pill" style="color:${sizeColor(r.size).fg};background:${sizeColor(r.size).bg}">${escapeHtml(r.size)}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${stageSel}</td>
+      <td>${statusSel}</td>
+      <td class="notes"><div class="clip">${r.notes ? escapeHtml(r.notes) : ""}</div></td>
+      <td style="font-size:12px;color:var(--muted);white-space:nowrap">${fmtUpdated(r.updatedAt)}</td>
+      <td class="actions"><button data-edit="${r.id}" title="Edit">✎</button></td>
+    </tr>`;
+  }).join("");
+
+  tb.querySelectorAll("select.inline").forEach(sel => {
+    sel.onchange = () => {
+      const r = data.find(x => x.id == sel.dataset.id);
+      r[sel.dataset.field] = sel.value;
+      r.updatedAt = nowISO();
+      save(); render(); renderFunnel();
+    };
+  });
+  tb.querySelectorAll("[data-edit]").forEach(b => {
+    b.onclick = () => openModal(parseInt(b.dataset.edit));
+  });
+}
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+// ---------- Modal ----------
+function openModal(id) {
+  editingId = id;
+  const r = id ? data.find(x => x.id === id) : { company:"",role:"",industry:"",dateStarted:"",remote:"",tech:"",size:"",stage:"Website",status:"Applied",nextStage:"",link:"",notes:"" };
+  $("#modalTitle").textContent = id ? "Edit company" : "Add company";
+  $("#m_company").value = r.company || "";
+  $("#m_role").value = r.role || "";
+  $("#m_industry").value = r.industry || "";
+  $("#m_dateStarted").value = r.dateStarted || "";
+  $("#m_remote").value = r.remote || "";
+  $("#m_tech").value = r.tech || "";
+  $("#m_size").value = r.size || "";
+  $("#m_stage").value = r.stage || "";
+  $("#m_status").value = r.status || "Applied";
+  $("#m_nextStage").value = r.nextStage || "";
+  $("#m_link").value = r.link || "";
+  $("#m_notes").value = r.notes || "";
+  $("#modalDel").style.display = id ? "inline-block" : "none";
+  $("#overlay").classList.add("open");
+}
+function closeModal() { $("#overlay").classList.remove("open"); editingId = null; }
+$("#modalSave").onclick = () => {
+  const obj = {
+    company: $("#m_company").value.trim(),
+    role: $("#m_role").value.trim(),
+    industry: $("#m_industry").value.trim(),
+    dateStarted: $("#m_dateStarted").value.trim(),
+    remote: $("#m_remote").value.trim(),
+    tech: $("#m_tech").value.trim(),
+    size: $("#m_size").value.trim(),
+    stage: $("#m_stage").value.trim(),
+    status: $("#m_status").value,
+    nextStage: $("#m_nextStage").value.trim(),
+    link: $("#m_link").value.trim(),
+    notes: $("#m_notes").value.trim(),
+  };
+  if (!obj.company) { toast("Company name required"); return; }
+  obj.updatedAt = nowISO();
+  if (editingId) {
+    const r = data.find(x => x.id === editingId);
+    Object.assign(r, obj);
+  } else {
+    data.push({ id: nextId(), ...obj });
+  }
+  save(); closeModal(); render(); renderFunnel();
+  toast("Saved");
+};
+$("#modalDel").onclick = () => {
+  if (!editingId) return;
+  if (!confirm("Delete this entry?")) return;
+  data = data.filter(x => x.id !== editingId);
+  save(); closeModal(); render(); renderFunnel();
+  toast("Deleted");
+};
+$("#modalCancel").onclick = closeModal;
+$("#overlay").onclick = e => { if (e.target === $("#overlay")) closeModal(); };
+$("#addBtn").onclick = () => openModal(null);
+
+// ---------- Export / Import / Reset ----------
+$("#exportBtn").onclick = () => {
+  const clean = data.map(({id, ...rest}) => rest);
+  const json = JSON.stringify(clean, null, 1);
+  navigator.clipboard.writeText(json).then(
+    () => toast("JSON copied to clipboard"),
+    () => { $("#importText").value = json; $("#importOverlay").classList.add("open"); }
+  );
+};
+$("#importBtn").onclick = () => { $("#importText").value = ""; $("#importOverlay").classList.add("open"); };
+$("#importCancel").onclick = () => $("#importOverlay").classList.remove("open");
+$("#importDo").onclick = () => {
+  try {
+    const arr = JSON.parse($("#importText").value);
+    if (!Array.isArray(arr)) throw new Error("not array");
+    data = arr.map((r, i) => ({ id: i + 1, ...r }));
+    save(); $("#importOverlay").classList.remove("open");
+    rebuildFilters(); render(); renderFunnel();
+    toast("Imported " + data.length + " rows");
+  } catch (e) { toast("Invalid JSON"); }
+};
+$("#resetBtn").onclick = async () => {
+  try {
+    await reloadFromDisk();
+    toast("Reloaded from data.json");
+  } catch (e) { toast("Couldn't load data.json — is serve.py running?"); }
+};
+
+function rebuildFilters() {
+  ["#fStatus","#fStage","#fIndustry"].forEach(s => { const el = $(s); el.innerHTML = `<option value="">${el.options[0].text}</option>`; });
+  // re-add: simplest is to reload page-level builders for stage/industry
+  const stages = [...new Set(data.map(r => r.stage).filter(Boolean))].sort();
+  stages.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; $("#fStage").appendChild(o); });
+  const inds = [...new Set(data.map(r => r.industry).filter(Boolean))].sort();
+  inds.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; $("#fIndustry").appendChild(o); });
+  STATUSES.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; $("#fStatus").appendChild(o); });
+}
+
+// ---------- Sorting + filter wiring ----------
+document.querySelectorAll("thead th[data-sort]").forEach(th => {
+  th.onclick = () => {
+    const k = th.dataset.sort;
+    if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = (k === "stageRank" || k === "dateStarted" || k === "updatedAt") ? -1 : 1; }
+    document.querySelectorAll("thead th .arrow").forEach(a => a.textContent = "");
+    th.querySelector(".arrow").textContent = sortDir === 1 ? "▲" : "▼";
+    render();
+  };
+});
+["#search","#fStatus","#fStage","#fIndustry","#hideRejected"].forEach(s => {
+  $(s).addEventListener("input", render);
+  $(s).addEventListener("change", render);
+});
+
+// ---------- Toast ----------
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+// ---------- Init ----------
+function syncHeaderH() {
+  const h = document.querySelector("header").offsetHeight;
+  document.documentElement.style.setProperty("--header-h", h + "px");
+}
+window.addEventListener("resize", syncHeaderH);
+
+function showLoadError(e) {
+  const main = document.querySelector("main");
+  if (!main) return;
+  main.innerHTML =
+    '<div style="background:#fdeaea;border:1px solid #f0c9c9;border-left:4px solid var(--bad);' +
+    'border-radius:8px;padding:20px 24px;color:var(--text);max-width:640px;margin:20px auto;">' +
+    '<b style="color:var(--bad)">Couldn’t load data.json</b> (' + (e && e.message ? e.message : e) + ').<br><br>' +
+    'This page reads &amp; writes <code>data.json</code> through a tiny local server. Start it from this folder:' +
+    '<pre style="background:#fff;border:1px solid var(--border);border-radius:6px;padding:10px 12px;margin:12px 0;">python3 serve.py</pre>' +
+    'then open <b>http://localhost:8000</b> &mdash; not the <code>file://</code> path.</div>';
+}
+
+async function init() {
+  try {
+    data = await loadData();
+  } catch (e) {
+    showLoadError(e);
+    return;
+  }
+  const aged = applyAging(data);     // re-evaluate the >20-day rule each load
+  populateFilters();
+  renderFunnel();
+  render();
+  syncHeaderH();
+  if (aged > 0) save();              // persist any rows that just crossed 20 days
+  setInterval(checkVersion, 5000);   // watch for external edits to data.json
+}
+init();
+</script>
+</body>
+</html>

@@ -413,6 +413,10 @@
     ["&nbsp;&nbsp;Min Area Rectangle","rect-other"],
     ["&nbsp;&nbsp;Max Area Rectangle","maxrect-other"],
     ["&nbsp;&nbsp;Subarray Sum = K","subk-other"],
+    ["&nbsp;&nbsp;Tic-Tac-Toe (N×N)","tttn-other"],
+    ["&nbsp;&nbsp;Tic-Tac-Toe (N×N, K)","ttt-other"],
+    ["&nbsp;&nbsp;Task Scheduler","task-other"],
+    ["&nbsp;&nbsp;Find Missing ID","missing-other"],
     ["@group","★ Likely problems"],
     ["Manager Hierarchy","lp1"],
     ["Exploding Mines","lp2"],
@@ -1409,6 +1413,18 @@ end</code></pre></div>
     <h4 id="ed-other">Edit Distance (LeetCode 72) — classic 2D DP</h4>
     <p style="font-size:13px"><strong>Prompt:</strong> Given two strings, find the minimum number of single-character edits (insert / delete / replace) to convert one into the other. 2D DP where <code class="inline">dp[i][j]</code> = edit distance between <code class="inline">word1[0...i]</code> and <code class="inline">word2[0...j]</code>.</p>
 
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Define the subproblem precisely.</strong> Let <code class="inline">dp[i][j]</code> = the minimum edits to turn the first <code class="inline">i</code> characters of <code class="inline">word1</code> into the first <code class="inline">j</code> characters of <code class="inline">word2</code>. The final answer is <code class="inline">dp[m][n]</code>. Getting this definition stated cleanly is most of the battle.</li>
+        <li><strong>Set the base cases from empty strings.</strong> Converting a length-<code class="inline">i</code> prefix to <em>empty</em> costs <code class="inline">i</code> deletions, so <code class="inline">dp[i][0] = i</code>; converting empty to a length-<code class="inline">j</code> prefix costs <code class="inline">j</code> insertions, so <code class="inline">dp[0][j] = j</code>. These are the first row and column.</li>
+        <li><strong>Find the recurrence by looking at the last characters.</strong> If <code class="inline">word1[i-1] == word2[j-1]</code>, the last chars already match — no edit needed, so <code class="inline">dp[i][j] = dp[i-1][j-1]</code> (carry the cost over for free).</li>
+        <li><strong>Otherwise take the cheapest of the three edits.</strong> When they differ, <code class="inline">dp[i][j] = 1 + min(</code> <code class="inline">dp[i-1][j-1]</code> replace, <code class="inline">dp[i-1][j]</code> delete from word1, <code class="inline">dp[i][j-1]</code> insert into word1 <code class="inline">)</code>. Each option reduces to a strictly smaller subproblem we've already solved.</li>
+        <li><strong>Fill the table in order.</strong> Iterate <code class="inline">i</code> then <code class="inline">j</code> so that every cell's three dependencies (up, left, up-left) are computed before it. Bottom-up avoids recursion-stack and re-computation entirely.</li>
+        <li><strong>Complexity & optimization.</strong> O(m·n) time and O(m·n) space. Mention the standard win: since each row only depends on the previous one, you can roll the table down to <strong>O(min(m,n)) space</strong> with two 1D arrays — a good thing to offer out loud.</li>
+      </ol>
+    </div>
+
     <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  word1 = "horse", word2 = "ros"
 # Output: 3   (one path: horse -&gt; rorse -&gt; rose -&gt; ros)
 #         Minimum number of single-character edits to convert word1 to word2.
@@ -1708,6 +1724,18 @@ end
     <p style="font-size:13px"><strong>Prompt:</strong> <code class="inline">n</code> friends (ids <code class="inline">0..n-1</code>). <code class="inline">preferences[i]</code> lists every other friend in <em>i</em>'s order of preference (most-preferred first). <code class="inline">pairs</code> assigns everyone a partner. A person <strong>x</strong> is <em>unhappy</em> if there is some person <strong>u</strong> where <strong>x prefers u over x's own partner</strong> AND <strong>u prefers x over u's own partner</strong>. Count the unhappy friends.</p>
     <p style="font-size:13px">The trick is a <strong>rank index</strong>: turn each preference <em>list</em> into a lookup <code class="inline">rank[i][j] = position of j in i's list</code> (smaller = liked more). That makes "does A like B more than C?" an O(1) compare instead of a list scan, dropping the whole thing to a clean O(n²).</p>
 
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Reframe the definition as a mutual check.</strong> "x is unhappy" is never about x alone — it needs a <em>witness</em> u where BOTH halves hold: x would rather be with u than with x's own partner, and u would rather be with x than with u's own partner. It's a "we'd both trade up to each other" test.</li>
+        <li><strong>Spot the naive cost.</strong> Comparing two friends straight off the preference <em>lists</em> means an <code class="inline">index</code> scan every time — O(n) per comparison, O(n³) overall. That's the thing to optimize away.</li>
+        <li><strong>Invert each list into a rank index (the key move).</strong> Build <code class="inline">rank[i][j] = position of j in i's list</code> once. Now "does i prefer a over b?" is just <code class="inline">rank[i][a] &lt; rank[i][b]</code> — an O(1) integer compare. A <code class="inline">partner</code> array gives O(1) partner lookup the same way.</li>
+        <li><strong>Check each person independently.</strong> For person x, walk x's preference list <em>in order</em> and test each friend u that x ranks above its own partner against the reverse condition. The first u that also prefers x marks x unhappy — stop.</li>
+        <li><strong>Exploit the ordering to break early.</strong> Because the list is already in preference order, the moment you reach someone x likes no more than its partner, everyone after is worse too — so you can stop scanning x immediately.</li>
+        <li><strong>Complexity & pitfall.</strong> O(n²) time, O(n²) space. Watch the wording: you count <em>people</em>, not pairs, so the answer can be odd — each person is evaluated on their own.</li>
+      </ol>
+    </div>
+
     <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 4
 #         preferences = [[1, 2, 3], [3, 2, 0], [3, 1, 0], [1, 2, 0]]
 #         pairs       = [[0, 1], [2, 3]]
@@ -1781,6 +1809,18 @@ end
     <p style="font-size:13px"><strong>Prompt:</strong> Given distinct points on a plane, find the minimum area of any <strong>axis-aligned</strong> rectangle whose four corners are all in the input set. Return <code class="inline">0</code> if no such rectangle exists.</p>
     <p style="font-size:13px"><em>(Heads-up on naming: your header used to say "Maximum Area … (LC 963)". This is the version you picked — <strong>LC 939, axis-aligned, minimize</strong>. LC 963 is the harder "any-angle" variant; LC 3380 is the "maximize, no interior point" one.)</em> <strong>Key insight:</strong> an axis-aligned rectangle is fully determined by <em>two opposite corners</em> — if you fix the diagonal <code class="inline">(x1,y1)</code>–<code class="inline">(x2,y2)</code>, the other two corners are forced to be <code class="inline">(x1,y2)</code> and <code class="inline">(x2,y1)</code>. Drop every point in a set, then for each diagonal pair just ask the set "do those other two corners exist?"</p>
 
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Use the geometry to avoid 4-tuples.</strong> The brute force is "pick 4 points, are they a rectangle?" — O(n⁴). The key fact that collapses it: an axis-aligned rectangle is fully pinned down by just <em>two opposite corners</em>. Fix a diagonal <code class="inline">(x1,y1)</code>–<code class="inline">(x2,y2)</code> and the other two corners are <em>forced</em> to be <code class="inline">(x1,y2)</code> and <code class="inline">(x2,y1)</code>.</li>
+        <li><strong>Enumerate pairs, not quadruples.</strong> That insight turns the search into "for each PAIR of points, do the two implied corners also exist?" — O(n²) pairs instead of O(n⁴) tuples.</li>
+        <li><strong>Hash set for O(1) existence.</strong> Drop every point into a set keyed on <code class="inline">[x, y]</code> so "does corner (a,b) exist?" is constant time.</li>
+        <li><strong>Filter to real diagonals.</strong> A valid diagonal must differ in BOTH x and y. If the pair shares a row or column it's an edge, not a diagonal — skip it (and it would divide-by-zero the area intuition anyway).</li>
+        <li><strong>Compute and track the minimum.</strong> When both implied corners exist, the area is <code class="inline">|x1−x2| · |y1−y2|</code>; keep the smallest. Each rectangle is naturally found twice (once per diagonal) — harmless for a min.</li>
+        <li><strong>Complexity & pitfall.</strong> O(n²) time, O(n) space. Return <code class="inline">0</code> (not <code class="inline">nil</code>/−1) when no rectangle exists — that's the contract for this problem.</li>
+      </ol>
+    </div>
+
     <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  points = [[1,1],[1,3],[3,1],[3,3],[2,2]]
 # Output: 4   (corners (1,1),(1,3),(3,1),(3,3) form a 2×2 square -> area 4;
 #              the lone point (2,2) belongs to no rectangle)
@@ -1838,6 +1878,18 @@ end
     <h4 id="maxrect-other">Maximum Area Rectangle With Point Constraints (LeetCode 3380) — set lookup + interior scan</h4>
     <p style="font-size:13px"><strong>Prompt:</strong> Given points on a plane, return the <strong>maximum</strong> area of an <strong>axis-aligned</strong> rectangle whose four corners are all input points <em>and</em> that contains <strong>no other point inside it or on its border</strong>. Return <code class="inline">-1</code> if no such rectangle exists.</p>
     <p style="font-size:13px"><strong>How it differs from LC 939 above:</strong> two extra rules. (1) We <em>maximize</em> instead of minimize. (2) The "clean" constraint — a rectangle is disqualified if <em>any</em> other point lands in its closed box (interior or edges). That second rule is the whole problem: finding the four corners is the easy part (same set-lookup trick as 939); the work is rejecting rectangles that aren't empty. So after confirming the four corners exist, scan every point and reject the rectangle if one falls inside or on the border but isn't a corner.</p>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Reuse the LC 939 backbone.</strong> Finding the corners is the same trick: a hash set of points, then enumerate pairs and check the two implied corners exist. Don't reinvent it — start from there.</li>
+        <li><strong>Add orientation to count each rectangle once.</strong> Fix <code class="inline">points[i]</code> as the bottom-left and <code class="inline">points[j]</code> as the top-right by requiring <code class="inline">x1 &lt; x2 AND y1 &lt; y2</code>. This guarantees a valid diagonal and means every rectangle is generated from exactly one ordered pair.</li>
+        <li><strong>Recognize the real problem is the emptiness rule.</strong> Corners are easy; the constraint that makes 3380 different from 939 is "no OTHER point inside or on the border." That check is where the actual work and the gotchas live.</li>
+        <li><strong>Implement emptiness as a closed-box scan.</strong> For a candidate rectangle, scan all points: a point contaminates it if it lies in the closed box <code class="inline">[x1,x2] × [y1,y2]</code> AND is not one of the four corners. One such point disqualifies the rectangle. "On the border" counts — it's the closed box, not just the strict interior.</li>
+        <li><strong>Maximize over the survivors.</strong> Among rectangles that pass both the corner check and the emptiness check, keep the largest <code class="inline">(x2−x1)·(y2−y1)</code>. If none survive, return <code class="inline">−1</code>.</li>
+        <li><strong>Complexity & scaling note.</strong> O(n³) — O(n²) pairs × O(n) scan — and O(n) space. That's fine for LC 3380 ("I", n ≤ 10). Say out loud that the harder follow-up LC 3382 ("II") has large n and needs coordinate compression + a sweep so the interviewer sees you know the ceiling.</li>
+      </ol>
+    </div>
 
     <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  points = [[1,1],[1,3],[3,1],[3,3],[1,2],[3,2]]
 # Output: 2   (the big 2×2 square has (1,2) and (3,2) ON its border -> invalid;
@@ -1914,6 +1966,18 @@ end
     <p style="font-size:13px"><strong>Prompt:</strong> Given an integer array <code class="inline">nums</code> (values may be negative) and an integer <code class="inline">k</code>, count how many <strong>contiguous</strong> subarrays sum to exactly <code class="inline">k</code>.</p>
     <p style="font-size:13px">This is the canonical <strong>Pattern 2: prefix sum + hashmap</strong> (covered below too). The insight: the sum of the elements between two indices equals <code class="inline">prefix[j] - prefix[i]</code>. So a subarray ending at the current index sums to <code class="inline">k</code> exactly when some earlier prefix equals <code class="inline">running_sum - k</code>. Keep a running count of every prefix sum we've seen and the answer falls out in one pass. (A sliding window does NOT work here because negative numbers break the monotonic-window assumption.)</p>
 
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Translate "subarray sum" into prefix sums.</strong> The sum of <code class="inline">nums[i..j]</code> equals <code class="inline">prefix[j] − prefix[i−1]</code>. So a subarray ending at <code class="inline">j</code> sums to <code class="inline">k</code> exactly when some earlier prefix equals <code class="inline">prefix[j] − k</code>. This reframing is the whole problem.</li>
+        <li><strong>Turn the search into a hashmap lookup.</strong> Instead of trying every <code class="inline">(i, j)</code> pair (O(n²)), do one pass keeping a running prefix sum and a map <code class="inline">count[s] = how many prefixes so far had sum s</code>.</li>
+        <li><strong>Count occurrences, not just presence.</strong> At each element: extend the running sum, then add <code class="inline">count[running − k]</code> to the answer — every earlier prefix with that value is a <em>distinct</em> valid subarray ending here. Then record the current running sum. The same prefix sum can recur (zeros, or <code class="inline">+x</code> then <code class="inline">−x</code>), so we store frequencies, not a boolean.</li>
+        <li><strong>Seed the empty prefix.</strong> Initialize <code class="inline">count[0] = 1</code> to represent the empty prefix before index 0 — this is what lets a subarray that starts at index 0 and itself sums to <code class="inline">k</code> get counted.</li>
+        <li><strong>Know why a sliding window fails.</strong> If asked, explain: values can be negative, so the running sum isn't monotonic — you can't decide to grow or shrink a window. The prefix-sum frequency map is the correct tool precisely because it doesn't assume monotonicity.</li>
+        <li><strong>Complexity.</strong> O(n) time (single pass, O(1) map work per element), O(n) space (up to n distinct prefix sums).</li>
+      </ol>
+    </div>
+
     <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [1, 2, 3], k = 3
 # Output: 2   (the subarrays [1, 2] and [3] each sum to 3)
 
@@ -1949,6 +2013,362 @@ end
 
 # Time:  O(n) — single pass, O(1) hashmap work per element.
 # Space: O(n) — up to n distinct prefix sums stored.</code></pre></div>
+
+    <h4 id="tttn-other">Tic-Tac-Toe — N×N board, N-in-a-row to win (LeetCode 348, OOD)</h4>
+    <p style="font-size:13px"><strong>Prompt:</strong> Design a tic-tac-toe game on an <code class="inline">n × n</code> board for two players. A player wins by filling an entire row, an entire column, or one of the two main diagonals with their own marks. Implement <code class="inline">move(row, col, player)</code> that places a mark and returns the winning player (<code class="inline">1</code> or <code class="inline">2</code>), or <code class="inline">0</code> if no one has won yet. <strong>Aim for O(1) per move.</strong></p>
+    <p style="font-size:13px"><strong>Key insight:</strong> because a win here means a <em>complete</em> line (exactly <code class="inline">n</code> marks), you don't need the board at all — just a running tally per line. Give player 1 <code class="inline">+1</code> and player 2 <code class="inline">−1</code>; a line is won the instant its tally hits <code class="inline">+n</code> (all player 1) or <code class="inline">−n</code> (all player 2).</p>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Notice the win is a FULL line.</strong> Unlike the k-in-a-row variant below, here you must fill an entire row/column/diagonal. That "all-or-nothing per line" property is what lets you avoid scanning anything.</li>
+        <li><strong>Replace the board with per-line counters.</strong> Keep one counter for each of the <code class="inline">n</code> rows, each of the <code class="inline">n</code> columns, plus a single counter for the main diagonal and one for the anti-diagonal. That's all the state you need.</li>
+        <li><strong>Encode the two players as +1 / −1.</strong> Each move adds <code class="inline">+1</code> (player 1) or <code class="inline">−1</code> (player 2) to the counters of every line the cell belongs to. A cell is on the main diagonal when <code class="inline">row == col</code>, and on the anti-diagonal when <code class="inline">row + col == n − 1</code>.</li>
+        <li><strong>Detect a win by magnitude.</strong> After updating, if any touched counter has absolute value <code class="inline">n</code>, that line is entirely one player's marks — return that player. Using <code class="inline">.abs == n</code> handles both players with one check.</li>
+        <li><strong>Complexity.</strong> O(1) time per move (a fixed handful of counter updates and comparisons) and O(n) space for the row/column counters — no <code class="inline">n²</code> board required. This is the answer the "aim for O(1)" hint is fishing for.</li>
+      </ol>
+    </div>
+
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Usage:  g = TicTacToe.new(3)   # standard 3×3 board
+#         g.move(0, 0, 1)  # => 0
+#         ...
+#         g.move(2, 1, 1)  # => 1   (player 1 completed a full line)
+
+class TicTacToe
+  def initialize(n)
+    @n = n
+    # One running tally per row and per column, plus the two diagonals.
+    # Player 1 adds +1, player 2 adds -1, so a full line of one player
+    # drives that tally to +n or -n. No board array needed.
+    @rows = Array.new(n, 0)
+    @cols = Array.new(n, 0)
+    @diag = 0   # main diagonal      (cells where row == col)
+    @anti = 0   # anti-diagonal      (cells where row + col == n - 1)
+  end
+
+  # Place `player`'s mark at (row, col). Returns the winning player (1 or 2)
+  # if this move completed a full line, otherwise 0.
+  def move(row, col, player)
+    delta = (player == 1) ? 1 : -1
+
+    # Update every line this cell belongs to.
+    @rows[row] += delta
+    @cols[col] += delta
+    @diag += delta if row == col
+    @anti += delta if row + col == @n - 1
+
+    # Delegate the decision to the win check, then translate to the
+    # required return value (the player on a win, else 0).
+    win?(row, col) ? player : 0
+  end
+
+  # Has the line(s) passing through (row, col) just been completed by one
+  # player? A tally of +n means player 1 filled it; -n means player 2.
+  # .abs == n captures both in a single comparison. O(1) — no scanning.
+  def win?(row, col)
+    @rows[row].abs == @n ||
+      @cols[col].abs == @n ||
+      @diag.abs == @n ||
+      @anti.abs == @n
+  end
+end
+
+# Time:  O(1) per move — a constant number of counter updates and checks.
+# Space: O(n)   — the row and column tallies (no n×n board stored).</code></pre></div>
+
+    <p style="font-size:13px;margin-bottom:4px"><strong>Example use cases</strong></p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># ---- Example 1: player 1 wins by filling the bottom row ----
+g = TicTacToe.new(3)
+g.move(0, 0, 1)   # => 0    player 1, top-left
+g.move(0, 2, 2)   # => 0    player 2, top-right
+g.move(2, 2, 1)   # => 0    player 1
+g.move(1, 1, 2)   # => 0    player 2, center
+g.move(2, 0, 1)   # => 0    player 1
+g.move(1, 0, 2)   # => 0    player 2
+g.move(2, 1, 1)   # => 1    player 1 fills row 2 (cols 0,1,2) -> WINS
+
+# ---- Example 2: player 1 wins on the anti-diagonal ----
+g2 = TicTacToe.new(3)
+g2.move(0, 2, 1)  # => 0    player 1
+g2.move(0, 0, 2)  # => 0    player 2
+g2.move(1, 1, 1)  # => 0    player 1, center
+g2.move(0, 1, 2)  # => 0    player 2
+g2.move(2, 0, 1)  # => 1    cells (0,2),(1,1),(2,0) all player 1 -> WINS</code></pre></div>
+
+    <h4 id="ttt-other">Tic-Tac-Toe — N×N board, K-in-a-row to win (generalized LeetCode 348, OOD)</h4>
+    <p style="font-size:13px"><strong>Prompt:</strong> Design a game on an <code class="inline">n × n</code> board where a player wins by getting <code class="inline">k</code> of their marks consecutively in a row, column, or diagonal (<code class="inline">k ≤ n</code> — plain tic-tac-toe is <code class="inline">n = k = 3</code>; Gomoku is large <code class="inline">n</code> with <code class="inline">k = 5</code>). Implement <code class="inline">move(row, col, player)</code> that places a mark and returns the winning player, or <code class="inline">0</code> if no one has won yet.</p>
+    <p style="font-size:13px"><strong>Key insight:</strong> a brand-new win must pass <em>through the cell just played</em> — you never need to rescan the whole board. So after placing a mark, inspect only the four lines crossing that cell (horizontal, vertical, both diagonals) and count consecutive matching marks outward in both directions.</p>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Clarify the win rule first.</strong> "k consecutive" is NOT "fill the whole row" unless <code class="inline">k == n</code>. That distinction decides the whole approach, so pin it down out loud before coding.</li>
+        <li><strong>Localize the check to the last move.</strong> The board can't change anywhere except the cell just played, so any new k-in-a-row must include that cell. This turns a whole-board scan into a check of just the four lines through one point.</li>
+        <li><strong>Model the four axes as direction vectors.</strong> Horizontal <code class="inline">(0,1)</code>, vertical <code class="inline">(1,0)</code>, main diagonal <code class="inline">(1,1)</code>, anti-diagonal <code class="inline">(1,-1)</code>. For each, count the placed cell (1) plus the matching run in the <em>positive</em> direction plus the run in the <em>negative</em> direction.</li>
+        <li><strong>Walk outward until a mismatch or edge.</strong> A small helper steps <code class="inline">(dr, dc)</code> from the cell, counting same-player marks and stopping at the board boundary or the first non-matching square.</li>
+        <li><strong>Declare the win.</strong> If any axis reaches a total of <code class="inline">≥ k</code>, the player who just moved wins; otherwise return <code class="inline">0</code>.</li>
+        <li><strong>Complexity & the O(1) special case.</strong> Each <code class="inline">move</code> is O(k) time (≤ 4 short scans), O(n²) space for the board. Worth naming aloud: when <code class="inline">k == n</code> (classic LeetCode 348), you can drop to <strong>O(1) per move</strong> with per-row / per-column / per-diagonal counters (+1 for player 1, −1 for player 2, win when any hits ±n) — but that counter trick does NOT generalize to <code class="inline">k &lt; n</code>, which is exactly why the directional scan is the right default here.</li>
+      </ol>
+    </div>
+
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Usage:  g = TicTacToe.new(5, 3)   # 5×5 board, 3-in-a-row wins
+#         g.move(2, 2, 1)  # => 0   (no win yet)
+#         ...
+#         g.move(1, 1, 1)  # => 1   (player 1 just completed a diagonal)
+
+class TicTacToe
+  # n = board side length, k = how many in a row are needed to win.
+  def initialize(n, k)
+    @n = n
+    @k = k
+    # 0 = empty cell, 1 = player 1's mark, 2 = player 2's mark.
+    @board = Array.new(n) { Array.new(n, 0) }
+  end
+
+  # Place `player`'s mark at (row, col). Returns the winning player (1 or 2)
+  # if this move just completed k-in-a-row, otherwise 0.
+  def move(row, col, player)
+    @board[row][col] = player
+    win?(row, col, player) ? player : 0
+  end
+
+  # Did placing `player` at (row, col) create k consecutive marks through
+  # that cell? A new win can only pass THROUGH the just-placed cell, so we
+  # inspect just the four lines crossing it.
+  def win?(row, col, player)
+    directions = [
+      [0, 1],   # horizontal   (left  &lt;-&gt; right)
+      [1, 0],   # vertical     (up    &lt;-&gt; down)
+      [1, 1],   # diagonal     (top-left &lt;-&gt; bottom-right)
+      [1, -1]   # anti-diagonal(top-right &lt;-&gt; bottom-left)
+    ]
+
+    directions.each do |dr, dc|
+      # Start at 1 for the placed cell, then extend BOTH ways along this axis.
+      count = 1
+      count += run(row, col, dr, dc, player)     # one direction
+      count += run(row, col, -dr, -dc, player)   # the opposite direction
+      return true if count &gt;= @k
+    end
+
+    false   # no line reached k — game continues
+  end
+
+  private
+
+  # Step from (row, col) by (dr, dc), counting consecutive cells that hold
+  # `player`. Stops at the board edge or the first non-matching cell.
+  def run(row, col, dr, dc, player)
+    count = 0
+    r = row + dr
+    c = col + dc
+    while r &gt;= 0 &amp;&amp; r &lt; @n &amp;&amp; c &gt;= 0 &amp;&amp; c &lt; @n &amp;&amp; @board[r][c] == player
+      count += 1
+      r += dr
+      c += dc
+    end
+    count
+  end
+end
+
+# Time:  O(k) per move — at most four scans of length &lt; k each.
+# Space: O(n^2) for the board.</code></pre></div>
+
+    <p style="font-size:13px;margin-bottom:4px"><strong>Example use cases</strong></p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># ---- Example 1: 5×5 board, 3-in-a-row, player 1 wins on a diagonal ----
+g = TicTacToe.new(5, 3)
+g.move(2, 2, 1)   # => 0
+g.move(0, 0, 2)   # => 0
+g.move(3, 3, 1)   # => 0
+g.move(0, 1, 2)   # => 0
+g.move(1, 1, 1)   # => 1    cells (1,1),(2,2),(3,3) -> 3 in a row -> WINS
+
+# ---- Example 2: same board, player 1 wins horizontally on row 2 ----
+g2 = TicTacToe.new(5, 3)
+g2.move(2, 0, 1)  # => 0
+g2.move(0, 0, 2)  # => 0
+g2.move(2, 1, 1)  # => 0
+g2.move(0, 1, 2)  # => 0
+g2.move(2, 2, 1)  # => 1    row 2, cols 0,1,2 all player 1 -> WINS
+
+# ---- Example 3: query the win check directly (read-only) ----
+g2.win?(2, 2, 1) # => true   confirms the line through (2,2) is a win for P1</code></pre></div>
+
+    <h4 id="task-other">Task Scheduler (LeetCode 621) — greedy counting formula</h4>
+    <p style="font-size:13px"><strong>Prompt:</strong> Given a list of CPU <code class="inline">tasks</code> (each labeled by a letter) and a cooldown <code class="inline">n</code>, each task takes 1 time unit and two runs of the <em>same</em> task must be separated by at least <code class="inline">n</code> units (the CPU may idle in between). Return the minimum total time — task units plus idles — to finish everything.</p>
+    <p style="font-size:13px"><strong>Key insight:</strong> the schedule's length is dictated entirely by the <em>most frequent</em> task. Lay that task out first — it creates a fixed skeleton of <code class="inline">(max_freq − 1)</code> gaps, each of width <code class="inline">(n + 1)</code> — then everything else either slots into the idle gaps or, if there are too many distinct tasks, packs in with no idles at all.</p>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Realize only frequencies matter, not order or labels.</strong> The answer depends solely on how many times each task appears — so first count frequencies into a map.</li>
+        <li><strong>Anchor on the busiest task.</strong> Let <code class="inline">max_freq</code> be the highest frequency. That task is the bottleneck: between its consecutive runs you MUST leave <code class="inline">n</code> slots, forcing <code class="inline">(max_freq − 1)</code> blocks of width <code class="inline">(n + 1)</code>.</li>
+        <li><strong>Account for ties in the last block.</strong> Every task that also hits <code class="inline">max_freq</code> must sit in the final block (one each, no trailing idle). If <code class="inline">count_max</code> tasks tie for the max, the skeleton length is <code class="inline">(max_freq − 1) · (n + 1) + count_max</code>.</li>
+        <li><strong>Handle the "plenty of tasks" case.</strong> When there are many distinct tasks, they fill all the idle gaps and may even overflow — then there are zero idles and the schedule is just the total task count. The real answer is <code class="inline">max(tasks.length, skeleton)</code>, which is correct in both regimes without any explicit idle simulation.</li>
+        <li><strong>Why the formula is exact.</strong> The skeleton is a hard lower bound (you can't beat the bottleneck task's spacing), and the <code class="inline">max</code> with the task count covers when idles vanish — so no greedy simulation or heap is needed, though mention a max-heap simulation as the alternative if pressed.</li>
+        <li><strong>Complexity.</strong> O(T) time for T tasks (the count pass), O(U) space for U distinct tasks (≤ 26 for letters — effectively O(1)).</li>
+      </ol>
+    </div>
+
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  tasks = ["A","A","A","B","B","B"], n = 2
+# Output: 8   (e.g. A B idle A B idle A B  — 6 tasks + 2 idles)
+
+def least_interval(tasks, n)
+  # ============================================================
+  # Step 1: count how often each task appears
+  # ============================================================
+  counts = Hash.new(0)
+  tasks.each do |t|
+    counts[t] += 1
+  end
+
+  # ============================================================
+  # Step 2: find the bottleneck
+  # ============================================================
+  max_freq  = counts.values.max                       # busiest task's count
+  count_max = counts.values.count { |c| c == max_freq } # how many tie for it
+
+  # ============================================================
+  # Step 3: the skeleton forced by the busiest task
+  # ============================================================
+  # The busiest task creates (max_freq - 1) gaps, each of width (n + 1):
+  # the task itself plus n cooldown slots. The final block holds every task
+  # tied at max_freq (count_max of them), with no trailing idle.
+  skeleton = (max_freq - 1) * (n + 1) + count_max
+
+  # ============================================================
+  # Step 4: reconcile with the "many distinct tasks" case
+  # ============================================================
+  # If there are enough other tasks, they fill every idle gap (and possibly
+  # overflow), so there are NO idles and the time is just the task count.
+  # The true minimum is whichever is larger.
+  [tasks.length, skeleton].max
+end
+
+# Time:  O(T) — one pass to count T tasks; the max/tie scans are O(unique).
+# Space: O(U) — U distinct task labels (<= 26 for letters, effectively O(1)).</code></pre></div>
+
+    <h4 id="missing-other">Find the Missing ID in a Concatenated Sequence (reported Chime variant)</h4>
+    <p style="font-size:13px"><strong>Prompt:</strong> You're given <code class="inline">n</code> (the max id, capped at 99) and a string that is the ids <code class="inline">1, 2, 3, …, n</code> written <em>in order and concatenated together</em>, except exactly one id has been left out. Return the missing id. Example: <code class="inline">n = 15</code>, input <code class="inline">"1234567891011131415"</code> → the full sequence would be <code class="inline">"123456789101112131415"</code>, so the missing id is <strong>12</strong>.</p>
+    <p style="font-size:13px"><strong>Why it's trickier than it looks:</strong> ids are 1–99, so they're either <em>one</em> or <em>two</em> digits — you can't just chop the string into fixed-width pieces. The unlock: you already KNOW the sequence should be <code class="inline">1, 2, 3, …</code> in order, so don't try to parse the string blindly. Walk the <em>expected</em> numbers and consume their digits from the string one by one; the first expected number whose digits aren't sitting at your cursor is the missing one.</p>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Resist blind tokenizing.</strong> Variable-width ids (1 vs 2 digits) make splitting the raw string ambiguous. The sequence being a known, ordered run <code class="inline">1..n</code> is the structure to lean on.</li>
+        <li><strong>Drive from expectation, not from the string.</strong> Keep a cursor <code class="inline">pos</code> into the string and loop <code class="inline">expected</code> from <code class="inline">1</code> to <code class="inline">n</code>. At each step you know exactly which digits should appear next: <code class="inline">expected.to_s</code>.</li>
+        <li><strong>Match-and-consume.</strong> If the substring at <code class="inline">pos</code> of that length equals <code class="inline">expected</code>'s text, advance <code class="inline">pos</code> past it and continue.</li>
+        <li><strong>A mismatch IS the answer.</strong> If it doesn't match, <code class="inline">expected</code> was the one left out — record it and do <em>not</em> advance the cursor, because the digits sitting there belong to the NEXT id in line. (Exactly one is missing, so this fires once.)</li>
+        <li><strong>The edges fall out for free.</strong> Missing the first id → mismatch on the very first compare. Missing the last id → you reach <code class="inline">expected = n</code> with the cursor at the end, the substring comes back empty, and it's flagged. No special-casing needed.</li>
+        <li><strong>Complexity.</strong> O(L) time where L is the string length (each digit is consumed at most once), O(1) extra space.</li>
+      </ol>
+    </div>
+
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 15, s = "1234567891011131415"
+# Output: 12   (ids 1..15 concatenated in order, but "12" is missing)
+
+def find_missing_id(n, s)
+  pos     = 0     # cursor into the string
+  missing = nil   # the id we fail to find
+
+  # Walk the ids we EXPECT to see, in order.
+  (1..n).each do |expected|
+    token = expected.to_s   # the digits this id should contribute
+
+    # Do the next `token.length` chars spell out `expected`?
+    # (s[pos, len] grabs a substring of that length starting at pos;
+    #  it returns "" past the end, which never equals a real token.)
+    if s[pos, token.length] == token
+      # Match — consume those digits and move on.
+      pos += token.length
+    else
+      # No match — `expected` is the missing id. Do NOT advance pos: the
+      # digits here belong to the next id in the sequence.
+      missing = expected
+    end
+  end
+
+  missing
+end
+
+# Time:  O(L) — L = string length; every digit is consumed at most once.
+# Space: O(1) — just a cursor and the answer.</code></pre></div>
+
+    <p style="font-size:13px;margin-bottom:4px"><strong>Example use cases</strong></p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">find_missing_id(15, "1234567891011131415")        # => 12  (the asked example)
+
+# Missing a single-digit id (7 dropped):
+find_missing_id(15, "12345689101112131415")        # => 7
+
+# Missing the FIRST id (1 dropped) -> mismatch on the very first compare:
+find_missing_id(15, "23456789101112131415")        # => 1
+
+# Missing the LAST id (15 dropped) -> cursor runs off the end:
+find_missing_id(15, "1234567891011121314")         # => 15
+
+# Two-digit id dropped at the 1->2 digit boundary (10 dropped):
+find_missing_id(20, "12345678911121314151617181920")  # => 10</code></pre></div>
+
+    <p style="font-size:13px;margin-top:18px"><strong>Variant — the input is NOT ordered.</strong> <code class="inline">n = 5</code>, input <code class="inline">"4135"</code> → ids <code class="inline">1..5</code> were shuffled before concatenating, one is missing → answer <strong>2</strong>. The ordered trick is now useless: you can't "consume the next expected id" when they're jumbled. But you don't need order at all — the <em>sum</em> of the ids is fixed regardless of arrangement.</p>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-weight:600">Strategy (unordered)</p>
+      <ol style="margin:0;padding-left:18px;font-size:13px">
+        <li><strong>Drop the sequence-walk — it depended on order.</strong> Shuffled input means the cursor approach can't know which id should come next. Switch to an order-independent invariant.</li>
+        <li><strong>Use the Gauss sum.</strong> The complete set <code class="inline">1..n</code> always sums to <code class="inline">n·(n+1)/2</code>, no matter the order. Sum the ids actually present and the missing one is <code class="inline">expected_sum − actual_sum</code>.</li>
+        <li><strong>For <code class="inline">n ≤ 9</code> every CHARACTER is an id.</strong> That's the asked case (<code class="inline">n = 5</code>): just add up the digits. O(L) time, O(1) space.</li>
+        <li><strong>Raise the ambiguity for <code class="inline">n ≥ 10</code> out loud.</strong> Unordered + variable-width is genuinely ill-posed: <code class="inline">"4135"</code> could be <code class="inline">[4,1,3,5]</code> or <code class="inline">[41,3,5]</code> or <code class="inline">[4,13,5]</code>… You can't recover token boundaries without help. Ask the interviewer: are ids zero-padded to a fixed 2 digits (<code class="inline">"0102…"</code>) or delimited? If padded, slice every 2 chars and reuse the same sum trick.</li>
+        <li><strong>Mention XOR as the overflow-safe alternative.</strong> <code class="inline">XOR</code> of <code class="inline">1..n</code> against all present ids leaves the missing one — same O(L)/O(1), but no risk of a huge sum overflowing in languages with fixed-width ints.</li>
+      </ol>
+    </div>
+
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 5, s = "4135"   (ids 1..5 shuffled, one missing)
+# Output: 2
+
+def find_missing_id_unordered(n, s)
+  # The full set 1..n always sums to n*(n+1)/2 (Gauss), independent of order.
+  expected_sum = n * (n + 1) / 2
+
+  # For n &lt;= 9 every id is a single digit, so each CHARACTER is one id.
+  actual_sum = 0
+  s.each_char do |ch|
+    actual_sum += ch.to_i
+  end
+
+  # Whatever is left over is the id that never showed up.
+  expected_sum - actual_sum
+end
+
+# Time:  O(L) — one pass over the string. Space: O(1).
+
+# ---- Overflow-safe alternative: XOR (a ^ a == 0, so pairs cancel) ----
+def find_missing_id_xor(n, s)
+  acc = 0
+  (1..n).each { |id| acc ^= id }          # XOR in every id we EXPECT
+  s.each_char { |ch| acc ^= ch.to_i }     # XOR out every id we SEE
+  acc                                     # the unmatched id survives
+end
+
+# ---- n &gt;= 10 only works if ids are fixed-width (zero-padded to 2): "0102.." ----
+def find_missing_id_unordered_padded(n, s)
+  expected_sum = n * (n + 1) / 2
+  actual_sum = 0
+  i = 0
+  while i &lt; s.length
+    actual_sum += s[i, 2].to_i   # take 2 chars = one id
+    i += 2
+  end
+  expected_sum - actual_sum
+end</code></pre></div>
+
+    <p style="font-size:13px;margin-bottom:4px"><strong>Example use cases (unordered)</strong></p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">find_missing_id_unordered(5, "4135")        # => 2   (the asked example)
+find_missing_id_unordered(9, "31542976")    # => 8   (1..9 shuffled, 8 dropped)
+find_missing_id_xor(5, "4135")              # => 2   (same answer, overflow-safe)
+
+# n >= 10 needs fixed-width padding to be unambiguous (here 1..15 minus 12,
+# shuffled, each id zero-padded to 2 chars):
+find_missing_id_unordered_padded(15, "0307011502130509081406041011")  # => 12</code></pre></div>
 
     <div class="card chime">
       <p style="margin:0;font-size:13px"><strong>If they pivot to ANY problem in this list:</strong> the talk-track is unchanged — restate, clarify, brute force first, optimize with hash or DP, narrate the tradeoff, test with a small example, state complexity. The shape that scores is the SAME shape that would have scored on T9 — what you're showing is the loop, not the algorithm.</p>

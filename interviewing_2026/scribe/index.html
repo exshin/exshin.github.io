@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scribe · Backend · System Design (Billing) Prep</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #f7f6fb;
+    --panel: #ffffff;
+    --panel-2: #efecf8;
+    --border: #ded7ee;
+    --text: #1d1830;
+    --muted: #6b6485;
+    --accent: #6d28d9;
+    --accent-2: #8b5cf6;
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --scribe: #7c3aed;
+    --scribe-dark: #5b21b6;
+    --shadow: 0 1px 2px rgba(30, 23, 60, 0.05), 0 1px 1px rgba(30, 23, 60, 0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--scribe-dark); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--accent-2); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  h5 { margin: 16px 0 6px 0; color: var(--accent); font-size: 13px; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  ol.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ol.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.scribe { border-left: 3px solid var(--scribe); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #faf9fe !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .dual { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .lang-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 4px 4px 0 0; margin-bottom: -10px; position: relative; z-index: 1; }
+  .lang-tag.rb { color: #fff; background: #b5152b; }
+  .lang-tag.py { color: #fff; background: #3a6ea5; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.scribe { color: #fff; background: var(--scribe-dark); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  .ascii { font-size: 12px; background: var(--panel-2); padding: 12px; border-radius: 6px; line-height: 1.4; overflow-x: auto; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  .story { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .story .title { color: var(--accent); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .story .tags { margin-bottom: 8px; }
+  .story .row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .story .row .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  .round-banner {
+    background: linear-gradient(135deg, var(--scribe) 0%, var(--accent) 100%);
+    color: #fff; padding: 12px 18px; border-radius: 8px; margin: 0 0 16px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .round-banner .lbl { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.08em; }
+  .round-banner .time { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; }
+  /* === Collapsible problem sections === */
+  details.problem {
+    margin: 12px 0;
+    border-top: 1px solid var(--border);
+    padding-top: 4px;
+  }
+  details.problem:first-of-type { border-top: none; padding-top: 0; }
+  details.problem > summary {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent-2);
+    cursor: pointer;
+    padding: 10px 8px;
+    list-style: none;
+    border-radius: 4px;
+    user-select: none;
+  }
+  details.problem > summary:hover { background: var(--panel-2); }
+  details.problem > summary::-webkit-details-marker { display: none; }
+  details.problem > summary::marker { content: ""; }
+  details.problem > summary::before {
+    content: "\25B8";
+    display: inline-block;
+    margin-right: 10px;
+    color: var(--muted);
+    transition: transform 0.12s ease;
+    font-size: 11px;
+    width: 8px;
+  }
+  details.problem[open] > summary::before { transform: rotate(90deg); }
+  details.problem[open] > summary {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  /* TOC group headers */
+  aside li.toc-group {
+    color: var(--accent-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    padding: 14px 10px 4px 0;
+    margin-top: 6px;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+  aside li.toc-group:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  aside .toc-controls { display: flex; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  aside .toc-controls button { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: inherit; }
+  aside .toc-controls button:hover { color: var(--accent); background: var(--panel-2); border-color: var(--accent); }
+  aside .toc-filter { width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-bottom: 10px; font-family: inherit; }
+  aside .toc-filter:focus { outline: none; border-color: var(--accent); }
+  aside li.toc-hidden { display: none; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3, .grid-4, .dual { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Scribe · Backend Eng <span class="badge">System Design · Billing</span></h1>
+  <nav class="tabs">
+    <button data-tab="cheat" class="active">Cheat Sheet</button>
+    <button data-tab="design">System Design ★</button>
+    <button data-tab="coding">Coding</button>
+    <button data-tab="behavioral">Behavioral</button>
+    <button data-tab="product">Product ★</button>
+    <button data-tab="exec">Exec ★</button>
+    <button data-tab="techtalk">Tech Talk ★</button>
+    <button data-tab="stories">Stories</button>
+    <button data-tab="company">Company</button>
+    <button data-tab="questions">Q's to Ask</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <div class="toc-controls" id="toc-controls" style="display:none">
+      <button id="expand-all" title="Expand every section">Expand all</button>
+      <button id="collapse-all" title="Collapse every section">Collapse all</button>
+    </div>
+    <input type="text" id="toc-filter" class="toc-filter" placeholder="Filter sections..." style="display:none" />
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab active" id="tab-cheat" data-toc='[
+    ["The loop at a glance","glance"],
+    ["The 10-second pitch","pitch"],
+    ["Scribe values (they ask)","values"],
+    ["Why this maps to you","whyyou"],
+    ["Words that land","vocab"],
+    ["Design round in 6 moves","sixmoves"],
+    ["Billing one-liners to drop","oneliners"],
+    ["Mission soundbite","mission"],
+    ["Red flags to avoid","red"],
+    ["When stuck","stuck"]
+  ]'>
+    <h2>Cheat Sheet <span class="sub">scan this between rounds</span></h2>
+
+    <div class="card scribe">
+      <p style="margin:0 0 6px 0"><strong>Scribe = "documentation that writes itself."</strong> Browser extension + desktop app records a screen workflow and auto-generates an annotated step-by-step guide. ~120 people, SF, founded 2019. <strong>Series C $75M (Nov 2025) at a $1.3B valuation</strong>, led by StepStone. 5M+ users, 78k paid orgs, 94% of the Fortune 500 touch it.</p>
+      <p style="margin:0;font-size:13px"><strong>Stack:</strong> Python / <strong>Django monolith</strong>, <strong>PostgreSQL</strong>, Amazon MQ, AWS. <strong>Stripe</strong> for payments. <strong>Seat-based</strong> subscriptions with live proration + sales-led Enterprise. You're interviewing for the <strong>Billing team</strong>.</p>
+    </div>
+
+    <h3 class="section" id="glance">The loop at a glance</h3>
+    <p style="font-size:13px">Reported Scribe SWE loop (Glassdoor): recruiter screen → hiring-manager → live coding w/ senior eng → product-team interview → <strong>technical presentation to an eng panel</strong> → VP Eng → co-founder. Difficulty ~2.8/5, ~75% positive, ~14 days end-to-end. The "technical presentation to a panel" is the closest analog to a system-design round and may be it — treat your design as something you can <em>present and defend</em>, not just whiteboard.</p>
+    <div class="card warn"><p style="margin:0;font-size:13px"><strong>Reality check:</strong> No Scribe-specific system-design prompt is reported publicly, and the recruiter said it may not be billing-specific. So: prep the <strong>billing canon deeply</strong> (it's your edge as the billing hire) <em>and</em> the <strong>general BE design canon</strong> (webhook delivery, notifications, rate limiter, "design Scribe"). The System Design tab covers both.</p></div>
+
+    <h3 class="section" id="pitch">The 10-second pitch (about you)</h3>
+    <div class="card accent">
+      <p class="quote" style="margin:0">"I'm a backend engineer who owned the payments feature on Zendesk Talk end-to-end — Zuora integration, async SQS jobs, the works. I'm at my best on money-correctness problems: idempotency, reconciliation, the failure modes where a duplicate charge or a lost event actually costs a customer. That's exactly the surface a billing team lives on."</p>
+    </div>
+
+    <h3 class="section" id="values">Scribe values — operating principles (skim before behavioral)</h3>
+    <div class="grid-2">
+      <div class="card"><strong>Accelerate impact</strong><br><span style="font-size:12px;color:var(--muted)">Act with urgency. Prioritize the highest-impact work.</span></div>
+      <div class="card"><strong>Rapid learning machine</strong><br><span style="font-size:12px;color:var(--muted)">Break problems into small, testable units. Experiment, learn, iterate.</span></div>
+      <div class="card"><strong>Raise the bar</strong><br><span style="font-size:12px;color:var(--muted)">Uplevel performance and velocity, continuously.</span></div>
+      <div class="card"><strong>Clear is kind</strong><br><span style="font-size:12px;color:var(--muted)">Be honest and direct. It's the kind thing to do.</span></div>
+      <div class="card"><strong>Make our users heroes</strong><br><span style="font-size:12px;color:var(--muted)">At the center of every Scribe story is our user.</span></div>
+      <div class="card"><strong>One team, one dream</strong><br><span style="font-size:12px;color:var(--muted)">We win together. Compete as a team, not against each other.</span></div>
+    </div>
+
+    <h3 class="section" id="whyyou">Why this role maps to you (lead with these)</h3>
+    <ul class="tight">
+      <li><strong>Zendesk Talk payments owner</strong> — sole owner of a billing/charges feature, integrated with <strong>Zuora</strong> (a subscription-billing provider, conceptually identical to Stripe). You already speak billing's native language.</li>
+      <li><strong>The silent-200 duplicate-charge bug</strong> — your real story IS the idempotency lesson every billing interview is fishing for. Use it in both the behavioral AND the design round ("here's how I'd design this so the bug I found can't happen").</li>
+      <li><strong>Async architecture</strong> — API → SQS job → third-party → callback. That's the exact shape of a billing pipeline (charge → queue → PSP → webhook).</li>
+      <li><strong>Production debugging via dashboards + support tickets</strong> — "Make our users heroes" + reliability instinct.</li>
+    </ul>
+
+    <h3 class="section" id="vocab">Words and phrases that land well</h3>
+    <p style="font-size:13px"><span class="pill">idempotency key</span><span class="pill">transactional outbox</span><span class="pill">at-least-once + idempotent consumer</span><span class="pill">double-entry ledger</span><span class="pill">append-only / immutable</span><span class="pill">integer minor units (cents)</span><span class="pill">credit note, not edit</span><span class="pill">proration</span><span class="pill">webhooks are triggers, not truth</span><span class="pill">reconciliation job</span><span class="pill">dunning / smart retries</span><span class="pill">price versioning</span><span class="pill">entitlements</span><span class="pill">PCI scope minimization</span><span class="pill">strong consistency for money</span></p>
+
+    <h3 class="section" id="sixmoves">The design round in 6 moves (run this every time)</h3>
+    <ol class="tight">
+      <li><strong>Clarify &amp; scope</strong> (2–3 min) — ask the questions, write down the 1–2 things you'll build vs explicitly defer.</li>
+      <li><strong>Estimate</strong> — back-of-envelope: users, events/sec, write vs read ratio, money-critical vs not.</li>
+      <li><strong>API + data model</strong> — name the tables, the key invariants (UNIQUE idempotency key, debits=credits).</li>
+      <li><strong>Happy path end-to-end</strong> — draw the boxes, walk one request through.</li>
+      <li><strong>Failure modes</strong> — volunteer them before they ask. This is where senior signal lives.</li>
+      <li><strong>Scale + tradeoffs</strong> — what breaks at 10×, what you'd change, what you'd keep simple.</li>
+    </ol>
+
+    <h3 class="section" id="oneliners">Billing one-liners to drop (memorize 5)</h3>
+    <div class="card">
+      <ul class="tight" style="margin-bottom:0">
+        <li>"Money is stored as <strong>integer minor units</strong>, never floats — floats can't represent 0.1 and the rounding drift breaks the ledger invariant."</li>
+        <li>"<strong>Exactly-once delivery doesn't exist.</strong> I get exactly-once <em>processing</em> = at-least-once delivery + an idempotent consumer."</li>
+        <li>"<strong>Webhooks are triggers, not truth.</strong> Verify the signature, dedup on event id, enqueue, then refetch the resource from the PSP and reconcile."</li>
+        <li>"Finalized invoices are <strong>immutable</strong> — corrections are <strong>credit notes</strong>, never edits, because tax and audit need a stable record."</li>
+        <li>"For money I want <strong>strong consistency</strong> — I never read a balance off an eventually-consistent read replica."</li>
+        <li>"The balance is a <strong>projection of an append-only ledger</strong> — you never mutate, you append a compensating entry."</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="mission">Mission soundbite (use when "why Scribe?")</h3>
+    <div class="card scribe">
+      <p class="quote" style="margin:0">"Scribe's mission is to unleash and uplevel the world's know-how — the best ways of working already exist, they're just not evenly distributed. What pulls me in is that you've built a real proprietary dataset of how work actually gets done, and you're turning it into the foundation for work in the age of AI. On the billing side that's a fun problem: PLG self-serve seats <em>and</em> enterprise contracts <em>and</em> a separately-priced Optimize product — that's a genuinely interesting monetization surface to engineer."</p>
+    </div>
+
+    <h3 class="section" id="red">Red flags to avoid (any round)</h3>
+    <ul class="tight">
+      <li><strong>Don't claim "exactly-once delivery."</strong> Instant junior tell. Say at-least-once + idempotent.</li>
+      <li><strong>Don't use floats for money.</strong> Don't even say "I'll use a decimal and round later" without a rounding policy.</li>
+      <li><strong>Don't edit a finalized invoice.</strong> Credit note.</li>
+      <li><strong>Don't dual-write</strong> (DB then publish to queue as two steps). Name it as the trap, use the outbox.</li>
+      <li><strong>Don't trust webhook ordering.</strong> Stripe does not guarantee order.</li>
+      <li><strong>Don't over-engineer.</strong> Scribe is a Django monolith on Postgres — "I'd start in the monolith and extract a service only when the boundary earns it" is the right altitude here, not "microservices + Kafka + CQRS" by default.</li>
+    </ul>
+
+    <h3 class="section" id="stuck">When stuck (any round)</h3>
+    <ul class="tight">
+      <li>"Let me restate the requirement to make sure I'm solving the right problem."</li>
+      <li>"Let me start with the simplest thing that's correct, then make it fast." (Correct-first is a billing virtue.)</li>
+      <li>"What's the failure mode here?" — naming a failure usually reveals the missing component.</li>
+      <li>"Let me name the tradeoff out loud and pick — I'd rather commit and tell you when I'd revisit it."</li>
+    </ul>
+  </section>
+
+  <!-- ============ SYSTEM DESIGN ============ -->
+  <section class="tab" id="tab-design" data-collapsible="true" data-toc='[
+    ["@group","START HERE"],
+    ["Format &amp; what to expect","d-fmt"],
+    ["Universal framework","d-framework"],
+    ["Billing-specific essentials","d-essentials"],
+    ["Estimation cheat (Scribe numbers)","d-numbers"],
+    ["@group","★ BILLING PROBLEMS"],
+    ["★★ Subscription billing + proration","p-sub"],
+    ["★★ Usage-based metering &amp; rating","p-meter"],
+    ["★★ Stripe webhooks + reconciliation","p-webhookin"],
+    ["★ Double-entry ledger","p-ledger"],
+    ["★ Invoicing service","p-invoice"],
+    ["★ Entitlements / plan service","p-entitle"],
+    ["@group","★ GENERAL BE PROBLEMS"],
+    ["★ Webhook delivery (outbound)","p-webhookout"],
+    ["★ Notification / fan-out service","p-notif"],
+    ["★ Rate limiter","p-rate"],
+    ["★ Idempotency layer","p-idem"],
+    ["★ Design Scribe (capture→guide)","p-scribe"],
+    ["@group","CHEAT TABLES"],
+    ["Database tradeoffs","d-db"],
+    ["Patterns you must name","d-patterns"],
+    ["Phrases to use in the round","d-phrases"]
+  ]'>
+    <h2>System Design <span class="sub">★ the centerpiece — billing + general BE</span></h2>
+
+    <h3 class="section" id="d-fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-size:13px">Likely 45–60 min, one interviewer (or the panel "technical presentation"). They give an open prompt, you drive. <strong>Open-ended on purpose</strong> — they're scoring how you <em>think</em>, scope, and handle tradeoffs, not whether you recall one canonical answer.</p>
+      <p style="margin:0;font-size:13px"><strong>What they score:</strong> (1) Do you clarify before designing? (2) Is your data model correct, especially the invariants? (3) Do you reason about failure &amp; consistency? (4) Do you make explicit tradeoffs instead of hand-waving? (5) Can you defend a decision when pushed and change your mind when the push is right?</p>
+    </div>
+
+    <h3 class="section" id="d-framework">Universal framework (use every single time)</h3>
+    <table class="rubric">
+      <tr><th>Step</th><th>What you say / do</th><th>Time</th></tr>
+      <tr><td><strong>1. Clarify</strong></td><td>Functional reqs (what must it do), non-functional (scale, latency, consistency, durability), and the money-criticality. Ask "is this self-serve, enterprise, or both?" for any billing prompt. <strong>Write the scope down.</strong></td><td>3 min</td></tr>
+      <tr><td><strong>2. Estimate</strong></td><td>Order-of-magnitude: customers, events/sec, read:write, storage growth. Anchor in real numbers (see Scribe numbers below).</td><td>2 min</td></tr>
+      <tr><td><strong>3. API + entities</strong></td><td>A few endpoints, then the core tables and their <strong>invariants</strong> (UNIQUE keys, FK, append-only). This is where billing rounds are won.</td><td>8 min</td></tr>
+      <tr><td><strong>4. Architecture</strong></td><td>Draw the boxes. Walk ONE request end-to-end on the happy path.</td><td>10 min</td></tr>
+      <tr><td><strong>5. Deep dive</strong></td><td>Interviewer picks a component, or you pick the riskiest one (usually idempotency or the async pipeline). Go deep.</td><td>15 min</td></tr>
+      <tr><td><strong>6. Failure + scale</strong></td><td>Volunteer failure modes; describe what breaks at 10× and what you'd change. End by restating the tradeoffs you chose.</td><td>10 min</td></tr>
+    </table>
+
+    <h3 class="section" id="d-essentials">Billing-specific essentials (say these for ANY billing prompt)</h3>
+    <div class="grid-2">
+      <div class="card good"><strong>Money = integer minor units</strong><p style="margin:4px 0 0 0;font-size:12px">Store cents as <code class="inline">BIGINT</code> + a currency code. Never float. Round once, at a defined point, with an explicit policy; track remainders.</p></div>
+      <div class="card good"><strong>Idempotency everywhere</strong><p style="margin:4px 0 0 0;font-size:12px">Client idempotency key on writes; vendor idempotency key to the PSP; dedup on event id for webhooks. The whole domain is "make retries safe."</p></div>
+      <div class="card good"><strong>Append-only audit</strong><p style="margin:4px 0 0 0;font-size:12px">Ledger entries, invoice state transitions, subscription changes — all immutable history. Auditors and finance need "what happened and when."</p></div>
+      <div class="card good"><strong>Strong consistency for money</strong><p style="margin:4px 0 0 0;font-size:12px">Balance checks &amp; ledger postings are linearizable / single-shard ACID. Eventual is fine for usage rollups, notifications, analytics.</p></div>
+      <div class="card good"><strong>Reconciliation, always</strong><p style="margin:4px 0 0 0;font-size:12px">Never trust the PSP's webhooks alone. A pull-based job compares your state machine vs the PSP's record of truth and heals drift.</p></div>
+      <div class="card good"><strong>PCI scope minimization</strong><p style="margin:4px 0 0 0;font-size:12px">Card data goes browser→Stripe directly (Elements). You store a <em>token</em>, never the PAN. Touching raw cards explodes PCI scope.</p></div>
+    </div>
+
+    <h3 class="section" id="d-numbers">Estimation cheat (anchor in Scribe's real numbers)</h3>
+    <table class="rubric">
+      <tr><td>Paid orgs</td><td>~78,000 paying customer organizations</td></tr>
+      <tr><td>Users</td><td>5M+ total users</td></tr>
+      <tr><td>Billing cadence</td><td>Most subs monthly or annual → invoice generation is <strong>bursty</strong> (renewals cluster at month boundaries / sign-up anniversaries), not uniform.</td></tr>
+      <tr><td>Rough invoice volume</td><td>78k orgs, mostly monthly → ~78k invoices/month ≈ ~2.6k/day average, but <strong>peaks</strong> at the 1st of the month. Design for the peak, not the average.</td></tr>
+      <tr><td>Seat churn</td><td>Pro Team = base 5 seats + per-additional-seat, with live proration → seat add/remove events are the high-frequency write.</td></tr>
+      <tr><td>Money-critical QPS</td><td>Low absolute QPS (this isn't ad-tech). The hard part is <strong>correctness &amp; auditability</strong>, not throughput. Say that out loud — it reframes the whole design toward consistency over scale.</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--muted)"><strong>Senior framing:</strong> "Billing is a low-QPS, high-correctness system. I'm going to optimize for auditability and safe retries, not for raw throughput — and I'll lean on Postgres transactions rather than reaching for eventual-consistency infra I don't need."</p>
+
+    <!-- ===== BILLING PROBLEM 1: SUBSCRIPTION + PRORATION ===== -->
+    <h3 class="section" id="p-sub">★★ Subscription Billing + Proration (the most Scribe-shaped problem)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-size:13px"><strong>Why this one first:</strong> it's literally Scribe's billing model — seat-based plans (Basic/Pro Personal/Pro Team/Enterprise), a base tier + per-additional-seat, and <strong>live proration</strong> when seats change mid-cycle. If the round is billing-flavored, this or metering is what you'll get.</p>
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design the subscription billing system for Scribe. Customers subscribe to a seat-based plan, add/remove seats mid-cycle (prorated), upgrade/downgrade plans, and get charged on a recurring cycle via Stripe. Handle trials and annual vs monthly."</p>
+    </div>
+
+    <h4>Clarifying questions (ask BEFORE drawing)</h4>
+    <ol class="tight">
+      <li><strong>Scope?</strong> Just self-serve seat subscriptions, or also enterprise contract invoicing? (They differ: self-serve = card + Stripe auto-charge; enterprise = invoice + NET-30 terms.) Propose: "I'll design self-serve fully and sketch where enterprise diverges."</li>
+      <li><strong>Who's the source of truth for the subscription — us or Stripe?</strong> This is the single most important architectural decision (see below). I'll argue <em>we</em> own it and Stripe is the payment rail.</li>
+      <li><strong>Proration behavior?</strong> Charge immediately on seat add, or roll the delta to next invoice? Credit on removal = refund or account credit? (Scribe: prorated charge on add, prorated credit on remove.)</li>
+      <li><strong>Multi-currency?</strong> Assume USD first, design so currency is a column not an assumption.</li>
+      <li><strong>Entitlement coupling?</strong> When a seat is added, does access turn on immediately (before payment settles)? Usually yes — provision optimistically, reconcile money async.</li>
+    </ol>
+
+    <h4>The central decision: who owns subscription state?</h4>
+    <table class="rubric">
+      <tr><th>Option</th><th>Verdict</th></tr>
+      <tr><td><strong>Stripe is source of truth</strong> (Stripe Subscriptions / Billing drives everything)</td><td>Fast to start. But you couple your product to Stripe's data model, struggle with custom proration/entitlements, and every read is a Stripe API call. Fine for a tiny startup; not for a company at Scribe's scale with enterprise needs.</td></tr>
+      <tr><td><strong>We own subscriptions; Stripe is the payment rail (recommended)</strong></td><td>Our DB is the source of truth for plans, subscriptions, seats, entitlements, invoices. We use Stripe only to <em>charge a card</em> (PaymentIntents) and store tokenized payment methods. We reconcile via webhooks. This is what serious billing teams do — it keeps the domain model ours and Stripe swappable.</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--muted)"><strong>Senior verbalization:</strong> "I'll make our database the source of truth for subscription state and treat Stripe as a payment rail behind an adapter. It costs more upfront than letting Stripe Billing drive, but it keeps our entitlement and proration logic ours, and means a future PSP swap or a second PSP is an adapter change, not a rewrite."</p>
+
+    <h4>Data model (the tables you'd draw)</h4>
+    <table class="rubric">
+      <tr><td><code class="inline">products</code></td><td>id, name (e.g. "Pro Team")</td></tr>
+      <tr><td><code class="inline">prices</code></td><td>id, product_id, currency, interval (month/year), unit_amount_cents, model (flat/per_seat/tiered), <strong>version</strong>, active. <em>Immutable once used — never edit a price, create a new version.</em></td></tr>
+      <tr><td><code class="inline">subscriptions</code></td><td>id, customer_id, price_id, status (trialing/active/past_due/canceled), quantity (seats), current_period_start, current_period_end, cancel_at_period_end, stripe_customer_id</td></tr>
+      <tr><td><code class="inline">subscription_items</code></td><td>id, subscription_id, price_id, quantity — supports multi-line subs (base + add-ons + Optimize)</td></tr>
+      <tr><td><code class="inline">subscription_events</code></td><td>id, subscription_id, type (created/seat_added/upgraded/canceled), from→to, effective_at — <strong>append-only audit log</strong></td></tr>
+      <tr><td><code class="inline">invoices</code></td><td>id, customer_id, subscription_id, status (draft/open/paid/void/uncollectible), total_cents, currency, period_start/end, idempotency context</td></tr>
+      <tr><td><code class="inline">invoice_line_items</code></td><td>id, invoice_id, description, quantity, unit_amount_cents, amount_cents, proration (bool), period_start/end</td></tr>
+      <tr><td><code class="inline">payment_attempts</code></td><td>id, invoice_id, stripe_payment_intent_id, status, amount_cents, idempotency_key (UNIQUE), attempt_no, created_at</td></tr>
+    </table>
+
+    <h4>Proration — the math they will probe</h4>
+    <p style="font-size:13px">Customer on Pro Team adds 2 seats 10 days into a 30-day monthly cycle at $13/seat/mo.</p>
+    <div class="card">
+      <p style="margin:0;font-size:13px"><strong>Remaining fraction</strong> = days_left / days_in_period = 20/30 = 0.667.<br>
+      <strong>Prorated charge</strong> = 2 seats × $13 × 0.667 = <strong>$17.34</strong> (1734 cents).<br>
+      The general rule: <code class="inline">credit the unused portion of the old quantity/price, charge the prorated portion of the new</code>. On a pure seat-add the old-quantity credit is $0, so you just charge the new seats' remainder.</p>
+    </div>
+    <table class="rubric">
+      <tr><th>Decision</th><th>Options &amp; tradeoff</th></tr>
+      <tr><td><strong>When to bill the proration</strong></td><td><strong>Immediately</strong> (separate small invoice now) = clearest, but lots of tiny charges. <strong>Roll to next invoice</strong> (add proration line items to the upcoming invoice) = fewer charges, what Stripe does by default, better UX. Recommend roll-to-next, immediate for upgrades crossing a big amount.</td></tr>
+      <tr><td><strong>Time basis</strong></td><td>Wall-clock seconds is most accurate; whole-day is simpler and what most SaaS shows. Pick day-granularity and say why (matches what the customer sees on the invoice).</td></tr>
+      <tr><td><strong>Removal credit</strong></td><td>Refund to card (cash out — finance hates surprise refunds) vs <strong>account credit</strong> applied to future invoices (recommended; this is a negative line item / credit balance).</td></tr>
+      <tr><td><strong>Rounding</strong></td><td>Round each line item to the cent with a consistent policy (half-up). Never let summed rounded lines disagree with the rounded total — round the lines, then the invoice total is their sum.</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--muted)"><strong>Senior signal:</strong> proration is a pure function of (price version, old qty, new qty, time-in-period). Because <code class="inline">prices</code> are versioned and immutable, you can always recompute a past proration deterministically — that's what makes disputes and audits answerable.</p>
+
+    <h4>Architecture — the recurring billing run</h4>
+    <pre class="ascii">A scheduled job ("invoice cron") wakes up and finds subscriptions whose
+current_period_end &lt;= now:
+
+  Scheduler (per-minute) ── finds due subscriptions
+        │
+        ▼
+  For each due subscription, in ONE Postgres txn:
+    1. Generate invoice (status=draft) + line items (base seats, proration,
+       credits) from OUR subscription state — NOT from Stripe
+    2. Finalize invoice (status=open) — now immutable
+    3. Insert outbox_event "invoice.finalized"
+        │
+        ▼
+  Outbox poller ──▶ queue (Amazon MQ / SQS) ──▶ Charge worker
+        │
+        ▼
+  Charge worker:
+    - create Stripe PaymentIntent with idempotency_key = invoice_id+attempt
+    - on success → mark invoice paid, advance period_end, append event
+    - on failure → mark past_due, schedule dunning retry
+        │
+        ▼
+  Stripe webhook (payment_intent.succeeded/.failed) ──▶ reconcile
+    (verify sig, dedup event id, REFETCH intent, converge invoice state)</pre>
+    <p style="font-size:13px"><strong>Two correctness pillars here:</strong> (1) generating the invoice and finalizing it and emitting the charge event happen in <strong>one DB transaction + outbox</strong> — no dual-write. (2) The charge worker passes an <strong>idempotency key</strong> to Stripe so a retried run never double-charges. Your Zendesk silent-200 bug is exactly the failure this prevents — call that out if it fits.</p>
+
+    <h4>Subscription lifecycle (state machine)</h4>
+    <pre class="ascii">trialing ──(trial ends, payment ok)──▶ active ──(renewal fails)──▶ past_due
+   │                                      │                            │
+   │ (no card at trial end)               │ (user cancels)             │ (dunning exhausted)
+   ▼                                      ▼                            ▼
+canceled  ◀───────────────────────── canceled  ◀──────────────────── canceled / unpaid
+
+Upgrade/downgrade = new subscription_item version + proration line items;
+the subscription row keeps the same id (history in subscription_events).</pre>
+
+    <h4>Upgrades vs downgrades — the asymmetry to volunteer</h4>
+    <ul class="tight">
+      <li><strong>Upgrade (more seats / higher plan):</strong> apply <em>immediately</em> + charge proration now (or next invoice). Entitlement turns on at once. Customer is paying you more — low risk to provision optimistically.</li>
+      <li><strong>Downgrade (fewer seats / lower plan):</strong> usually apply <em>at period end</em>, not immediately — otherwise you owe a refund and they keep access they paid for. Schedule the change; bill the new rate next cycle. Volunteer this asymmetry; it shows product sense, not just plumbing.</li>
+    </ul>
+
+    <h4>Failure modes (volunteer before asked)</h4>
+    <ul class="tight">
+      <li><strong>Charge worker runs twice (queue redelivery):</strong> Stripe idempotency key on the PaymentIntent → second attempt returns the original result, no double charge.</li>
+      <li><strong>Process dies after Stripe charges but before we mark paid:</strong> webhook + reconciliation job converge the invoice to paid by refetching the intent. State machine is driven by truth from Stripe, not by our optimistic write.</li>
+      <li><strong>Seat added during the exact moment the invoice is being generated:</strong> generate from a consistent snapshot (the subscription row + items as of the txn); the seat add either lands in this invoice or the next, never half.</li>
+      <li><strong>Renewal fails (card declined):</strong> invoice stays open, subscription → past_due, dunning schedule kicks in (smart retries + emails), entitlement grace period before suspension.</li>
+      <li><strong>Annual plan refund on cancel:</strong> policy decision — usually no refund, access until period end. State the policy explicitly; don't silently assume.</li>
+    </ul>
+
+    <h4>Likely follow-ups</h4>
+    <ul class="tight">
+      <li><strong>"How do enterprise contracts differ?"</strong> Sales-negotiated price (custom <code class="inline">prices</code> row, not catalog), invoice with NET-30 terms instead of auto-charge, manual or ACH payment, possibly annual-up-front. Same invoice/ledger core, different collection path.</li>
+      <li><strong>"How do you handle a price change for existing customers?"</strong> New price version; existing subs keep their old version until they're explicitly migrated. Never mutate a price in place.</li>
+      <li><strong>"How do entitlements stay in sync?"</strong> Separate entitlements service/table derived from active subscription state; updated in the same txn as the seat change, or via an event the entitlements service consumes idempotently. (See the Entitlements problem below.)</li>
+      <li><strong>"Scale 10×?"</strong> The bottleneck is the renewal burst at month boundaries, not steady QPS. Spread anniversary dates, shard the invoice cron by customer_id, make each invoice generation independent and idempotent so it can be retried/parallelized freely.</li>
+    </ul>
+
+    <!-- ===== BILLING PROBLEM 2: METERING ===== -->
+    <h3 class="section" id="p-meter">★★ Usage-Based Metering &amp; Rating (the "design a metered billing pipeline" classic)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-size:13px"><strong>Why likely:</strong> the canonical billing system-design problem, and increasingly relevant to Scribe as AI features (Optimize) push toward consumption pricing. Even if Scribe is seat-based today, "how would you add usage-based billing?" is a natural probe for a billing hire.</p>
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design a usage-based billing system. Customers emit usage events (e.g. AI guide generations, API calls). We meter usage, rate it against a price, and roll it into a monthly invoice. Handle high event volume, late/duplicate/out-of-order events, and retroactive corrections."</p>
+    </div>
+
+    <h4>Clarifying questions</h4>
+    <ol class="tight">
+      <li><strong>Event volume &amp; latency?</strong> Real-time balance display, or is end-of-month accuracy enough? (Changes everything: real-time → stream + cache; batch → store-and-query.)</li>
+      <li><strong>Pricing model?</strong> Flat per-unit, tiered, volume, graduated? Do prices change retroactively?</li>
+      <li><strong>Accuracy bar?</strong> Must every event count exactly (it's money), or is sampling acceptable? (For billing: exact.)</li>
+      <li><strong>Do customers dispute usage?</strong> If yes, you need raw-event retention + replayability, not just aggregates.</li>
+    </ol>
+
+    <h4>The 5-stage pipeline (name these)</h4>
+    <pre class="ascii">  ingest ──▶ store (raw, immutable) ──▶ aggregate ──▶ rate (apply price) ──▶ invoice
+</pre>
+    <table class="rubric">
+      <tr><th>Stage</th><th>What happens</th></tr>
+      <tr><td><strong>Ingest</strong></td><td>Accept events via API/SDK. Each carries a client-supplied <code class="inline">idempotency_key</code> / <code class="inline">transaction_id</code>. At-least-once; dedup makes it effectively exactly-once. Validate &amp; enqueue fast; don't block the caller.</td></tr>
+      <tr><td><strong>Store</strong></td><td>Write raw events to an <strong>immutable, append-only</strong> store (columnar warehouse / event log). <em>This is the source of truth.</em> Never mutate.</td></tr>
+      <tr><td><strong>Aggregate</strong></td><td>Roll events into billable quantities per (customer, metric, period).</td></tr>
+      <tr><td><strong>Rate</strong></td><td>Apply the price (tiers/volume) to aggregated quantity → money. Deterministic: same events + same price → same amount.</td></tr>
+      <tr><td><strong>Invoice</strong></td><td>Materialize rated amounts as invoice line items at period close.</td></tr>
+    </table>
+
+    <h4>The big architectural fork: pre-aggregate vs query-time (the senior probe)</h4>
+    <table class="rubric">
+      <tr><th>Approach</th><th>Pros</th><th>Cons</th></tr>
+      <tr><td><strong>Query-time over immutable raw events (recommended for correctness)</strong><br><span style="font-size:12px;color:var(--muted)">Orb's model</span></td><td>Late/out-of-order events &amp; backfills are free — you just re-query. Retroactive price changes work. Fully auditable: "same query twice → same invoice." Disputes are answerable.</td><td>Heavier reads. Needs a columnar store that can scan a month of events fast. Real-time display needs a separate cache.</td></tr>
+      <tr><td><strong>Streaming pre-aggregation</strong><br><span style="font-size:12px;color:var(--muted)">Metronome-style</span></td><td>Cheap, fast reads. Natural real-time balance.</td><td>Corrections are hard — a late event means restating a materialized aggregate. Backfills need watermarks + a restatement mechanism. Easier to get subtly wrong.</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--muted)"><strong>Senior verbalization:</strong> "I'll store raw events immutably and compute invoices at query time over a columnar store, caching aggregates in Redis only for real-time display. The reason is correctness: late events, backfills, and retroactive price changes all become re-queries instead of fragile aggregate restatements. Pre-aggregation looks cheaper but it sacrifices exactly the property billing needs — the ability to recompute the truth."</p>
+    <div class="card bad"><p style="margin:0;font-size:13px"><strong>Common trap:</strong> "I'll pre-aggregate everything for performance." Sounds right, is usually wrong for billing — you lose clean backfills and retro-corrections. Lead with the correct framing; it's strong signal.</p></div>
+
+    <h4>Idempotent ingestion &amp; late events</h4>
+    <ul class="tight">
+      <li><strong>Dedup:</strong> unique constraint on <code class="inline">(customer_id, idempotency_key)</code>. Retries/heartbeats use a <em>deterministic</em> key so duplicates collapse. Dedup window TTL must outlive the producer's max retry window.</li>
+      <li><strong>Out-of-order:</strong> events carry an <code class="inline">event_timestamp</code> (when it happened) separate from <code class="inline">ingest_timestamp</code> (when we got it). Bill by event_timestamp; out-of-order is a non-issue if you store raw and query by event time.</li>
+      <li><strong>Late events after invoice close:</strong> with query-time architecture, apply as a <strong>read-path overlay</strong> / true-up on the next invoice (a correction line item) rather than reopening a finalized invoice. Finalized invoices stay immutable.</li>
+      <li><strong>Corrections / amendments:</strong> layer credits or adjustments on top; don't rewrite history.</li>
+    </ul>
+
+    <h4>Failure modes</h4>
+    <ul class="tight">
+      <li><strong>Duplicate event delivery:</strong> dedup key → counted once.</li>
+      <li><strong>Event arrives 3 days late:</strong> stored by event_timestamp; included when that period is (re)queried; if period already invoiced → true-up next cycle.</li>
+      <li><strong>Price changed retroactively:</strong> re-rate raw events against the corrected price; emit an adjustment. Possible only because raw events are retained.</li>
+      <li><strong>Ingestion pipeline lag at month close:</strong> define a cutoff/grace window before finalizing; events after cutoff roll to next period. State the cutoff explicitly.</li>
+    </ul>
+
+    <!-- ===== BILLING PROBLEM 3: WEBHOOKS IN ===== -->
+    <h3 class="section" id="p-webhookin">★★ Stripe Webhooks + Payment Reconciliation (your Zuora bug, generalized)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-size:13px"><strong>Why this is YOUR problem:</strong> the Zendesk silent-200 duplicate-charge bug is exactly this surface — a third party returning success ambiguously, retries creating duplicates. You found and fixed it in production. Designing the system that makes it impossible is a story you can tell better than almost any candidate.</p>
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> "We charge customers through Stripe and react to Stripe webhooks to update our billing state. Design this so our state is always correct despite duplicate, out-of-order, and lost webhooks."</p>
+    </div>
+
+    <h4>The webhook handling rules (do them IN THIS ORDER)</h4>
+    <ol class="tight">
+      <li><strong>Verify the HMAC signature on the raw request body.</strong> Any re-serialization of the body breaks the signature — verify before parsing.</li>
+      <li><strong>Dedup on the event <code class="inline">id</code></strong> via a UNIQUE constraint in a <code class="inline">processed_webhooks</code> table. Stripe retries; the same event id can arrive many times.</li>
+      <li><strong>Enqueue + return 200 fast.</strong> Don't do heavy work in the handler — persist the event, ack, process async. Slow handlers cause Stripe to retry and pile up.</li>
+      <li><strong>Process async: REFETCH the resource from Stripe, don't trust the payload.</strong> Webhooks are unordered and can be stale; refetch the PaymentIntent and converge your state to it.</li>
+    </ol>
+    <div class="card bad"><p style="margin:0;font-size:13px"><strong>The trap (and your real bug):</strong> treating the webhook (or a 200 from the PSP) as authoritative and writing state directly. A duplicate or out-of-order delivery then double-applies. The fix is the same shape as your Zendesk fix: <strong>idempotent processing keyed on a stable id, plus reconcile against the source of truth.</strong></p></div>
+
+    <h4>"Webhooks are triggers, not truth"</h4>
+    <p style="font-size:13px">Stripe does not guarantee ordering or exactly-once delivery. So never build a state machine that assumes <code class="inline">payment_intent.created</code> arrives before <code class="inline">.succeeded</code>. Instead: a webhook is a <em>nudge</em> that says "something changed, go look." You refetch the canonical object and set your state from it. This makes ordering irrelevant and duplicates harmless.</p>
+
+    <h4>The reconciliation safety net (the part juniors skip)</h4>
+    <p style="font-size:13px">Webhooks get lost — endpoint down, deploy mid-delivery, Stripe gives up after retries. So you <strong>never rely on webhooks alone.</strong> A scheduled <strong>reconciliation job</strong> pulls recent PaymentIntents/charges from Stripe and compares them against your <code class="inline">payment_attempts</code> / <code class="inline">invoices</code> state, healing any drift (mark a stuck invoice paid, flag a mystery charge). Webhooks = low-latency happy path; reconciliation = guaranteed eventual correctness.</p>
+
+    <h4>The outbox tie-in (atomic state + side effect)</h4>
+    <p style="font-size:13px">When the webhook processor updates billing state AND needs to trigger something downstream (send a receipt, flip entitlement), it writes the state change + an outbox event <strong>in one DB transaction</strong>, never DB-then-publish. The classic dual-write trap: you mark the invoice paid, then crash before publishing "send receipt" — customer paid, no receipt. Outbox makes it atomic.</p>
+
+    <h4>Data model</h4>
+    <table class="rubric">
+      <tr><td><code class="inline">processed_webhooks</code></td><td>stripe_event_id (UNIQUE), type, received_at, processed_at — the dedup table</td></tr>
+      <tr><td><code class="inline">payment_attempts</code></td><td>id, invoice_id, stripe_payment_intent_id, status, amount_cents, idempotency_key (UNIQUE), created_at</td></tr>
+      <tr><td><code class="inline">outbox_events</code></td><td>id, topic, payload, published_at (NULL until published)</td></tr>
+    </table>
+
+    <h4>Failure modes</h4>
+    <ul class="tight">
+      <li><strong>Same webhook delivered 5×:</strong> UNIQUE on event id → processed once, the rest are no-ops.</li>
+      <li><strong>succeeded arrives before created:</strong> we refetch the intent; current truth is "succeeded"; we converge. Order didn't matter.</li>
+      <li><strong>Webhook never arrives:</strong> reconciliation job catches it within its cadence (e.g. hourly).</li>
+      <li><strong>We charged but our "mark paid" write failed:</strong> webhook OR reconciliation refetches and converges. The charge (with idempotency key) is never repeated.</li>
+      <li><strong>Stripe outage:</strong> charge worker retries with backoff; idempotency key ensures no double charge when it recovers.</li>
+    </ul>
+
+    <!-- ===== BILLING PROBLEM 4: LEDGER ===== -->
+    <h3 class="section" id="p-ledger">★ Double-Entry Ledger (money-correctness core)</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design the ledger that records all money movement in our billing system — charges, credits, refunds, proration adjustments — so balances are always correct and auditable."</p></div>
+    <h4>The core ideas (say all four)</h4>
+    <ul class="tight">
+      <li><strong>Double-entry:</strong> every movement is two balanced postings — debit one account, credit another. The invariant <strong>debits = credits</strong> is enforced per transaction, so the books are always internally consistent.</li>
+      <li><strong>Append-only / immutable:</strong> no UPDATE, no DELETE. A reversal is a <em>new compensating entry</em>. This is what makes it auditable and reconciliation tractable.</li>
+      <li><strong>Balances are derived, not stored:</strong> balance = fold over the entry log (with periodic snapshot rows for performance). The log is the truth; the balance is a projection.</li>
+      <li><strong>The entry id is the idempotency key:</strong> a retried "post this transfer" with the same id must not move money twice.</li>
+    </ul>
+    <h4>Data model</h4>
+    <table class="rubric">
+      <tr><td><code class="inline">accounts</code></td><td>id, owner (customer/revenue/cash/credits), currency, type</td></tr>
+      <tr><td><code class="inline">ledger_transactions</code></td><td>id (idempotency key), description, created_at — groups the postings</td></tr>
+      <tr><td><code class="inline">ledger_entries</code></td><td>id, transaction_id, account_id, direction (debit/credit), amount_cents, currency. <strong>SUM(debits)=SUM(credits) per transaction</strong> (enforced in app txn / constraint).</td></tr>
+      <tr><td><code class="inline">balance_snapshots</code></td><td>account_id, as_of, balance_cents — periodic, to avoid folding the whole log</td></tr>
+    </table>
+    <h4>Tradeoffs &amp; senior signals</h4>
+    <ul class="tight">
+      <li><strong>Multi-currency:</strong> never sum across currencies. An FX conversion is itself two postings through an FX/clearing account.</li>
+      <li><strong>Strong consistency required:</strong> posting + balance check in one ACID transaction, single-shard. Never read a balance off a replica.</li>
+      <li><strong>Build vs buy:</strong> Postgres with app-enforced invariants is the right start; mention purpose-built ledger DBs (TigerBeetle) as the scale evolution — "I'd reach for a dedicated ledger engine when posting throughput or correctness guarantees outgrow a single Postgres, not before."</li>
+    </ul>
+
+    <!-- ===== BILLING PROBLEM 5: INVOICING ===== -->
+    <h3 class="section" id="p-invoice">★ Invoicing Service (lifecycle &amp; immutability)</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design the invoicing service — generate invoices from subscription/usage state, finalize them, collect payment, and handle corrections."</p></div>
+    <h4>Invoice lifecycle</h4>
+    <pre class="ascii">draft ──(finalize)──▶ open ──(payment succeeds)──▶ paid
+  │                     │
+  │ (editable here      ├──(issued in error)──▶ void
+  │  only)              └──(owed but written off)──▶ uncollectible</pre>
+    <ul class="tight">
+      <li><strong>Editable only in draft.</strong> Once finalized (open), amount/customer/line items <strong>lock</strong> — tax and legal need a stable record.</li>
+      <li><strong>Corrections after finalize = credit notes,</strong> never edits. A credit note adjusts money owed without rewriting the original document.</li>
+      <li><strong>void</strong> = invoice should never have been issued; <strong>uncollectible</strong> = legitimately owed but written off as bad debt. Different meanings — use precisely.</li>
+      <li><strong>Idempotent generation:</strong> generating an invoice for (subscription, period) twice must produce one invoice — UNIQUE on (subscription_id, period_start).</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted)"><strong>Senior verbalization:</strong> "Finalized invoices are immutable; every correction is a credit note. That keeps an auditable, tax-compliant trail and means I can always reconstruct exactly what a customer was told they owed and when."</p>
+
+    <!-- ===== BILLING PROBLEM 6: ENTITLEMENTS ===== -->
+    <h3 class="section" id="p-entitle">★ Entitlements / Plan Service (access derived from billing state)</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "How does the product know what a customer is allowed to do (seats, features, limits), and how does that stay in sync with billing?"</p></div>
+    <ul class="tight">
+      <li><strong>Separate entitlements from billing,</strong> but derive entitlements <em>from</em> subscription state. The product asks "can this user do X?" — that's a hot read path and must be fast (cache it), decoupled from invoice generation.</li>
+      <li><strong>Source:</strong> active subscription + plan → entitlements (seat count, feature flags, usage limits). Recompute on subscription change; consume the change via an idempotent event or update in the same txn.</li>
+      <li><strong>Optimistic provisioning:</strong> turn access on immediately on upgrade (before money settles); reconcile/revoke async if payment ultimately fails. Don't make users wait on a payment round-trip — "Make our users heroes."</li>
+      <li><strong>Grace periods:</strong> on past_due, don't hard-cut access — grace window + dunning, then suspend. Product policy, encoded in the entitlements service.</li>
+      <li><strong>Consistency:</strong> entitlements can be eventually consistent (a few seconds of lag on a feature flag is fine); the <em>money</em> behind it must be strongly consistent. Separate the two on purpose.</li>
+    </ul>
+
+    <!-- ===== GENERAL: WEBHOOK DELIVERY OUT ===== -->
+    <h3 class="section" id="p-webhookout">★ Webhook Delivery System — outbound (very likely general prompt)</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design a system that reliably delivers webhooks from our platform to customer endpoints (e.g. Scribe notifying a customer's system when a guide is published, or a billing event fires)."</p></div>
+    <h4>Architecture</h4>
+    <pre class="ascii">event occurs ──▶ persist event ──▶ enqueue ──▶ delivery workers ──▶ customer endpoint
+                                                    │ (fail)
+                                                    ▼
+                                          retry w/ exp backoff + jitter
+                                                    │ (exhausted)
+                                                    ▼
+                                              DLQ + disable endpoint + alert</pre>
+    <h4>The points that score</h4>
+    <ul class="tight">
+      <li><strong>Queue-first:</strong> persist then enqueue — decouples production from delivery, absorbs spikes, survives a slow/down receiver.</li>
+      <li><strong>At-least-once → receiver must be idempotent.</strong> Sign payloads with HMAC + a timestamp (anti-replay) and include a stable event id so customers can dedup.</li>
+      <li><strong>Retries: exponential backoff + JITTER</strong> — jitter avoids a thundering herd hammering a recovering endpoint. ~3–7 attempts over hours; cap interval (6–12h), total window 1–3 days, then disable + alert.</li>
+      <li><strong>DLQ + replay</strong> after the customer fixes their endpoint.</li>
+      <li><strong>Per-endpoint isolation:</strong> one customer's dead endpoint must not back up everyone else's deliveries (per-destination queues / concurrency limits).</li>
+      <li><strong>Status code nuance:</strong> retry 408 and 429 even though they're 4xx. Don't retry other 4xx (client config error).</li>
+    </ul>
+
+    <!-- ===== GENERAL: NOTIFICATION ===== -->
+    <h3 class="section" id="p-notif">★ Notification / Fan-out Service</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design a service that sends notifications (email, push, in-app, SMS) — e.g. billing receipts, dunning emails, 'your guide was viewed'."</p></div>
+    <pre class="ascii">event ──▶ bus (SNS/Kafka) ──▶ per-channel queues ──▶ channel dispatchers ──▶ providers
+                                  (email / push / sms / in-app)   (SES / FCM / Twilio)
+                                        ▲
+                              preference + quiet-hours + frequency-cap engine</pre>
+    <ul class="tight">
+      <li><strong>Fan-out, not messaging:</strong> the hard parts are per-channel isolation (one provider outage can't block others), dedup, and preference enforcement — not "how do I send an email."</li>
+      <li><strong>Idempotency:</strong> key like <code class="inline">hash(user_id, type, content_hash, date)</code> in Redis w/ TTL → no duplicate "payment failed" emails.</li>
+      <li><strong>Preference engine:</strong> channel opt-ins, quiet hours, frequency caps live in routing — critical for dunning so you don't spam.</li>
+      <li><strong>Templating + i18n,</strong> provider failover, delivery tracking, independent retry/DLQ per channel.</li>
+      <li><strong>Critical vs marketing:</strong> a dunning email is transactional (must deliver, cascade fallback channels); a "tip of the week" is best-effort. Separate the SLAs.</li>
+    </ul>
+
+    <!-- ===== GENERAL: RATE LIMITER ===== -->
+    <h3 class="section" id="p-rate">★ Rate Limiter</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design a rate limiter for our API (e.g. usage-ingestion endpoint, or protecting Stripe-facing calls)."</p></div>
+    <table class="rubric">
+      <tr><th>Algorithm</th><th>Behavior</th><th>Use when</th></tr>
+      <tr><td><strong>Token bucket</strong></td><td>Allows bursts up to capacity, steady refill. Cheap per key.</td><td>Default for API quotas. Most common right answer.</td></tr>
+      <tr><td><strong>Sliding window counter</strong></td><td>Blends current + previous window; near-exact at low cost.</td><td>Best general-purpose default when you want accuracy + cheap.</td></tr>
+      <tr><td><strong>Sliding window log</strong></td><td>Exact, stores every timestamp — memory/CPU heavy.</td><td>Only when precision is critical (fraud / financial limits).</td></tr>
+      <tr><td><strong>Fixed window</strong></td><td>Simplest; allows 2× burst at the boundary.</td><td>When approximate is fine and simplicity wins.</td></tr>
+    </table>
+    <ul class="tight">
+      <li><strong>Distributed:</strong> Redis with an atomic Lua script (read-modify-write must be atomic or two nodes both pass the limit).</li>
+      <li><strong>Consistency tradeoff:</strong> strict global limit = coordination latency; allowing small overage = much cheaper, often fine. Name the choice.</li>
+      <li><strong>Return <code class="inline">429</code> + <code class="inline">Retry-After</code>;</strong> rate-limit headers so clients can back off gracefully.</li>
+    </ul>
+
+    <!-- ===== GENERAL: IDEMPOTENCY LAYER ===== -->
+    <h3 class="section" id="p-idem">★ Idempotency Layer (the pattern under everything)</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design a generic idempotency layer for our write APIs so retries are safe."</p></div>
+    <ul class="tight">
+      <li>Client sends an <code class="inline">Idempotency-Key</code> header (a UUID it generates per logical operation).</li>
+      <li>Server keeps <code class="inline">(key, request_hash) → cached_response</code>. <strong>Same key + same body</strong> → return cached response. <strong>Same key + different body</strong> → 422 (client reused a key = bug). <strong>New key</strong> → process fresh.</li>
+      <li><strong>The critical part:</strong> record the idempotency result AND the business effect in the <em>same DB transaction</em>. If you do the work then separately record the key and crash between, a retry double-applies. Atomicity is the whole correctness argument.</li>
+      <li><strong>Store:</strong> Postgres for money flows (durable, ~1ms — worth it). Redis for non-money (faster, acceptable to lose). TTL must outlive the client's max retry window (24h typical).</li>
+      <li><strong>Side-effect idempotency:</strong> any external side effect (charge a card, send an email) needs its own idempotency token to the vendor — worker-level dedup alone doesn't cover a vendor call that fired before the crash.</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted)"><strong>This is your home turf — tie it to the Zendesk bug:</strong> "The production bug I fixed was exactly an idempotency gap — a provider returned 200 ambiguously and its retry created a duplicate charge. Designing this layer is designing the thing that makes that class of bug impossible."</p>
+
+    <!-- ===== GENERAL: DESIGN SCRIBE ===== -->
+    <h3 class="section" id="p-scribe">★ Design Scribe itself (capture → guide → serve)</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Design Scribe's core: a user records a workflow (clicks + screenshots), and we generate and serve a shareable step-by-step guide." A product-knowledge flex — shows you understand the business you'd be billing for.</p></div>
+    <h4>Walkthrough</h4>
+    <ul class="tight">
+      <li><strong>Capture (client):</strong> browser extension / desktop app records events (clicks, URLs, keystrokes-redacted) + screenshots locally; batches and uploads. <strong>Upload images direct to S3 via presigned URLs</strong>, not through the API — screenshots are large (MBs), don't proxy bytes through your app. The API records the S3 key after upload.</li>
+      <li><strong>Process (async):</strong> POST creates a <code class="inline">capture</code> row + outbox event in one txn → queue → workers do OCR / step extraction / auto-redaction of PII/PHI (enterprise feature) / screenshot annotation. State machine: <code class="inline">uploaded → processing → ready</code>.</li>
+      <li><strong>Store:</strong> Postgres for guide metadata &amp; steps; S3 for images; CDN in front for serving. (Matches their real stack: Django + Postgres + AWS.)</li>
+      <li><strong>Serve:</strong> guides are read-heavy &amp; shareable (embeds, exports, public links) → cache aggressively, CDN the images, signed URLs for private guides.</li>
+      <li><strong>Where billing plugs in:</strong> entitlements gate (seats, enterprise features like SSO/redaction), and — if usage pricing ever lands — metering "guides generated" through the pipeline you designed above. <strong>Bridge it back to billing</strong> to show range.</li>
+      <li><strong>Scale:</strong> capture volume is bursty &amp; per-user; processing is embarrassingly parallel (per-capture, idempotent); serving scales via CDN. The interesting consistency question is "guide is ready" eventual vs the billing money path strong.</li>
+    </ul>
+
+    <!-- ===== CHEAT TABLES ===== -->
+    <h3 class="section" id="d-db">Database tradeoffs cheat sheet</h3>
+    <table class="rubric">
+      <tr><th>Choice</th><th>When</th></tr>
+      <tr><td><strong>Postgres (default for billing)</strong></td><td>ACID transactions, strong consistency, constraints to enforce invariants (UNIQUE idempotency keys, debits=credits). Scribe runs Postgres — meet them there. This is the right answer for almost every billing component.</td></tr>
+      <tr><td><strong>Read replicas</strong></td><td>Scale reads (dashboards, reporting). <strong>Never read money state from them</strong> — replica lag breaks correctness.</td></tr>
+      <tr><td><strong>Redis</strong></td><td>Caches, rate-limit counters, real-time usage display, non-money idempotency. Not the source of truth for money.</td></tr>
+      <tr><td><strong>Columnar warehouse</strong> (Snowflake/ClickHouse/BigQuery)</td><td>Immutable raw usage events, query-time aggregation, analytics. The store for metering's source of truth.</td></tr>
+      <tr><td><strong>Queue</strong> (Amazon MQ / SQS / Kafka)</td><td>Async pipelines: charge workers, webhook processing, notification fan-out. At-least-once → idempotent consumers.</td></tr>
+      <tr><td><strong>Dedicated ledger DB</strong> (TigerBeetle)</td><td>Extreme posting throughput / built-in money correctness. The scale-up story, not the starting point.</td></tr>
+    </table>
+
+    <h3 class="section" id="d-patterns">Patterns you must be able to name</h3>
+    <table class="rubric">
+      <tr><th>Pattern</th><th>One-line</th></tr>
+      <tr><td><strong>Transactional outbox</strong></td><td>Write business row + event row in one txn; a poller (or CDC/Debezium off the WAL) publishes. Solves the dual-write problem. CDC = lower latency, more infra; polling = simpler.</td></tr>
+      <tr><td><strong>Idempotent consumer</strong></td><td>At-least-once delivery + dedup on a stable id in a control table = exactly-once <em>processing</em>. (Exactly-once delivery is a myth.)</td></tr>
+      <tr><td><strong>Idempotency key</strong></td><td>Client/vendor-supplied key makes a retried write a safe no-op returning the original result.</td></tr>
+      <tr><td><strong>Saga / compensating transaction</strong></td><td>Multi-step money flows that can't be one DB txn → forward steps + explicit compensations (a refund is a compensation, not a rollback).</td></tr>
+      <tr><td><strong>Event sourcing (for money)</strong></td><td>Immutable append-only log of facts; current state is a projection. The ledger and usage events are this.</td></tr>
+      <tr><td><strong>Reconciliation</strong></td><td>Pull-based job that compares your state to the external source of truth (PSP) and heals drift. The safety net behind webhooks.</td></tr>
+    </table>
+
+    <h3 class="section" id="d-phrases">Phrases to use during the round</h3>
+    <div class="card">
+      <ul class="tight" style="margin-bottom:0">
+        <li>"Let me clarify scope before I design — what's in vs out."</li>
+        <li>"Billing is low-QPS, high-correctness, so I'll optimize for auditability and safe retries over throughput."</li>
+        <li>"I'll make our DB the source of truth and treat Stripe as a swappable payment rail behind an adapter."</li>
+        <li>"That's a dual-write — let me use a transactional outbox instead."</li>
+        <li>"Exactly-once delivery doesn't exist; I'll do at-least-once plus an idempotent consumer."</li>
+        <li>"Webhooks are triggers, not truth — I verify, dedup, enqueue, refetch, reconcile."</li>
+        <li>"I'd start simple in the monolith and extract a service only when the boundary earns it."</li>
+        <li>"Here's the tradeoff; I'll commit to X and tell you the conditions under which I'd revisit it."</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CODING ============ -->
+  <section class="tab" id="tab-coding" data-toc='[
+    ["Format &amp; what to expect","c-fmt"],
+    ["Language &amp; the Ruby→Python bridge","c-lang"],
+    ["Communication framework","c-comm"],
+    ["Practical coding problems","c-prob"],
+    ["@group","OPTIMIZATION DRILL ★"],
+    ["Overview &amp; framework","c-opt"],
+    ["Big-O crash course","c-opt-bigo"],
+    ["Complexity of common ops","c-opt-cheatref"],
+    ["Scaling toolbox","c-opt-toolbox"],
+    ["Worked drills (7)","c-opt-drills"],
+    ["Glossary of lingo","c-opt-glossary"],
+    ["@group","REFERENCE"],
+    ["Patterns to have ready","c-patterns"],
+    ["Cheat sheets: Python &amp; Ruby","c-py"]
+  ]'>
+    <h2>Coding <span class="sub">live round with a senior engineer</span></h2>
+
+    <h3 class="section" id="c-fmt">Format &amp; what to expect</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Confirmed (offer email):</strong> 60-min <strong>BE Coding Interview on Coderpad</strong>. Evaluation is <strong>code fluency in Python</strong> on a <strong>practical / real-world problem</strong> — NOT a hard algorithmic puzzle. Conversational, <strong>pair-programming style</strong>. They score: code fluency, problem-solving, collaboration, communication. <strong>No AI / external help allowed.</strong> Treat it as: clean working code, good naming, sensible data modeling, edge cases handled, narrate as you go.</p></div>
+    <div class="card"><p style="margin:0;font-size:13px">Expect <strong>growing requirements</strong>: a small problem you build incrementally and extend live ("now handle malformed input… now add a time window… now make it testable"). Getting the perfect answer matters less than <strong>how you move</strong> — stay talking, take their nudges, iterate.</p></div>
+
+    <h3 class="section" id="c-lang">Language &amp; the Ruby→Python bridge</h3>
+    <p style="font-size:13px">You must <strong>write Python</strong> on Coderpad (Scribe is Python/Django) — but you think in <strong>Ruby</strong> (Rails native). Fastest fix for rusty Python: translate from what your fingers know. Every problem below is shown in <strong>both languages</strong> so you can anchor on the Ruby and produce the Python.</p>
+    <table class="rubric">
+      <tr><th>Concept</th><th>Ruby</th><th>Python</th></tr>
+      <tr><td>print</td><td><code class="inline">puts x</code></td><td><code class="inline">print(x)</code></td></tr>
+      <tr><td>interpolate</td><td><code class="inline">"#{x} seats"</code></td><td><code class="inline">f"{x} seats"</code></td></tr>
+      <tr><td>null / check</td><td><code class="inline">nil</code> · <code class="inline">x.nil?</code></td><td><code class="inline">None</code> · <code class="inline">x is None</code></td></tr>
+      <tr><td>iterate</td><td><code class="inline">arr.each { |x| ... }</code></td><td><code class="inline">for x in arr:</code></td></tr>
+      <tr><td>map</td><td><code class="inline">arr.map { |x| x*2 }</code></td><td><code class="inline">[x*2 for x in arr]</code></td></tr>
+      <tr><td>filter</td><td><code class="inline">arr.select { |x| x&gt;0 }</code></td><td><code class="inline">[x for x in arr if x&gt;0]</code></td></tr>
+      <tr><td>sum</td><td><code class="inline">arr.sum</code></td><td><code class="inline">sum(arr)</code></td></tr>
+      <tr><td>append</td><td><code class="inline">arr &lt;&lt; x</code></td><td><code class="inline">arr.append(x)</code></td></tr>
+      <tr><td>includes</td><td><code class="inline">arr.include?(x)</code></td><td><code class="inline">x in arr</code></td></tr>
+      <tr><td>length</td><td><code class="inline">arr.length</code></td><td><code class="inline">len(arr)</code></td></tr>
+      <tr><td>sort desc</td><td><code class="inline">arr.sort_by { |x| -x.n }</code></td><td><code class="inline">sorted(arr, key=lambda x: -x.n)</code></td></tr>
+      <tr><td>hash default 0</td><td><code class="inline">Hash.new(0)</code></td><td><code class="inline">defaultdict(int)</code> / <code class="inline">d.get(k,0)</code></td></tr>
+      <tr><td>hash iterate</td><td><code class="inline">h.each { |k,v| }</code></td><td><code class="inline">for k, v in d.items():</code></td></tr>
+      <tr><td>set</td><td><code class="inline">Set.new</code></td><td><code class="inline">set()</code></td></tr>
+      <tr><td>dict literal</td><td><code class="inline">{a: 1}</code> (symbol key)</td><td><code class="inline">{"a": 1}</code> (string key)</td></tr>
+      <tr><td>guard</td><td><code class="inline">next unless cond</code></td><td><code class="inline">if not cond: continue</code></td></tr>
+      <tr><td>raise</td><td><code class="inline">raise ArgumentError</code></td><td><code class="inline">raise ValueError</code></td></tr>
+      <tr><td>value object</td><td><code class="inline">Struct.new(:a, :b)</code></td><td><code class="inline">@dataclass</code></td></tr>
+    </table>
+    <div class="card accent"><p style="margin:0 0 6px;font-size:13px;font-weight:600">4 gotchas that bite a Ruby native — burn these in:</p>
+    <ul class="tight" style="margin:0">
+      <li><strong>Truthiness:</strong> Ruby — only <code class="inline">nil</code>/<code class="inline">false</code> are falsy. Python — <code class="inline">0</code>, <code class="inline">""</code>, <code class="inline">[]</code>, <code class="inline">{}</code>, <code class="inline">None</code> are <em>all</em> falsy. So <code class="inline">if not items:</code> catches empty-list AND None. Don't write <code class="inline">if x:</code> when <code class="inline">x</code> could be a legit <code class="inline">0</code>.</li>
+      <li><strong>Integer division:</strong> Ruby <code class="inline">7/2 == 3</code>. Python <code class="inline">7/2 == 3.5</code> — you must use <code class="inline">7 // 2</code> for int division (matters for money math).</li>
+      <li><strong>Ranges:</strong> Ruby <code class="inline">(1..10)</code> includes 10. Python <code class="inline">range(1, 10)</code> stops at 9 — end-exclusive.</li>
+      <li><strong>Power vs XOR:</strong> both use <code class="inline">**</code> for power, but Python <code class="inline">^</code> is XOR, not exponent.</li>
+    </ul></div>
+
+    <h3 class="section" id="c-comm">Communication framework (every problem)</h3>
+    <ol class="tight">
+      <li><strong>Restate</strong> the problem + confirm 1–2 examples (including an edge case).</li>
+      <li><strong>State the approach</strong> + complexity before coding. "I'll use a hashmap for O(1) lookups, O(n) overall."</li>
+      <li><strong>Narrate</strong> as you write; keep names clear.</li>
+      <li><strong>Test</strong> by walking the example, then volunteer edge cases (empty, duplicates, overflow, money rounding).</li>
+    </ol>
+
+    <h3 class="section" id="c-prob">Practical coding problems</h3>
+    <p style="font-size:13px">#1–#2 are <strong>general practical problems</strong> in the most-likely "growing requirements" shape — drill these first. #3–#6 are billing-flavored in case they tailor to the team. Every one is clean implementation + edge cases, not tricky algorithms. <strong>Ruby &amp; Python side by side.</strong></p>
+
+    <h4>1. Event log aggregator <span class="pill">most-likely shape</span></h4>
+    <p style="font-size:13px;color:var(--muted)">Grows live: <strong>v1</strong> count actions per user → <strong>v2</strong> skip malformed lines → <strong>v3</strong> top-N users by total events. Narrate each step.</p>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">from collections import defaultdict, Counter
+
+def count_actions(lines):
+    """Each line: 'user,action'. Count actions
+    per user; skip malformed lines."""
+    counts = defaultdict(Counter)     # user -> {action: n}
+    for line in lines:
+        parts = line.strip().split(",")
+        if len(parts) != 2:
+            continue                  # malformed -> skip
+        user, action = (p.strip() for p in parts)
+        if not user or not action:
+            continue
+        counts[user][action] += 1
+    return counts
+
+def top_users(counts, n):             # top-N by total events
+    totals = {u: sum(c.values()) for u, c in counts.items()}
+    return sorted(totals, key=lambda u: (-totals[u], u))[:n]
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">def count_actions(lines)
+  # Each line: 'user,action'. Count actions
+  # per user; skip malformed lines.
+  counts = Hash.new { |h, k| h[k] = Hash.new(0) } # user -> {action=>n}
+  lines.each do |line|
+    parts = line.strip.split(",")
+    next unless parts.length == 2                  # malformed -> skip
+    user, action = parts.map(&:strip)
+    next if user.empty? || action.empty?
+    counts[user][action] += 1
+  end
+  counts
+end
+
+def top_users(counts, n)             # top-N by total events
+  totals = counts.transform_values { |c| c.values.sum }
+  totals.sort_by { |u, t| [-t, u] }.first(n).map(&:first)
+end
+</code></pre></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">Parallels: <code class="inline">defaultdict(Counter)</code> ≈ <code class="inline">Hash.new { |h,k| h[k]=Hash.new(0) }</code>; dict-comprehension ≈ <code class="inline">transform_values</code>; the <code class="inline">(-total, name)</code> sort key (count desc, name asc tiebreak) is identical in both.</p>
+
+    <h4>2. In-memory store with TTL <span class="pill">class modeling</span></h4>
+    <p style="font-size:13px;color:var(--muted)"><strong>v1</strong> set/get/delete → <strong>v2</strong> TTL with lazy expiry → <strong>v3</strong> inject the clock so it's testable. That last move is your strongest seniority signal — say <em>"I'll inject the clock so tests control time instead of sleeping."</em></p>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">import time
+
+class KVStore:
+    """In-memory store, optional TTL + lazy expiry.
+    Clock injected for testability."""
+    def __init__(self, clock=time.monotonic):
+        self._clock = clock
+        self._data = {}            # key -> (value, expires_at|None)
+
+    def set(self, key, value, ttl=None):
+        expires = self._clock() + ttl if ttl is not None else None
+        self._data[key] = (value, expires)
+
+    def get(self, key):
+        item = self._data.get(key)
+        if item is None:
+            return None
+        value, expires = item
+        if expires is not None and self._clock() >= expires:
+            del self._data[key]    # lazy expiry on read
+            return None
+        return value
+
+    def delete(self, key):
+        self._data.pop(key, None)
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">class KVStore
+  # In-memory store, optional TTL + lazy expiry.
+  # Clock injected for testability.
+  def initialize(clock: -> { Process.clock_gettime(Process::CLOCK_MONOTONIC) })
+    @clock = clock
+    @data = {}                   # key -> [value, expires_at|nil]
+  end
+
+  def set(key, value, ttl: nil)
+    expires = ttl ? @clock.call + ttl : nil
+    @data[key] = [value, expires]
+  end
+
+  def get(key)
+    item = @data[key]
+    return nil if item.nil?
+    value, expires = item
+    if expires && @clock.call >= expires
+      @data.delete(key)          # lazy expiry on read
+      return nil
+    end
+    value
+  end
+
+  def delete(key)
+    @data.delete(key)
+  end
+end
+</code></pre></div>
+      </div>
+    </div>
+
+    <h4>3. Prorated charge calculator</h4>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">from dataclasses import dataclass
+
+@dataclass
+class ProrationResult:
+    charge_cents: int      # integer cents, never float
+    description: str
+
+def prorate(unit_cents, qty, days_left, days_in_period):
+    """Charge for adding qty units with days_left of
+    the period remaining. Integer cents; round once."""
+    if days_in_period <= 0:
+        raise ValueError("period length must be positive")
+    if days_left < 0 or days_left > days_in_period:
+        raise ValueError("days_left out of range")
+    numerator = unit_cents * qty * days_left
+    # round half-up via (n + d//2)//d, all integer math
+    charge = (numerator + days_in_period // 2) // days_in_period
+    return ProrationResult(charge, f"{qty} seat(s), {days_left}/{days_in_period}d")
+
+assert prorate(1300, 2, 20, 30).charge_cents == 1733
+assert prorate(1300, 2, 0, 30).charge_cents == 0  # no time, no charge
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">ProrationResult = Struct.new(:charge_cents, :description)
+
+def prorate(unit_cents, qty, days_left, days_in_period)
+  # Charge for adding qty units with days_left of
+  # the period remaining. Integer cents; round once.
+  raise ArgumentError, "period must be positive" if days_in_period <= 0
+  if days_left < 0 || days_left > days_in_period
+    raise ArgumentError, "days_left out of range"
+  end
+  numerator = unit_cents * qty * days_left
+  # in Ruby, / on ints is already integer division (the reverse gotcha)
+  charge = (numerator + days_in_period / 2) / days_in_period
+  ProrationResult.new(charge, "#{qty} seat(s), #{days_left}/#{days_in_period}d")
+end
+
+raise unless prorate(1300, 2, 20, 30).charge_cents == 1733
+raise unless prorate(1300, 2, 0, 30).charge_cents == 0
+</code></pre></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">Talking points: integer math to avoid float drift; round exactly once; validate the period. Note the language flip — Python needs <code class="inline">//</code> for integer division; Ruby's <code class="inline">/</code> on two ints already truncates.</p>
+
+    <h4>4. Idempotent event dedup (count unique usage)</h4>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">def aggregate_usage(events):
+    """events: {customer, metric, qty, idempotency_key}.
+    Dedup on key; sum qty per (customer, metric)."""
+    seen = set()
+    totals = {}
+    for e in events:
+        key = e["idempotency_key"]
+        if key in seen:        # at-least-once -> effectively once
+            continue
+        seen.add(key)
+        ck = (e["customer"], e["metric"])
+        totals[ck] = totals.get(ck, 0) + e["qty"]
+    return totals
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">require "set"
+
+def aggregate_usage(events)
+  # events: {customer, metric, qty, idempotency_key}.
+  # Dedup on key; sum qty per (customer, metric).
+  seen = Set.new
+  totals = Hash.new(0)
+  events.each do |e|
+    key = e[:idempotency_key]
+    next if seen.include?(key)  # at-least-once -> effectively once
+    seen.add(key)
+    ck = [e[:customer], e[:metric]]
+    totals[ck] += e[:qty]
+  end
+  totals
+end
+</code></pre></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">In-memory version of the metering dedup. Mention: in production the <code class="inline">seen</code> set becomes a UNIQUE constraint in the DB. Note <code class="inline">Hash.new(0)</code> ≈ <code class="inline">defaultdict(int)</code>.</p>
+
+    <h4>5. Apply tiered/volume pricing</h4>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">def rate_tiered(qty, tiers):
+    """tiers: [(up_to_or_None, unit_cents)] graduated.
+    [(100,10),(None,5)] = first 100 @10c, rest @5c."""
+    total, remaining, lower = 0, qty, 0
+    for up_to, unit in tiers:
+        band = (up_to - lower) if up_to is not None else remaining
+        take = min(remaining, band)
+        total += take * unit
+        remaining -= take
+        lower = up_to if up_to is not None else lower
+        if remaining <= 0:
+            break
+    return total
+
+assert rate_tiered(150, [(100, 10), (None, 5)]) == 100*10 + 50*5
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">def rate_tiered(qty, tiers)
+  # tiers: [[up_to_or_nil, unit_cents]] graduated.
+  # [[100,10],[nil,5]] = first 100 @10c, rest @5c.
+  total, remaining, lower = 0, qty, 0
+  tiers.each do |up_to, unit|
+    band = up_to ? up_to - lower : remaining
+    take = [remaining, band].min
+    total += take * unit
+    remaining -= take
+    lower = up_to || lower
+    break if remaining <= 0
+  end
+  total
+end
+
+raise unless rate_tiered(150, [[100, 10], [nil, 5]]) == 100*10 + 50*5
+</code></pre></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)"><code class="inline">min(remaining, band)</code> ≈ <code class="inline">[remaining, band].min</code>; <code class="inline">up_to if up_to is not None</code> ≈ <code class="inline">up_to || lower</code> (safe here since tier caps are never 0).</p>
+
+    <h4>6. Validate a ledger transaction (debits == credits)</h4>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">from collections import defaultdict
+
+def is_balanced(entries):
+    """entries: [{direction:'debit'|'credit', amount_cents, currency}].
+    Per currency, sum(debits) == sum(credits)."""
+    debits, credits = defaultdict(int), defaultdict(int)
+    for e in entries:
+        bucket = debits if e["direction"] == "debit" else credits
+        bucket[e["currency"]] += e["amount_cents"]
+    return debits == credits   # catches a currency on one side only
+
+assert is_balanced([
+    {"direction": "debit",  "amount_cents": 1000, "currency": "USD"},
+    {"direction": "credit", "amount_cents": 1000, "currency": "USD"},
+])
+assert not is_balanced([
+    {"direction": "debit",  "amount_cents": 1000, "currency": "USD"},
+    {"direction": "credit", "amount_cents": 1000, "currency": "EUR"},
+])
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">def is_balanced(entries)
+  # entries: [{direction:'debit'|'credit', amount_cents:, currency:}].
+  # Per currency, sum(debits) == sum(credits).
+  debits = Hash.new(0)
+  credits = Hash.new(0)
+  entries.each do |e|
+    bucket = e[:direction] == "debit" ? debits : credits
+    bucket[e[:currency]] += e[:amount_cents]
+  end
+  debits == credits   # catches a currency on one side only
+end
+
+raise unless is_balanced([
+  { direction: "debit",  amount_cents: 1000, currency: "USD" },
+  { direction: "credit", amount_cents: 1000, currency: "USD" },
+])
+raise if is_balanced([
+  { direction: "debit",  amount_cents: 1000, currency: "USD" },
+  { direction: "credit", amount_cents: 1000, currency: "EUR" },
+])
+</code></pre></div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted)">Comparing the two dicts works in both languages — content equality ignores the default factory / default value. A currency present on only one side makes them unequal, which is exactly what you want.</p>
+
+    <h3 class="section" id="c-opt">Optimization follow-up ★ <span class="sub">the reported Scribe pattern — a mini learning module</span></h3>
+    <div class="card accent"><p style="margin:0;font-size:13px">Candidates report that after you get it <strong>working</strong>, Scribe asks: <em>"What's the complexity? How would you make it faster? What if the input were 100× or 1000× bigger?"</em> Get it correct first — then have this conversation ready. <strong>Never optimize before it works.</strong></p></div>
+    <div class="card"><p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Jump to</p><p style="margin:0;font-size:13px;line-height:2"><a href="#c-opt-framework">4-step framework</a> · <a href="#c-opt-bigo">Big-O crash course</a> · <a href="#c-opt-cheatref">Op complexity table</a> · <a href="#c-opt-toolbox">Scaling toolbox</a> · <a href="#c-opt-drills">7 worked drills</a> · <a href="#c-opt-glossary">Glossary</a></p></div>
+
+    <h4 id="c-opt-framework">The 4-step answer framework</h4>
+    <ol class="tight">
+      <li><strong>State current complexity</strong> precisely — time and space, separately. "Single pass, so O(n) time; space is O(k) for the distinct keys."</li>
+      <li><strong>Name the bottleneck</strong> — which line/structure dominates as data grows? Usually it's memory (holding everything) or a sort.</li>
+      <li><strong>Offer the next step up</strong> — pick from the toolbox below and say <em>why</em> it helps.</li>
+      <li><strong>Name the tradeoff</strong> — every optimization costs something (memory, accuracy, complexity, latency). Saying the cost out loud is the senior signal.</li>
+    </ol>
+    <div class="card good"><p style="margin:0;font-size:13px"><strong>Sample answer, all 4 steps in ~20 seconds</strong> (event-log problem): <em>"Right now it's a single pass, so O(n) time where n is the number of events; space is O(k) for the k distinct users I track. At 1000× the bottleneck isn't CPU — it's memory, because the counts grow with distinct users. To scale I'd partition events by a hash of the user id, aggregate each shard independently, then merge — the MapReduce shape. The tradeoff is the added coordination complexity."</em></p></div>
+
+    <h4 id="c-opt-bigo">Big-O crash course <span style="font-weight:400;font-size:12px;color:var(--muted)">(Big-O = notation for how work grows as input grows; it drops constants and keeps the dominant term, so it describes the <em>shape</em>, not the exact runtime)</span></h4>
+    <p style="font-size:13px">Read O(f(n)) as: "for input of size n, roughly this many steps (time) or this much memory (space)." Two rules: <strong>drop constants</strong> (O(2n) is just O(n)) and <strong>keep only the dominant term</strong> (O(n + n²) is O(n²)).</p>
+    <table class="rubric">
+      <tr><th>Complexity</th><th>Name</th><th>Feels like</th><th>Typical source</th></tr>
+      <tr><td><strong>O(1)</strong></td><td>constant</td><td>instant, regardless of size</td><td>dict/set lookup, array index</td></tr>
+      <tr><td><strong>O(log n)</strong></td><td>logarithmic</td><td>barely grows (1M items ≈ 20 steps)</td><td>binary search, one heap/tree op</td></tr>
+      <tr><td><strong>O(n)</strong></td><td>linear</td><td>double the input → double the work</td><td>one loop / a single pass</td></tr>
+      <tr><td><strong>O(n log n)</strong></td><td>linearithmic</td><td>a bit worse than linear</td><td>a good sort (<code class="inline">sorted()</code> / <code class="inline">.sort</code>)</td></tr>
+      <tr><td><strong>O(n²)</strong></td><td>quadratic</td><td>100× data → 10,000× work</td><td>nested loop comparing every pair</td></tr>
+      <tr><td><strong>O(2ⁿ)</strong></td><td>exponential</td><td>falls over almost immediately</td><td>brute-forcing every subset — avoid</td></tr>
+    </table>
+    <p style="font-size:13px"><strong>Time and space are separate budgets.</strong> A hashmap usually trades space for time: spend O(n) memory to turn an O(n²) nested-loop search into an O(n) one-pass scan. Naming <em>both</em> is what makes the answer sound senior.</p>
+    <div class="card"><p style="margin:0;font-size:13px"><strong>"Amortized"</strong> <span style="color:var(--muted)">(you'll hear this)</span> = the average cost per operation across many operations, even if one occasional op is expensive. Appending to a dynamic array is <strong>amortized O(1)</strong>: almost every append is instant; once in a while the array resizes and copies everything, but spread across all appends it averages to constant.</p></div>
+
+    <h4 id="c-opt-cheatref">Complexity of common operations</h4>
+    <p style="font-size:13px">Know these cold — they're the building blocks of every complexity answer. (avg = average case; a hash collision can degrade lookups, but interviews assume the average.)</p>
+    <table class="rubric">
+      <tr><th>Operation</th><th>Python</th><th>Ruby</th><th>Cost</th></tr>
+      <tr><td>lookup / insert / delete by key</td><td><code class="inline">dict</code> / <code class="inline">set</code></td><td><code class="inline">Hash</code> / <code class="inline">Set</code></td><td>O(1) avg</td></tr>
+      <tr><td>membership test</td><td><code class="inline">x in s</code></td><td><code class="inline">s.include?(x)</code></td><td>O(1) set/hash · O(n) list/array</td></tr>
+      <tr><td>index access</td><td><code class="inline">a[i]</code></td><td><code class="inline">a[i]</code></td><td>O(1)</td></tr>
+      <tr><td>append to end</td><td><code class="inline">a.append(x)</code></td><td><code class="inline">a &lt;&lt; x</code></td><td>amortized O(1)</td></tr>
+      <tr><td>add/remove at front</td><td><code class="inline">deque.appendleft</code></td><td><code class="inline">a.unshift</code></td><td>O(1) deque · O(n) plain list</td></tr>
+      <tr><td>sort</td><td><code class="inline">sorted(a)</code></td><td><code class="inline">a.sort</code></td><td>O(n log n)</td></tr>
+      <tr><td>min / max (unsorted)</td><td><code class="inline">min(a)</code></td><td><code class="inline">a.min</code></td><td>O(n)</td></tr>
+      <tr><td>top-k</td><td><code class="inline">heapq.nlargest(k,a)</code></td><td><code class="inline">a.max_by(k)</code></td><td>O(n log k)</td></tr>
+      <tr><td>search a sorted list</td><td><code class="inline">bisect</code></td><td><code class="inline">a.bsearch</code></td><td>O(log n)</td></tr>
+    </table>
+
+    <h4 id="c-opt-toolbox">Scaling toolbox (reach for these by name)</h4>
+    <p style="font-size:13px">When asked "how would you make it faster / handle more," these are the six moves. Pick one and say <em>why</em> + the tradeoff. Terms in the <a href="#c-opt-glossary">glossary</a>.</p>
+    <table class="rubric">
+      <tr><th>Move</th><th>What it means &amp; when</th></tr>
+      <tr><td><strong>Better data structure</strong></td><td>Swap a slow structure for the right one: <strong>heap</strong> for top-N (avoid a full sort), <strong>set</strong> for dedup, <strong>dict</strong> for O(1) lookup instead of scanning a list.</td></tr>
+      <tr><td><strong>Stream / single pass</strong></td><td>Input too big for memory? Process it item-by-item and keep only a running summary — never load the whole thing. Turns an O(n)-memory job into O(1) or O(k).</td></tr>
+      <tr><td><strong>Partition + parallelize</strong></td><td><strong>Shard</strong> the data by a key (hash it into buckets), process each bucket independently / in parallel, then merge. This is the <strong>MapReduce</strong> shape and how you use many machines.</td></tr>
+      <tr><td><strong>Push to a built-for-it system</strong></td><td>Don't reimplement infrastructure: a DB <code class="inline">GROUP BY</code> for aggregation, <strong>Redis</strong> for O(1) lookups + TTL, a queue for buffering. "In production this is Redis / Postgres."</td></tr>
+      <tr><td><strong>Approximate</strong></td><td>When exact is too costly and an estimate is fine: <strong>Bloom filter</strong> (is x present?), <strong>HyperLogLog</strong> (how many distinct?), <strong>count-min sketch</strong> (how often does x appear?). Tradeoff = a small, bounded error.</td></tr>
+      <tr><td><strong>Cache / index / batch</strong></td><td>Stop repeating work: <strong>cache</strong> hot results, add an <strong>index</strong> for fast lookups, <strong>batch</strong> many small round-trips into one. Trades memory/staleness for speed.</td></tr>
+    </table>
+
+    <h4 id="c-opt-drills">Worked drills</h4>
+    <p style="font-size:13px">Each drill: <strong>current complexity → the follow-up → the answer + tradeoff → what they're listening for.</strong> Drills 1–3 are your prep problems; 4–7 are the other shapes that show up in practical rounds.</p>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 1 — Event log aggregator</p>
+    <ul class="tight">
+      <li><strong>Current:</strong> <code class="inline">count_actions</code> is one pass → <strong>O(n)</strong> time; space is <strong>O(u·a)</strong> (users × distinct actions). <code class="inline">top_users</code> sorts m users → <strong>O(m log m)</strong>.</li>
+      <li><strong>"Make top-N faster":</strong> don't sort all m users — use a <strong>heap</strong> to pull the top N in <strong>O(m log n)</strong>, a big win when n ≪ m (n much smaller than m).</li>
+      <li><strong>"Handle 100× / doesn't fit in memory":</strong> the counting is already <em>streaming</em> — I never hold all lines, just the running totals. The memory bound is the <strong>cardinality</strong> (number of distinct users). If that explodes: <strong>partition</strong> by user-hash and aggregate shards in parallel (MapReduce), push it to a DB <code class="inline">GROUP BY</code>, or if approximate counts are OK, a <strong>count-min sketch</strong>.</li>
+      <li><strong>Listen-for:</strong> it's already single-pass; memory (not time) is the real limit; "heap for top-N"; "partition to scale."</li>
+    </ul>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">import heapq
+
+def top_users(counts, n):
+    # O(m log n) instead of O(m log m) — only track the n best
+    totals = ((sum(c.values()), u) for u, c in counts.items())
+    return [u for _, u in heapq.nlargest(n, totals)]
+    # note: ties break by username desc here; if you need a
+    # specific tiebreak, sort just the n-sized result after.
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">def top_users(counts, n)
+  # max_by(n) returns the top n — O(m log n), no full sort
+  totals = counts.map { |u, c| [c.values.sum, u] }
+  totals.max_by(n) { |total, _u| total }.map { |_t, u| u }
+end
+</code></pre></div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 2 — In-memory store with TTL</p>
+    <ul class="tight">
+      <li><strong>Current:</strong> get/set/delete are <strong>O(1)</strong> average (dict). But <strong>lazy expiry</strong> (only removing an expired key when someone reads it) means write-once-never-read keys <strong>linger in memory</strong> — a slow memory leak.</li>
+      <li><strong>"Fix the memory leak":</strong> add <strong>active expiration</strong> — a background sweeper over a sample of keys, or a <strong>min-heap of (expires_at, key)</strong> so you can pop the soonest-to-expire cheaply. Tradeoff: the heap adds O(log n) per set and needs lazy deletion of stale heap entries.</li>
+      <li><strong>"Handle 100× / multi-server":</strong> a single-process dict can't scale or survive a restart — <strong>this is exactly what Redis is</strong> (O(1) hash + TTL + active &amp; lazy expiration + persistence). <strong>Shard</strong> by key-hash for horizontal scale.</li>
+      <li><strong>"What about threads?":</strong> a plain dict isn't safe for compound ops under concurrency — add a lock, or per-shard locks to cut contention (a <strong>hot key</strong> can still bottleneck one shard).</li>
+      <li><strong>Listen-for:</strong> O(1) ops; the lazy-expiry tradeoff and how to fix it; "this is Redis."</li>
+    </ul>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 3 — Idempotent dedup &amp; money problems</p>
+    <ul class="tight">
+      <li><strong>Dedup:</strong> O(n) time, O(k) space for the <code class="inline">seen</code> set. At scale the set is unbounded → in production it's a <strong>UNIQUE DB constraint</strong> or a TTL cache; for massive streams, a <strong>Bloom filter</strong> (tradeoff: a false positive could drop a real event, so back it with a DB check — a Bloom filter never has false <em>negatives</em>, so "not present" is always trustworthy).</li>
+      <li><strong>Proration / tiered pricing:</strong> already O(1) / O(tiers) — here the "optimization" conversation is about <strong>correctness at scale</strong>, not speed: integer-cents math, rounding once, and <strong>idempotency</strong> so a retry can't double-charge. Say that — it shows billing maturity.</li>
+    </ul>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 4 — Rate limiter <span style="font-weight:400;font-size:12px;color:var(--muted)">(common practical-round shape)</span></p>
+    <ul class="tight">
+      <li><strong>Problem:</strong> allow at most <code class="inline">limit</code> requests per <code class="inline">window</code> seconds, per key. The <strong>sliding-window log</strong> below keeps timestamps and drops ones older than the window.</li>
+      <li><strong>Current:</strong> <code class="inline">allow</code> is amortized <strong>O(1)</strong> (each timestamp is added once and removed once); space is O(requests in the window) per key.</li>
+      <li><strong>"Memory at scale":</strong> storing every timestamp is wasteful. Switch to a <strong>token bucket</strong> (track just a token count + last-refill time → O(1) space per key) or a fixed-window counter. Tradeoff: token bucket allows short bursts; fixed windows can let 2× through at a boundary.</li>
+      <li><strong>"Across many servers":</strong> per-process counters don't coordinate → move the counter into <strong>Redis</strong> (atomic increment + TTL), so all servers share one limit.</li>
+      <li><strong>Listen-for:</strong> sliding window vs token bucket tradeoff; "distributed → Redis."</li>
+    </ul>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">from collections import deque, defaultdict
+
+class RateLimiter:
+    """Allow `limit` requests per `window` seconds, per key."""
+    def __init__(self, limit, window, clock):
+        self.limit, self.window, self.clock = limit, window, clock
+        self.hits = defaultdict(deque)   # key -> timestamps
+
+    def allow(self, key):
+        now = self.clock()
+        q = self.hits[key]
+        while q and q[0] <= now - self.window:   # drop old ones
+            q.popleft()
+        if len(q) < self.limit:
+            q.append(now)
+            return True
+        return False
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">class RateLimiter
+  # Allow `limit` requests per `window` seconds, per key.
+  def initialize(limit, window, clock)
+    @limit, @window, @clock = limit, window, clock
+    @hits = Hash.new { |h, k| h[k] = [] }   # key -> timestamps
+  end
+
+  def allow(key)
+    now = @clock.call
+    q = @hits[key]
+    q.shift while q.any? && q.first <= now - @window  # drop old
+    if q.length < @limit
+      q.push(now)
+      true
+    else
+      false
+    end
+  end
+end
+</code></pre></div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 5 — Data-transformation pipeline <span style="font-weight:400;font-size:12px;color:var(--muted)">(parse → clean → aggregate → write)</span></p>
+    <ul class="tight">
+      <li><strong>Current:</strong> a naive version loads the whole input into a list, transforms, then writes → <strong>O(n) time and O(n) memory</strong>. Fine until the file is bigger than RAM.</li>
+      <li><strong>"Handle a 50 GB file":</strong> make it <strong>streaming</strong> — read a line/record at a time with a generator, transform, write incrementally. Memory drops to O(1) (plus any running aggregate).</li>
+      <li><strong>"Make it faster":</strong> the work per record is independent, so <strong>parallelize</strong> — chunk the input and map chunks across workers, then reduce. Watch for <strong>backpressure</strong>: if the writer is slower than the readers, bound the queue so memory doesn't blow up.</li>
+      <li><strong>"It keeps failing halfway":</strong> make each record's write <strong>idempotent</strong> and checkpoint progress, so a retry resumes instead of duplicating.</li>
+      <li><strong>Listen-for:</strong> "stream don't materialize," "parallel map + reduce," backpressure, idempotent retries.</li>
+    </ul>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 6 — Find duplicates / two-sum <span style="font-weight:400;font-size:12px;color:var(--muted)">(the classic time-vs-space tradeoff)</span></p>
+    <ul class="tight">
+      <li><strong>The tradeoff to name out loud:</strong> the brute force checks every pair → <strong>O(n²) time, O(1) space</strong>. A <strong>hashmap</strong> remembers what you've seen → <strong>O(n) time, O(n) space</strong>. You spent memory to buy speed.</li>
+      <li><strong>"What if you can't use extra memory?":</strong> <strong>sort first</strong>, then scan with two pointers → <strong>O(n log n) time, O(1) extra space</strong>. Slower than the hashmap but no memory — that's the dial.</li>
+      <li><strong>Listen-for:</strong> you can state all three points on the time/space curve (n² / n+n / n log n) and pick based on the constraint.</li>
+    </ul>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">def two_sum(nums, target):
+    # hashmap: O(n) time, O(n) space, one pass
+    seen = {}                          # value -> index
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return (seen[target - x], i)
+        seen[x] = i
+    return None
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">def two_sum(nums, target)
+  # hashmap: O(n) time, O(n) space, one pass
+  seen = {}                            # value => index
+  nums.each_with_index do |x, i|
+    return [seen[target - x], i] if seen.key?(target - x)
+    seen[x] = i
+  end
+  nil
+end
+</code></pre></div>
+      </div>
+    </div>
+
+    <p style="font-size:14px;font-weight:600;color:var(--accent-2);margin:14px 0 4px">Drill 7 — Merge overlapping intervals <span style="font-weight:400;font-size:12px;color:var(--muted)">(billing periods, proration windows)</span></p>
+    <ul class="tight">
+      <li><strong>Problem &amp; complexity:</strong> merge overlapping ranges (e.g. consolidate overlapping subscription periods). <strong>Sort by start</strong> → O(n log n), then one sweep → O(n). Total <strong>O(n log n)</strong>, dominated by the sort.</li>
+      <li><strong>"Can you beat O(n log n)?":</strong> only if the input is <em>already sorted</em> (then it's O(n)), or starts come from a bounded integer range (counting/bucket sort → O(n)). Otherwise the sort is the floor.</li>
+      <li><strong>Billing relevance:</strong> this is exactly how you detect overlapping charge windows or coalesce proration periods — worth naming the domain tie-in.</li>
+      <li><strong>Listen-for:</strong> "sort then sweep," recognizing the sort dominates, and the already-sorted special case.</li>
+    </ul>
+
+    <h4 id="c-opt-glossary">Glossary of lingo &amp; acronyms</h4>
+    <p style="font-size:13px">Every term used above, in one place. Drop these naturally and the optimization conversation sounds fluent.</p>
+    <table class="rubric">
+      <tr><th>Term</th><th>What it means</th></tr>
+      <tr><td><strong>Big-O</strong></td><td>Notation for how cost grows with input size n. Drops constants, keeps the dominant term. Describes the shape, not the exact time.</td></tr>
+      <tr><td><strong>Amortized</strong></td><td>Average cost per operation across many ops, even if one is occasionally expensive (e.g. array append = amortized O(1)).</td></tr>
+      <tr><td><strong>Time vs space</strong></td><td>Two separate budgets: CPU steps vs memory used. Optimizations usually trade one for the other.</td></tr>
+      <tr><td><strong>Cardinality</strong></td><td>The number of <em>distinct</em> values (e.g. distinct users). High cardinality = many unique keys = more memory.</td></tr>
+      <tr><td><strong>Throughput vs latency</strong></td><td>Throughput = ops per second (volume). Latency = time for one op. Batching raises throughput but adds latency.</td></tr>
+      <tr><td><strong>p50 / p95 / p99</strong></td><td>Percentile latency. "p99 = 50ms" → 99% of requests finish within 50ms. Tail (p99) matters more than the average.</td></tr>
+      <tr><td><strong>MapReduce</strong></td><td>A pattern: split data into shards, process each in parallel (<em>map</em>), then combine results (<em>reduce</em>). The model behind partition + merge.</td></tr>
+      <tr><td><strong>Sharding / partitioning</strong></td><td>Splitting data across buckets or servers by a key, so each holds only a slice.</td></tr>
+      <tr><td><strong>Horizontal vs vertical scaling</strong></td><td>Horizontal = add more machines. Vertical = make one machine bigger. Horizontal scales further but adds coordination.</td></tr>
+      <tr><td><strong>Idempotency</strong></td><td>Doing an operation twice has the same effect as doing it once. Essential for billing — a retry must not double-charge.</td></tr>
+      <tr><td><strong>TTL</strong></td><td>Time-To-Live: how long a stored/cached item stays valid before it expires.</td></tr>
+      <tr><td><strong>Lazy vs active expiration</strong></td><td>Lazy = remove an expired item only when it's next touched. Active = a background job sweeps and removes expired items.</td></tr>
+      <tr><td><strong>LRU / LFU</strong></td><td>Cache-eviction policies: when full, drop the <strong>L</strong>east <strong>R</strong>ecently <strong>U</strong>sed (or <strong>L</strong>east <strong>F</strong>requently <strong>U</strong>sed) item.</td></tr>
+      <tr><td><strong>Bloom filter</strong></td><td>Compact probabilistic set. Answers "definitely not present" or "probably present." Saves memory; can false-positive, never false-negative.</td></tr>
+      <tr><td><strong>HyperLogLog (HLL)</strong></td><td>Tiny structure that <em>estimates</em> how many distinct items you've seen (cardinality) using almost no memory. Approximate.</td></tr>
+      <tr><td><strong>Count-min sketch</strong></td><td>Estimates how often each item appears (frequencies) in fixed memory. Can overcount slightly, never undercount.</td></tr>
+      <tr><td><strong>Token bucket</strong></td><td>Rate-limit method: a bucket refills tokens at a steady rate; each request spends one; empty = rejected. Allows short bursts.</td></tr>
+      <tr><td><strong>Sliding window</strong></td><td>Counting/limiting over the most recent T seconds, continuously moving forward.</td></tr>
+      <tr><td><strong>Backpressure</strong></td><td>When a downstream stage is slower, it signals upstream to slow down so queues/memory don't blow up.</td></tr>
+      <tr><td><strong>Hot key</strong></td><td>One key taking a disproportionate share of traffic; can overload a single shard even when the rest are idle.</td></tr>
+      <tr><td><strong>Redis</strong></td><td>An in-memory key-value store with O(1) ops, built-in TTL/expiration, and persistence. The production answer for "fast lookups + expiry."</td></tr>
+      <tr><td><strong>ACID</strong></td><td>Database transaction guarantees: <strong>A</strong>tomic, <strong>C</strong>onsistent, <strong>I</strong>solated, <strong>D</strong>urable. Why a billing write either fully happens or not at all.</td></tr>
+      <tr><td><strong>Eventual consistency</strong></td><td>Replicas may briefly disagree but converge over time — the tradeoff some distributed systems make for availability.</td></tr>
+    </table>
+
+    <h3 class="section" id="c-patterns">Patterns to have ready (general)</h3>
+    <ul class="tight">
+      <li><strong>Hashmap "have I seen this?"</strong> — dedup, two-sum, group-by.</li>
+      <li><strong>Counter / defaultdict</strong> — frequencies, aggregation.</li>
+      <li><strong>Sliding window</strong> — rate windows, longest/shortest subarray.</li>
+      <li><strong>Stack</strong> — matching/parsing (e.g. parse a guide's step tree).</li>
+      <li><strong>BFS/DFS</strong> — tree/graph (e.g. step dependencies, org hierarchy).</li>
+      <li><strong>Two pointers / sort</strong> — interval merge (relevant to billing periods!).</li>
+      <li><strong>Interval merge</strong> — overlapping subscription periods, proration windows. Worth a quick drill.</li>
+    </ul>
+
+    <h3 class="section" id="c-py">Cheat sheets: Python &amp; Ruby</h3>
+    <p style="font-size:13px;color:var(--muted)">The same toolkit in both. Read the Ruby, type the Python.</p>
+    <div class="dual">
+      <div><span class="lang-tag py">Python</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-python">from collections import defaultdict, Counter, deque
+d = defaultdict(int); d[k] += 1
+c = Counter(items); c.most_common(3)
+q = deque(); q.append(x); q.popleft()
+seen = set()
+# sort by key, desc then name asc
+items.sort(key=lambda x: (-x.score, x.name))
+# group by
+groups = defaultdict(list)
+for x in xs: groups[x.key].append(x)
+# money round-half-up (int math): (n + d//2)//d
+# dict get with default
+total = totals.get(key, 0)
+# value object
+from dataclasses import dataclass
+@dataclass
+class Invoice:
+    id: str; total_cents: int; status: str = "draft"
+</code></pre></div>
+      </div>
+      <div><span class="lang-tag rb">Ruby</span>
+      <div class="code-wrap"><button class="copy-btn">Copy</button>
+      <pre><code class="language-ruby">require "set"
+d = Hash.new(0); d[k] += 1
+counts = items.tally               # ≈ Counter
+q = []; q.push(x); q.shift         # deque-ish
+seen = Set.new
+# sort by key, desc then name asc
+items.sort_by { |x| [-x.score, x.name] }
+# group by
+groups = xs.group_by { |x| x.key }
+# money round-half-up (int math): (n + d/2)/d
+# hash get with default
+total = totals.fetch(key, 0)
+# value object
+Invoice = Struct.new(:id, :total_cents, :status) do
+  def initialize(id:, total_cents:, status: "draft")
+    super(id, total_cents, status)
+  end
+end
+</code></pre></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BEHAVIORAL ============ -->
+  <section class="tab" id="tab-behavioral" data-toc='[
+    ["Format &amp; what to expect","b-fmt"],
+    ["Map values → your stories","b-map"],
+    ["The technical presentation round","b-pres"],
+    ["Most common questions","b-qs"],
+    ["Answer template (STAR-lite)","b-tmpl"],
+    ["Strong vs weak","b-sw"]
+  ]'>
+    <h2>Behavioral <span class="sub">hiring-manager + values, woven through every round</span></h2>
+
+    <h3 class="section" id="b-fmt">Format &amp; what to expect</h3>
+    <p style="font-size:13px">Hiring-manager interview + a co-founder/VP round. Scribe interviews against its operating principles. They value <strong>velocity with judgment</strong> ("accelerate impact", "raise the bar"), <strong>directness</strong> ("clear is kind"), and <strong>user obsession</strong> ("make our users heroes"). Have 4–5 stories ready and map each to multiple values.</p>
+
+    <h3 class="section" id="b-map">Map Scribe values → your stories</h3>
+    <table class="rubric">
+      <tr><th>Value</th><th>Your story</th></tr>
+      <tr><td><strong>Accelerate impact</strong> / bias to action</td><td><strong>Wordblok</strong> (slot 7) — one-week timebox to ship to the App Store; the deadline was the prioritization tool. Pure "act with urgency, highest-impact work."</td></tr>
+      <tr><td><strong>Make our users heroes</strong> / ownership</td><td><strong>Zendesk Zuora bug</strong> — noticed it via support tickets + dashboards, fixed the duplicate-charge issue, support tickets stopped. Customer-impact + initiative.</td></tr>
+      <tr><td><strong>Clear is kind</strong> / honest disagreement</td><td><strong>DDD pushback</strong> (slot 6) — raised disagreement directly (in 1:1s), made the case, committed when overruled. "Be honest and direct" + deferring well.</td></tr>
+      <tr><td><strong>Rapid learning machine</strong></td><td><strong>Wordblok</strong> (first App Store ship, learned the submission process) OR <strong>taking over Talk payments</strong> after the owner left — learned an unfamiliar system fast enough to find a latent bug.</td></tr>
+      <tr><td><strong>Raise the bar</strong></td><td><strong>Zuora bug</strong> — didn't just fix it; added logging + guard rails so the whole class of bug surfaces faster next time. Left the system better than the bar he found.</td></tr>
+      <tr><td><strong>One team, one dream</strong></td><td><strong>DDD pushback</strong> — after losing the call, went heavy on READMEs/comments so the next engineer (and other teams) succeeded; the consistency win helped cross-team work.</td></tr>
+    </table>
+
+    <h3 class="section" id="b-pres">The "technical presentation to a panel" round</h3>
+    <div class="card scribe">
+      <p style="margin:0 0 6px 0;font-size:13px">This is a distinctive Scribe round and is likely <strong>where your system-design signal actually gets read</strong> — a reported Scribe question is literally "what trade-offs did you make when designing this system?" You present a technical topic/project to a panel of engineers and field questions.</p>
+      <p style="margin:0;font-size:13px"><strong>Strong move:</strong> present the <strong>Zendesk Talk payments architecture + the silent-200 bug</strong>. The full timed 10-minute script, the diagram, and the anticipated trade-off Q&amp;A live on the dedicated <strong>Tech Talk ★</strong> tab (press <kbd>5</kbd>). Rehearse from there.</p>
+    </div>
+
+    <h3 class="section" id="b-qs">Most common questions (prep an answer for each)</h3>
+    <ul class="tight">
+      <li>"Tell me about yourself / walk me through your background." (→ the 10-second pitch, expanded)</li>
+      <li>"Why Scribe? Why the billing team?" (→ mission soundbite + your payments background)</li>
+      <li>"Describe a production bug you root-caused and fixed." (→ Zuora silent-200)</li>
+      <li>"Tell me about a disagreement / a time you were wrong." (→ DDD, slot 6)</li>
+      <li>"Tell me about a time you shipped fast / cut scope." (→ Wordblok, slot 7)</li>
+      <li>"A time you took ownership of something messy." (→ inheriting Talk payments after the owner left)</li>
+      <li>"How do you handle ambiguity / move fast without breaking things?" (→ correct-first instinct, guard rails + logging)</li>
+      <li>"Most impactful thing you've built." (→ Zuora fix: measurable — support tickets stopped, engineer-hours saved)</li>
+    </ul>
+
+    <h3 class="section" id="b-tmpl">Answer template (STAR-lite)</h3>
+    <div class="card">
+      <p style="margin:0;font-size:13px"><strong>S/T (1 sentence):</strong> the situation + what was at stake. <strong>A (the bulk):</strong> what <em>you</em> specifically did, with a decision and a tradeoff. <strong>R (concrete):</strong> the measurable outcome. <strong>Reflection (1 line):</strong> what you carry forward. Keep it ~2 min; let them dig.</p>
+    </div>
+
+    <h3 class="section" id="b-sw">Strong vs weak — "Why the billing team?"</h3>
+    <div class="grid-2">
+      <div class="card bad"><strong>Weak</strong><p style="margin:4px 0 0 0;font-size:12px">"I like backend work and billing seems important to the business."</p></div>
+      <div class="card good"><strong>Strong</strong><p style="margin:4px 0 0 0;font-size:12px">"I owned payments on Zendesk Talk and found I love money-correctness problems — idempotency, reconciliation, the failure modes where a duplicate charge actually hits a customer. I found and fixed exactly that bug in production. Billing is where engineering rigor directly protects users and revenue, and Scribe's mix of self-serve seats plus enterprise contracts plus a new Optimize product is a genuinely interesting monetization surface to build on."</p></div>
+    </div>
+  </section>
+
+  <!-- ============ TECH TALK ============ -->
+  <section class="tab" id="tab-techtalk" data-toc='[
+    ["Why this is your best shot","tt-why"],
+    ["Format &amp; logistics","tt-format"],
+    ["Slide plan (6 slides)","tt-slides"],
+    ["★ The 10-minute script","tt-script"],
+    ["The diagram (before → after)","tt-diagram"],
+    ["★ Anticipated trade-off Q&amp;A","tt-tradeoffs"],
+    ["Other likely questions","tt-followups"],
+    ["Delivery do&#39;s &amp; don&#39;ts","tt-avoid"],
+    ["Rehearsal checklist","tt-checklist"]
+  ]'>
+    <h2>Tech Talk <span class="sub">★ present the Zuora bug — your highest-probability design signal</span></h2>
+
+    <div class="round-banner">
+      <div><div class="lbl">The round</div><div>Technical presentation to an engineering panel</div></div>
+      <div class="time">~10 min talk + Q&amp;A</div>
+    </div>
+
+    <h3 class="section" id="tt-why">Why this is your best shot</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-size:13px">A reported Scribe interview question is <em>"what trade-offs did you make when designing this system?"</em> — which means the design signal is read through <strong>a system you actually built</strong>, not a cold whiteboard prompt. That's a gift: you get to pick the terrain.</p>
+      <p style="margin:0;font-size:13px">The <strong>Zendesk Talk payments / Zuora silent-200 bug</strong> is the ideal pick for a <em>billing</em> team: real production ownership, a money-correctness failure, a fast pragmatic fix, and a clean "here's how I'd design it now" that lands every senior billing concept (idempotency, outbox, reconciliation). You can answer "what trade-offs?" with genuine depth because you lived it.</p>
+    </div>
+
+    <h3 class="section" id="tt-format">Format &amp; logistics</h3>
+    <ul class="tight">
+      <li><strong>Confirm the format with your recruiter:</strong> slides vs live doc vs whiteboard, time limit, how much is talk vs Q&amp;A, and whether they want a system you built or a hypothetical design. Don't guess — ask.</li>
+      <li><strong>Default assumption:</strong> ~5–6 slides, 10 min presenting, then the panel drills in. Optimize for <em>their questions</em>, not your slides — leave room for them to interrupt.</li>
+      <li><strong>Bring a diagram.</strong> A panel remembers the picture. One "before" (the bug) and one "after" (the redesign) is plenty.</li>
+      <li><strong>Anonymize appropriately:</strong> it's fine to say "a third-party billing provider" if you're cautious about naming Zuora/Zendesk specifics; the architecture and lessons are what matter, not proprietary detail.</li>
+    </ul>
+
+    <h3 class="section" id="tt-slides">Slide plan (6 slides)</h3>
+    <table class="rubric">
+      <tr><th>#</th><th>Slide</th><th>What's on it</th></tr>
+      <tr><td>1</td><td><strong>Title + framing</strong></td><td>"Finding &amp; fixing a duplicate-charge bug in a payments pipeline — and what I'd build to make it impossible." One sentence on your role.</td></tr>
+      <tr><td>2</td><td><strong>The system</strong></td><td>The "before" architecture diagram. Talk → Billing API → SQS → Zuora → callback.</td></tr>
+      <tr><td>3</td><td><strong>The symptom</strong></td><td>How you found it (dashboards + support tickets), the cost (eng-hours/week, customer charges).</td></tr>
+      <tr><td>4</td><td><strong>Root cause</strong></td><td>The silent-200 + retry → duplicate. The sequence diagram of the failure.</td></tr>
+      <tr><td>5</td><td><strong>The fix I shipped</strong></td><td>Guard rails + logging, one week, the result (tickets stopped). The trade-off: stabilize fast vs redesign.</td></tr>
+      <tr><td>6</td><td><strong>What I'd build now</strong></td><td>The "after" diagram: idempotency key + outbox + reconciliation. Tie to billing-at-scale.</td></tr>
+    </table>
+
+    <h3 class="section" id="tt-script">★ The 10-minute script (rehearse from this)</h3>
+    <p style="font-size:13px;color:var(--muted)">Bold = say close to verbatim. The rest is your talking track — adapt the wording, keep the beats. Times are cumulative.</p>
+
+    <div class="card scribe">
+      <h4 style="margin-top:0">[0:00–0:30] Open — frame the whole talk in two sentences</h4>
+      <p style="margin:0;font-size:13px"><strong>"I want to walk through a duplicate-charge bug I found and fixed in a payments pipeline I owned at Zendesk — and then spend the back half on how I'd design that system today so the entire class of bug can't happen. I'm picking this one because it's exactly the kind of money-correctness problem a billing team lives on."</strong> <em>(Sets a clear two-act structure and signals you know what the role cares about.)</em></p>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0">[0:30–2:00] The system &amp; my role</h4>
+      <p style="margin:0 0 6px 0;font-size:13px">"I took <strong>sole ownership</strong> of the payments feature on Zendesk Talk — the call-center product — after the original owner and the other dev both left. So I inherited a money-critical system I hadn't built, which is partly how I found the bug.</p>
+      <p style="margin:0;font-size:13px">The flow was: the Talk platform calls our <strong>Billing app over an API</strong>; the Billing app enqueues an <strong>async SQS job</strong>; that job talks to <strong>Zuora</strong>, our third-party payments-and-subscription provider, to record the charge; and Zuora calls us back to signal completion. <strong>Async on purpose</strong> — we didn't want Talk's request path blocked on a third-party billing call." <em>(Walk slide 2's diagram here.)</em></p>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0">[2:00–3:30] How I found it — the symptom</h4>
+      <p style="margin:0 0 6px 0;font-size:13px">"While I was ramping on the code, I did two things: read the dashboards, and read the <strong>customer support tickets</strong>. A pattern jumped out — the same class of issue was recurring <strong>several times a week</strong>, and engineers were spending <strong>hours a week manually correcting customers' payment data</strong>.</p>
+      <p style="margin:0;font-size:13px">That's the part I'd underline: nobody had filed this as a bug. It looked like routine ops toil. The signal was in the <em>aggregate</em> — support volume plus the manual-fix burden — not in any single alert. <strong>I treated recurring manual cleanup as a bug smell.</strong>" <em>("Make our users heroes" + "raise the bar" land here implicitly.)</em></p>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0">[3:30–5:00] Root cause — the silent 200</h4>
+      <p style="margin:0 0 6px 0;font-size:13px">"The root cause was a failure mode in how Zuora signaled success. Occasionally Zuora would <strong>return a 200 — a success — but fail to actually persist the record.</strong> A silent error. Then Zuora's <strong>own internal retry</strong> would run, succeed, and return <em>another</em> 200.</p>
+      <p style="margin:0;font-size:13px">So from our side we saw two successes for one logical charge, and we wrote <strong>two charge entries</strong> — a duplicate against the customer. The deeper lesson: <strong>we were treating the provider's 200 as the source of truth.</strong> A 200 was ambiguous — it could mean 'stored' or 'I thought I stored it' — and we'd built no defense against that ambiguity." <em>(Walk slide 4's sequence diagram: charge → 200 (no write) → retry → 200 (write) → duplicate.)</em></p>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0">[5:00–6:30] The fix I shipped — and the trade-off</h4>
+      <p style="margin:0 0 6px 0;font-size:13px">"I had a choice: stop the bleeding fast, or redesign the charge path properly. I chose to <strong>stabilize first</strong>. In about a week I shipped <strong>guard rails against that specific duplicate condition</strong> plus <strong>extra logging</strong> so this class of issue would surface in seconds instead of via support tickets. The support tickets for it stopped.</p>
+      <p style="margin:0;font-size:13px"><strong>The trade-off I made deliberately:</strong> a narrow, low-risk fix on a payments path I'd just inherited, shipped in days while customers were actively being affected — rather than a larger idempotency redesign that would've needed more buy-in, more testing, and left customers exposed longer. <strong>Stabilize, then redesign</strong> — I'd defend that sequencing on a money system every time. The logging was the highest-leverage part: it turned an invisible failure into an observable one." <em>(This is your direct answer to "what trade-offs did you make" — say the words "trade-off" out loud.)</em></p>
+    </div>
+
+    <div class="card good">
+      <h4 style="margin-top:0">[6:30–9:00] What I'd design now — the senior reframe</h4>
+      <p style="margin:0 0 6px 0;font-size:13px">"If I were designing this charge pipeline today, I'd make the duplicate <strong>structurally impossible</strong> with three things — <strong>idempotency, the outbox pattern, and reconciliation.</strong></p>
+      <ol class="tight" style="margin-bottom:6px">
+        <li><strong>Idempotency key on the side effect.</strong> Every charge carries a unique key we generate. We pass it to the provider, so the provider's own retry returns the <em>original</em> result instead of creating a second record. The duplicate can't happen at the source. The principle: <strong>push idempotency down to the side-effect layer</strong>, not just our worker.</li>
+        <li><strong>Transactional outbox.</strong> We write the charge intent and the 'go charge' event in <strong>one database transaction</strong>, and a separate poller publishes to the queue. No dual-write — we can't end up with a charge recorded but no job, or a job with no record.</li>
+        <li><strong>Reconciliation, because webhooks and responses lie.</strong> A scheduled job pulls the provider's record of truth and compares it to ours, healing any drift. <strong>The provider's 200 stops being the source of truth — it's just a trigger to go verify.</strong> That's the exact assumption that caused the original bug, inverted."</li>
+      </ol>
+      <p style="margin:0;font-size:13px">"Net: the original bug was an idempotency gap plus trusting an ambiguous success. The redesign closes both — and it's the same shape as any modern billing pipeline, including a Stripe-backed one." <em>(Walk slide 6's "after" diagram.)</em></p>
+    </div>
+
+    <div class="card scribe">
+      <h4 style="margin-top:0">[9:00–9:45] Close — the lesson + the bridge</h4>
+      <p style="margin:0;font-size:13px"><strong>"My takeaway is that on money systems, the hard part usually isn't throughput — it's making every operation safe to retry and never trusting an external 'success' without reconciling it. That's the instinct I'd bring to the billing team here. Happy to go deeper on any part — the idempotency design, the reconciliation cadence, or the trade-offs in the original async architecture."</strong> <em>(Ends by inviting the trade-off questions you've prepped below.)</em></p>
+    </div>
+
+    <h3 class="section" id="tt-diagram">The diagram (before → after)</h3>
+    <h4>Before — where the duplicate is born</h4>
+    <pre class="ascii">Talk ──API──▶ Billing App ──enqueue──▶ SQS job ──▶ Zuora
+                                            │           │
+                                            │   1) charge ──▶ 200 OK  (but NOT persisted)  ✗
+                                            │   2) Zuora auto-retry ──▶ 200 OK (persisted)  ✓
+                                            ▼
+                                   we recorded TWO successes  ──▶  DUPLICATE CHARGE
+                                   (we trusted the 200 as truth)</pre>
+    <h4>After — duplicate is structurally impossible</h4>
+    <pre class="ascii">Talk ──API──▶ Billing App
+                  │  ONE txn: write charge_intent(idempotency_key) + outbox_event
+                  ▼
+              Postgres ──poller──▶ SQS ──▶ Charge worker
+                                              │  call provider WITH idempotency_key
+                                              ▼
+                                           Provider  (retry returns ORIGINAL result — no dupe)
+                                              │
+                  ┌───────────────────────────┘
+                  ▼
+        Reconciliation job (scheduled): pull provider truth, compare to ours, heal drift
+        ── "the 200 is a trigger to verify, never the source of truth" ──</pre>
+
+    <h3 class="section" id="tt-tradeoffs">★ Anticipated trade-off Q&amp;A (the panel WILL push here)</h3>
+    <table class="rubric">
+      <tr><th>If they ask…</th><th>Your answer</th></tr>
+      <tr><td><strong>"What trade-offs did you make in the fix?"</strong></td><td>"Speed and risk vs completeness. I shipped a narrow guard rail + logging in a week to stop active customer harm, instead of a full idempotency redesign that would've taken longer and left customers exposed meanwhile. Conscious sequencing: stabilize a bleeding money system first, redesign second. The cost is that the guard rail is a point fix, not a general solution — which is exactly why I'd follow it with the idempotency redesign."</td></tr>
+      <tr><td><strong>"Why guard rails + logging, not the idempotency redesign immediately?"</strong></td><td>"Three reasons: customers were being charged twice <em>now</em>; I'd just inherited the system and wanted a minimal-blast-radius change on a payments path before making structural ones; and the logging gave me the observability to verify the fix and to justify the bigger redesign with data. Fast + reversible beats slow + perfect when money is actively at risk."</td></tr>
+      <tr><td><strong>"How did you know the fix worked / didn't regress?"</strong></td><td>"The new logging made the duplicate condition observable, so I watched it post-deploy alongside the support-ticket volume and the dashboards. The condition was narrow and well-characterized, so the change was easy to reason about — and the ticket stream for it going to zero was the real-world confirmation."</td></tr>
+      <tr><td><strong>"What were the trade-offs in the original async architecture?"</strong></td><td>"Async via SQS was the right call — it decoupled Talk's request path from a slow third-party billing call. The trade-off it introduced: at-least-once delivery against a downstream that wasn't idempotent. Async buys you resilience and latency isolation but it <em>demands</em> idempotent consumers and side effects — and that's the part that was missing, not the async itself."</td></tr>
+      <tr><td><strong>"Could your guard rail block a legitimate repeat charge?"</strong></td><td>"That's the real risk of any dedupe — false positives. So the dedupe key has to be specific enough: the logical charge identity (customer + charge context + amount) within a tight window, not just 'same customer same amount.' A customer legitimately being charged the same amount later must not collide. Getting that key right is the whole game — too loose and you drop real charges, too tight and you miss dupes."</td></tr>
+      <tr><td><strong>"Why does an idempotency key actually prevent it?"</strong></td><td>"Because the duplicate was created by the provider's <em>own retry</em>. If that retry carries the same idempotency key as the first attempt, the provider recognizes it and returns the original result instead of creating a second record. It moves the dedupe to the side-effect boundary — the one place that can actually stop a vendor-side retry."</td></tr>
+      <tr><td><strong>"You can't control the vendor's silent 200 — so what?"</strong></td><td>"Exactly — that's the core lesson. You can't fix the vendor, so you stop trusting the vendor's success signal unilaterally. Idempotency key makes their retry safe; reconciliation makes their ambiguity detectable. You design <em>your</em> side to be correct regardless of how the vendor behaves."</td></tr>
+      <tr><td><strong>"How would you catch this whole class faster next time?"</strong></td><td>"Alert on the duplicate-charge <em>rate</em> as a first-class metric, and run the reconciliation job continuously so any drift between our ledger and the provider's surfaces within minutes — not via a human reading support tickets weeks later."</td></tr>
+    </table>
+
+    <h3 class="section" id="tt-followups">Other likely questions</h3>
+    <ul class="tight">
+      <li><strong>"How big was the customer impact?"</strong> Frame honestly: recurring several times/week, real duplicate charges, plus engineer-hours/week of manual correction. The toil cost was as telling as the customer cost.</li>
+      <li><strong>"Why was this missed originally?"</strong> It looked like ops toil, not a bug — no single failing alert, the signal was in the aggregate. Good prompt to say what you'd add: a duplicate-rate metric + reconciliation.</li>
+      <li><strong>"What would you do differently in how you handled it?"</strong> "I'd have filed the idempotency redesign as a tracked follow-up immediately, with the logging data as the justification, so 'stabilize then redesign' didn't risk stalling at 'stabilize.'"</li>
+      <li><strong>"How does this map to what we do at Scribe?"</strong> Same shape with Stripe instead of Zuora — idempotency keys on PaymentIntents, webhooks-as-triggers, a reconciliation job against Stripe. Bridge straight into the System Design tab.</li>
+      <li><strong>"Did you write tests for it?"</strong> Speak to reproducing the condition and guarding it; be honest about what was feasible on an inherited system in a week.</li>
+    </ul>
+
+    <h3 class="section" id="tt-avoid">Delivery do's &amp; don'ts</h3>
+    <div class="grid-2">
+      <div class="card good"><strong>Do</strong><ul class="tight" style="margin-bottom:0">
+        <li>Say "trade-off" out loud — they're listening for it.</li>
+        <li>Use the two-act structure: the real fix, then the ideal design.</li>
+        <li>Pause for questions; a panel that interrupts is engaged.</li>
+        <li>Own what you inherited vs built — it's more impressive, not less.</li>
+        <li>Quantify (times/week, eng-hours, tickets→zero).</li>
+      </ul></div>
+      <div class="card bad"><strong>Don't</strong><ul class="tight" style="margin-bottom:0">
+        <li>Don't over-engineer the "after" — three patterns, named well, beats a kitchen sink.</li>
+        <li>Don't bash the original authors or the vendor; describe the failure neutrally.</li>
+        <li>Don't claim "exactly-once" anywhere — say at-least-once + idempotent.</li>
+        <li>Don't run 10 min of monologue; aim for ~7 talking, ~3 inviting questions.</li>
+        <li>Don't hide that the first fix was a point fix — the sequencing IS the senior signal.</li>
+      </ul></div>
+    </div>
+
+    <h3 class="section" id="tt-checklist">Rehearsal checklist</h3>
+    <ul class="tight">
+      <li>Confirm format/time/slides-or-not with the recruiter.</li>
+      <li>Build 6 slides (or a one-page doc) with the before/after diagrams.</li>
+      <li>Rehearse out loud to time — target the talk at ~7–8 min so Q&amp;A fits.</li>
+      <li>Memorize the verbatim open and close; everything else can be adaptive.</li>
+      <li>Drill the trade-off Q&amp;A table until each answer is one breath.</li>
+      <li>Have the System Design tab's idempotency / outbox / reconciliation details ready for "go deeper" follow-ups.</li>
+    </ul>
+  </section>
+
+  <!-- ============ STORIES ============ -->
+  <section class="tab" id="tab-stories" data-toc='[
+    ["How to use these","s-how"],
+    ["★ Zuora silent-200 duplicate-charge bug","s-zuora"],
+    ["★ DDD pushback (disagreement)","s-ddd"],
+    ["★ Wordblok (shipped fast)","s-wb"],
+    ["Quick prompt → story map","s-map"]
+  ]'>
+    <h2>Stories <span class="sub">your rehearsed repertoire</span></h2>
+
+    <h3 class="section" id="s-how">How to use these</h3>
+    <p style="font-size:13px">Three battle-tested stories cover most prompts. Lead with the one-line hook, then STAR-lite, then the reflection. For the billing interview specifically, the <strong>Zuora bug is your strongest asset</strong> — it works as a behavioral answer AND seeds your system-design answers AND is the ideal technical-presentation topic.</p>
+
+    <div class="story" id="s-zuora">
+      <div class="title">★ Zuora silent-200 duplicate-charge bug — production debugging / ownership / billing</div>
+      <div class="tags"><span class="pill scribe">use for billing ★</span><span class="pill">production bug</span><span class="pill">ownership</span><span class="pill">user impact</span><span class="pill">raise the bar</span></div>
+      <div class="row"><div class="lbl">Hook</div><div>"I took over a payments feature on Zendesk Talk after the owner left, and within weeks found a recurring bug that was silently double-charging — and costing engineers hours a week of manual cleanup."</div></div>
+      <div class="row"><div class="lbl">System</div><div>Talk → Billing App API → SQS job → Zuora (payments + subscription store) → callback to Billing App on completion.</div></div>
+      <div class="row"><div class="lbl">Discovery</div><div>While learning the code, reviewed dashboards + support tickets; spotted an issue recurring several times a week. Engineers were manually fixing customers' payment data.</div></div>
+      <div class="row"><div class="lbl">Root cause</div><div>Zuora occasionally returned a <strong>silent 200</strong> — success response despite failing to store. Its own retry then succeeded with another 200. Two "successes" → duplicate charge entries against the customer.</div></div>
+      <div class="row"><div class="lbl">Fix</div><div>In one week: guard rails against that exact condition + extra logging so future issues surface fast. Support tickets for it stopped.</div></div>
+      <div class="row"><div class="lbl">Now I'd</div><div>"Design an idempotency layer + reconciliation against the provider so this whole class can't happen — webhooks/responses are triggers, not truth." (Bridges straight into system design.)</div></div>
+    </div>
+
+    <div class="story" id="s-ddd">
+      <div class="title">★ DDD pushback — disagreement / deferring / "time you were wrong" (slot 6)</div>
+      <div class="tags"><span class="pill">disagreement</span><span class="pill">clear is kind</span><span class="pill">deferred well</span><span class="pill">both right &amp; wrong</span></div>
+      <div class="row"><div class="lbl">Hook</div><div>"I pushed back on the architecture group's DDD mandate for a small payments project I owned, lost the call, mitigated with heavy READMEs/comments — and turned out honestly both right and wrong."</div></div>
+      <div class="row"><div class="lbl">Tension</div><div>Thought DDD was overkill for a small-scope service; worried about onboarding friction for the next engineer. Arch group was optimizing for org-wide consistency — a legitimate goal he wasn't carrying.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Raised it in 1:1s (not the review meeting), made the scope/team-size case, genuinely tried their position, deferred and committed once consistency won, mitigated with thorough docs.</div></div>
+      <div class="row"><div class="lbl">Result</div><div><strong>Right:</strong> DDD ceremony did add cost at that scale. <strong>Wrong:</strong> the shared vocabulary genuinely paid off for cross-team payments work. Highest-leverage thing he shipped: the docs that outlived multiple engineer transitions.</div></div>
+      <div class="row"><div class="lbl">Carries fwd</div><div>Steelman consistency's network effects harder before pushing back; when you lose a call, find the mitigation that makes the chosen path work.</div></div>
+    </div>
+
+    <div class="story" id="s-wb">
+      <div class="title">★ Wordblok — speed / shipped fast / scope discipline (slot 7)</div>
+      <div class="tags"><span class="pill">speed</span><span class="pill">accelerate impact</span><span class="pill">scope cuts</span><span class="pill">MVP</span></div>
+      <div class="row"><div class="lbl">Hook</div><div>"I gave myself one week to ship my first game to the App Store — Wordblok — and used the timebox itself as the design tool to decide what to cut."</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Ruthless cuts against the one-week budget: <strong>kept</strong> the core loop with 3 modes; <strong>cut</strong> 2 more modes, all monetization (IAP/ads), and polish. v1 only had to be playable.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Shipped on time — first game live on the App Store. The forcing function did the prioritization, not his judgment.</div></div>
+      <div class="row"><div class="lbl">Carries fwd</div><div>Pick the forcing function before the feature list. Don't build revenue infra before validating the product. Honest downside: day-1 users see the rawest version — fine for a learning project, weigh harder when reputation's at stake.</div></div>
+    </div>
+
+    <h3 class="section" id="s-map">Quick prompt → story map</h3>
+    <table class="rubric">
+      <tr><th>Prompt theme</th><th>Story</th></tr>
+      <tr><td>Production bug / debugging / ownership / customer impact</td><td>Zuora silent-200</td></tr>
+      <tr><td>Disagreement / time you were wrong / deferred to senior judgment</td><td>DDD pushback (slot 6)</td></tr>
+      <tr><td>Shipped fast / cut scope / bias to action / side project</td><td>Wordblok (slot 7)</td></tr>
+      <tr><td>Took over something messy / self-directed learning</td><td>Inheriting Talk payments (frame from the Zuora story)</td></tr>
+      <tr><td>Raised the bar / left it better than you found it</td><td>Zuora fix — logging + guard rails for the whole class</td></tr>
+      <tr><td>Most impactful thing you built</td><td>Zuora fix (measurable: tickets stopped, eng-hours saved)</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ PRODUCT ============ -->
+  <section class="tab" id="tab-product" data-toc='[
+    ["Format &amp; what to expect","pr-fmt"],
+    ["Scoring: what PMs want","pr-score"],
+    ["★ Headline: SF–Billing–Zuora story","pr-headline"],
+    ["Secondary: Zuora advocacy","pr-zuora"],
+    ["Reusable lines","pr-lines"],
+    ["Likely questions","pr-qs"],
+    ["Product sense: Scribe billing","pr-sense"],
+    ["Questions to ask the PM","pr-ask"]
+  ]'>
+    <h2>Product <span class="sub">★ 30 min with a Scribe PM</span></h2>
+
+    <h3 class="section" id="pr-fmt">Format &amp; what to expect</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Confirmed:</strong> 30-min session with a Product Manager. Focus: <strong>collaboration, stakeholder management, communication, process, fundamentals, and the Scribe product</strong>. A PM isn't grading your code — they're answering one question: <em>"Would I want to build with this person?"</em></p></div>
+
+    <h3 class="section" id="pr-score">Scoring: what PMs want to see</h3>
+    <ul class="tight">
+      <li><strong>You turn fuzzy requirements into reality</strong> — and surface the edge cases they didn't think of (billing is full of these).</li>
+      <li><strong>You push back like a partner, not an order-taker</strong> — with data and customer/$ impact, not "this is hard."</li>
+      <li><strong>You speak their language</strong> — customer impact, risk, revenue — not tech jargon.</li>
+      <li><strong>You own ambiguity</strong> instead of waiting for a perfect spec.</li>
+    </ul>
+    <div class="card"><p style="margin:0;font-size:13px">Billing is the ideal domain to show all four, because billing requirements are <em>always</em> under-specified. Lean into that.</p></div>
+
+    <h3 class="section" id="pr-headline">★ Headline story — Salesforce ↔ Billing ↔ Zuora integration (quote-to-cash)</h3>
+    <div class="story">
+      <div class="title">★ Salesforce–Billing–Zuora integration — stakeholder management across Sales, Finance &amp; Product</div>
+      <div class="tags"><span class="pill scribe">use for product ★</span><span class="pill">stakeholder mgmt</span><span class="pill">cross-functional</span><span class="pill">requirements</span><span class="pill">billing integrity</span></div>
+      <div class="row"><div class="lbl">Hook</div><div>"I owned the integration connecting Salesforce, our Billing app, and Zuora — the quote-to-cash backbone. The hard part wasn't the code; it was sitting between Sales, Finance, and Product, who each wanted something different, and translating a fuzzy 'just sync the data' into correct billing."</div></div>
+      <div class="row"><div class="lbl">System</div><div>Salesforce = system of record for the <em>sale</em> (accounts, quotes/orders). Billing app = the orchestration layer in the middle. Zuora = system of record for <em>subscriptions, invoicing &amp; payments</em>. It ran <strong>bidirectionally</strong>: closed SF deals provisioned Zuora subscriptions; invoice/payment status synced back to SF; account &amp; catalog data stayed consistent; and amendments/renewals flowed through. <em>(Same systems as your Zuora silent-200 bug — they reinforce each other.)</em></div></div>
+      <div class="row"><div class="lbl">Stakeholders</div><div>Sales/RevOps wanted speed and deal flexibility; Finance wanted invoice/revenue correctness; the PM owned the process and timeline. Three legitimate, competing goals — my job was to make them coexist without breaking billing.</div></div>
+      <div class="row"><div class="lbl">Collaboration</div><div>Co-defined the mapping and rules with the PM and stakeholders, and surfaced the integrity cases the happy-path spec missed: (1) <strong>failed/partial syncs needing idempotency</strong> — a retry must not double-provision or double-charge (the exact class as the silent-200 bug); (2) <strong>source-of-truth conflicts</strong> — when SF and Zuora disagreed on a record, defining which system wins per field and lifecycle stage rather than blindly overwriting; (3) <strong>catalog ↔ rate-plan mapping</strong> — SF products/price books didn't map cleanly onto Zuora's rate plans, so we worked out the canonical mapping together.</div></div>
+      <div class="row"><div class="lbl">Scope / judgment</div><div>The negotiation was <strong>speed vs integrity sequencing</strong>. Under pressure to ship the sync fast, I made the case to land integrity first — idempotency, conflict resolution, reconciliation — <em>before</em> the nice-to-haves. My argument in their currency: a fast-but-wrong billing sync creates silent revenue and invoice errors that are far more expensive to unwind (manual Finance corrections, customer trust) than launching a little later. We sequenced integrity-first and committed.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>A reliable bidirectional quote-to-cash path all three teams trusted; billing errors caught in design instead of in customers' invoices. <span class="pill warn">optional: add a metric — fewer manual Finance corrections, faster deal-to-provision, or fewer sync tickets</span></div></div>
+    </div>
+    <div class="card good"><p style="margin:0;font-size:13px">✅ <strong>Why this wins the Product round:</strong> pure <em>cross-functional stakeholder management</em> — Sales vs Finance vs Product, you in the middle — plus a clean judgment call (integrity before speed) argued in each stakeholder's language. It's your strongest answer for "work across teams," "manage competing stakeholders," "translate fuzzy requirements," AND "a time you pushed back." The only thing left is an optional result metric.</p></div>
+
+    <h3 class="section" id="pr-zuora">Secondary story — Zuora bug as customer advocacy</h3>
+    <div class="story">
+      <div class="title">Zuora double-charge — influence without authority / customer obsession</div>
+      <div class="tags"><span class="pill">advocacy</span><span class="pill">customer impact</span><span class="pill">prioritization</span></div>
+      <div class="row"><div class="lbl">Frame</div><div>"I found a bug silently double-charging customers. It wasn't on anyone's roadmap, so I built the case using support tickets and the eng-hours-a-week of manual cleanup, got it prioritized, and fixed the whole class — not just the instance."</div></div>
+      <div class="row"><div class="lbl">Product skill</div><div>The fix was eng-led, but the <strong>prioritization case</strong> is the product muscle: I translated a quiet technical bug into customer-trust + cost language a stakeholder could act on.</div></div>
+    </div>
+
+    <h3 class="section" id="pr-lines">Reusable lines</h3>
+    <ul class="tight">
+      <li><strong>On ambiguous requirements:</strong> "Billing taught me to assume the spec is the happy path and my job is the other 80% — proration, failures, refunds, currency. I'd rather ask the annoying edge-case question in planning than ship a billing error."</li>
+      <li><strong>On disagreeing with a PM:</strong> "I push back in the PM's currency — customer impact, risk, revenue — not in 'this is hard.' Then once we decide, I commit." (Bridges to the DDD deferral story if they probe.)</li>
+      <li><strong>On process:</strong> "Small, reversible steps with logging/observability so we learn fast — especially with money, where a silent failure is the dangerous kind."</li>
+    </ul>
+
+    <h3 class="section" id="pr-qs">Likely questions</h3>
+    <table class="rubric">
+      <tr><th>Question</th><th>Lead with</th></tr>
+      <tr><td>Working closely with a PM / across teams</td><td>SF–Billing–Zuora headline (stakeholder mgmt)</td></tr>
+      <tr><td>Balancing competing stakeholders / disagreeing on scope</td><td>SF–Billing–Zuora — Sales vs Finance tension</td></tr>
+      <tr><td>How do you handle ambiguous/changing requirements</td><td>The "happy path is 20%" line + edge-case examples</td></tr>
+      <tr><td>A time you advocated for the customer</td><td>Zuora advocacy story</td></tr>
+      <tr><td>How do you balance velocity vs quality / tech debt</td><td>"Reversible steps + observability; money raises the bar on quality"</td></tr>
+      <tr><td>What would you improve about Scribe?</td><td>See product-sense below — be humble, ask before asserting</td></tr>
+    </table>
+
+    <h3 class="section" id="pr-sense">Product sense: how you'd think about Scribe billing</h3>
+    <p style="font-size:13px">Scribe stacks <strong>three pricing models</strong>: seat-based subscriptions with live proration, per-org usage pricing on Optimize, and enterprise contracts. That's exactly where billing gets interesting. Frame your answer as <em>"how I'd get my bearings,"</em> not "here's what's wrong":</p>
+    <ul class="tight">
+      <li><strong>First I'd map the money path</strong> and where truth lives — Stripe vs the internal ledger — and how they're reconciled.</li>
+      <li><strong>Correctness hot spots:</strong> proration on mid-cycle plan changes, usage-metering accuracy for Optimize, idempotency on webhooks, dunning/failed-payment handling.</li>
+      <li><strong>One product-y improvement instinct:</strong> charge transparency — when customers can see <em>why</em> a prorated charge is what it is, billing support tickets drop. (Ties straight to your Zuora "support-load" lens.)</li>
+    </ul>
+    <div class="card"><p style="margin:0;font-size:13px">Tone: curious and humble. "I'd want to understand X before I had an opinion" beats a confident wrong critique of a system you haven't seen.</p></div>
+
+    <h3 class="section" id="pr-ask">Questions to ask the PM</h3>
+    <ul class="tight">
+      <li>"Where does product and eng collaboration work best on the billing team today — and where's the friction?"</li>
+      <li>"What billing pain do customers report most — and how does that shape the roadmap?"</li>
+      <li>"How do pricing/packaging decisions get made, and how early is eng pulled in?"</li>
+      <li>"What would a great first six months in this role look like to you?"</li>
+    </ul>
+  </section>
+
+  <!-- ============ EXEC ============ -->
+  <section class="tab" id="tab-exec" data-toc='[
+    ["Format &amp; what to expect","ex-fmt"],
+    ["Why Scribe (3 pillars)","ex-why"],
+    ["Next ~6 years","ex-six"],
+    ["Other likely questions","ex-qs"],
+    ["Questions to ask Gautam","ex-ask"]
+  ]'>
+    <h2>Executive <span class="sub">★ 45 min with Gautam, VP Engineering</span></h2>
+
+    <h3 class="section" id="ex-fmt">Format &amp; what to expect</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px">45 min with the <strong>VP of Engineering</strong>. He's checking three things: <strong>genuine motivation &amp; fit</strong>, <strong>judgment/maturity</strong>, and <strong>whether you'll still be here and growing in a few years</strong>. Lead with <strong>domain fit</strong> — it's your most authentic and differentiated angle. Also <strong>HM Sync (15 min) with Rishabh</strong> right after — mostly fit/logistics; bring 1–2 crisp questions.</p></div>
+
+    <h3 class="section" id="ex-why">"Why Scribe?" — 3 pillars (lead with #1)</h3>
+    <div class="card good"><p style="margin:0 0 6px;font-size:13px;font-weight:600">1. Domain fit at exactly the right inflection point (your differentiator)</p><p style="margin:0;font-size:13px">"I've spent my career in billing and payments — I built Talk's usage-based payments and lived in the Zuora integration, including root-causing a duplicate-charge bug. Scribe is at the moment billing gets hard: you raised $75M, revenue more than doubled, and you run three pricing models at once — seat-based with live proration, per-org usage pricing on Optimize, and enterprise contracts. That stacked, multi-model complexity is what I find genuinely interesting, and the scar tissue I have — idempotency, reconciliation, billing integrity — is directly useful here."</p></div>
+    <div class="card"><p style="margin:0 0 4px;font-size:13px;font-weight:600">2. Stage &amp; ownership</p><p style="margin:0;font-size:13px">~120 people doubling, post-Series C — early enough to own and shape a core revenue system, late enough that it's real money and real customers. The opposite of being a cog on a finished system.</p></div>
+    <div class="card"><p style="margin:0 0 4px;font-size:13px;font-weight:600">3. A product people actually love</p><p style="margin:0;font-size:13px">94% of the Fortune 500 touch it, and Optimize is a real AI bet. Billing sits on the revenue artery of a product that's genuinely useful — not something I'd have to squint to feel good about.</p></div>
+
+    <h3 class="section" id="ex-six">"What do you want to gain over the next ~6 years?"</h3>
+    <p style="font-size:13px"><strong>Spine:</strong> "I want to go from 'the person who fixed a duplicate-charge bug' to 'the person who designs billing so that entire class of failure can't happen' — owning billing/payments as a domain at scale. Scribe is the right place because it's early enough that I can set the patterns and grow with the system as it 10x's — an arc you only get at this stage."</p>
+    <table class="rubric">
+      <tr><th>If you lean…</th><th>Say</th></tr>
+      <tr><td><strong>IC depth</strong></td><td>"…grow into a staff-level engineer who's the technical owner of billing — the person teams pull in when money is involved."</td></tr>
+      <tr><td><strong>Leadership</strong></td><td>"…grow into tech-lead/leadership for the billing area as the team scales — set direction and mentor, while staying close enough to the system to stay credible."</td></tr>
+    </table>
+    <div class="card warn"><p style="margin:0;font-size:13px">⚠️ <strong>Pick the variant that's actually true to you.</strong> Honest hedge to add: "Six years is a long time and I won't pretend to have it mapped — but the through-line is depth in billing at scale and growing scope, and Scribe is where I'd want to do that."</p></div>
+
+    <h3 class="section" id="ex-qs">Other likely questions</h3>
+    <table class="rubric">
+      <tr><th>Question</th><th>Lead with</th></tr>
+      <tr><td>Why leave Zendesk / why now?</td><td>Pull toward ownership + stage, not push away from Zendesk. Stay positive.</td></tr>
+      <tr><td>Most impactful thing you've built / proud of?</td><td>Zuora class-fix — guard rails + logging for the whole bug class (raise the bar).</td></tr>
+      <tr><td>A time you disagreed / were overruled?</td><td>DDD pushback (deferred, honestly both right and wrong).</td></tr>
+      <tr><td>Concerns about a smaller/earlier-stage company?</td><td>Reframe as the draw: ownership, shaping the system, broad scope.</td></tr>
+      <tr><td>What does "raising the bar" mean to you?</td><td>Fixing the class not the instance; observability so silent failures surface.</td></tr>
+    </table>
+
+    <h3 class="section" id="ex-ask">Questions to ask Gautam (VP Eng) — and Rishabh (HM)</h3>
+    <ul class="tight">
+      <li>"How do you think about billing as a system over the next 1–2 years, given the three pricing models converging?"</li>
+      <li>"What's the biggest engineering scaling challenge post-Series C as the team doubles?"</li>
+      <li>"What separates a good senior engineer from a great one on this team?"</li>
+      <li>"What does raising the bar look like on the billing team specifically?"</li>
+      <li><strong>For Rishabh (HM):</strong> "What would success in this role look like at 6 and 12 months?" · "What's the team's biggest priority right now?"</li>
+    </ul>
+  </section>
+
+  <!-- ============ COMPANY ============ -->
+  <section class="tab" id="tab-company" data-toc='[
+    ["What Scribe does","co-what"],
+    ["Stage &amp; funding","co-stage"],
+    ["Mission &amp; values","co-mission"],
+    ["Pricing = your billing surface","co-pricing"],
+    ["Tech stack","co-stack"],
+    ["Talking points","co-talk"]
+  ]'>
+    <h2>Company <span class="sub">Scribe (scribehow.com / scribe.com)</span></h2>
+
+    <h3 class="section" id="co-what">What Scribe does</h3>
+    <div class="card scribe">
+      <p style="margin:0 0 6px 0;font-size:13px">An <strong>auto-documentation</strong> tool. A browser extension + desktop app records a user's screen workflow and automatically generates a step-by-step how-to guide with text and annotated screenshots. Two products:</p>
+      <ul class="tight" style="margin-bottom:0">
+        <li><strong>Scribe Capture</strong> — "documentation that writes itself," the core auto-guide generator.</li>
+        <li><strong>Scribe Optimize</strong> — newer AI product that maps workflows across an org to reveal where automation/AI will pay off. Priced per-organization (not seat-based).</li>
+      </ul>
+    </div>
+    <p style="font-size:13px"><strong>Scale signals:</strong> 5M+ users, 78k paid customer orgs, 94% of the Fortune 500 use it (45% pay), 10M+ workflows across 40k apps, revenue more than doubled YoY.</p>
+
+    <h3 class="section" id="co-stage">Stage &amp; funding</h3>
+    <table class="rubric">
+      <tr><td>Founded</td><td>2019, San Francisco; ~120 employees (planning to roughly double)</td></tr>
+      <tr><td>Founders</td><td>Jennifer Smith (CEO), Aaron Podolny (CTO)</td></tr>
+      <tr><td>Series B</td><td>$25M, Feb 2024, led by Redpoint Ventures</td></tr>
+      <tr><td>Series C</td><td><strong>$75M, Nov 2025, at a $1.3B valuation</strong>, led by StepStone (Amplify, Redpoint, Tiger Global, Morado, NY Life Ventures)</td></tr>
+      <tr><td>Total raised</td><td>~$122M</td></tr>
+    </table>
+
+    <h3 class="section" id="co-mission">Mission &amp; values</h3>
+    <div class="card">
+      <p style="margin:0 0 4px 0;font-size:13px"><strong>Mission:</strong> "We're on a mission to unleash and uplevel the world's know-how."</p>
+      <p class="quote" style="margin:0">"The best ways of working are here. They're just not evenly distributed."</p>
+    </div>
+    <p style="font-size:13px"><strong>Operating principles:</strong> Accelerate impact · Rapid learning machine · Raise the bar · Clear is kind · Make our users heroes · One team, one dream. (See the Behavioral tab for the story mapping.)</p>
+
+    <h3 class="section" id="co-pricing">Pricing = the billing surface you'd own</h3>
+    <table class="rubric">
+      <tr><th>Tier</th><th>Model</th></tr>
+      <tr><td><strong>Basic</strong></td><td>Free, self-serve</td></tr>
+      <tr><td><strong>Pro Personal</strong></td><td>~$25/seat/mo (annual), min 1 seat, self-serve checkout</td></tr>
+      <tr><td><strong>Pro Team</strong></td><td>~$13/seat/mo (annual), <strong>min 5 seats</strong>; base + per-additional-seat. Self-serve. "Most popular."</td></tr>
+      <tr><td><strong>Enterprise</strong></td><td>Custom / sales-led. SSO/SAML, SCIM, RBAC, multi-workspace, PII/PHI redaction, volume discounts</td></tr>
+      <tr><td><strong>Optimize</strong></td><td>Separate product, <strong>per-organization</strong> pricing (not seat-based)</td></tr>
+    </table>
+    <div class="card accent"><p style="margin:0;font-size:13px"><strong>Why this matters for your interview:</strong> the billing team handles (a) seat-based recurring subs with base + per-seat &amp; <strong>live proration</strong>, (b) self-serve Stripe checkout <em>and</em> enterprise contract invoicing, and (c) a separately-priced per-org product. So the billing system must handle <strong>mixed pricing models, multi-workspace/org hierarchies, and both PLG self-serve and contract-based enterprise</strong>. That's exactly the design space the System Design tab covers.</p></div>
+
+    <h3 class="section" id="co-stack">Tech stack</h3>
+    <ul class="tight">
+      <li><strong>Backend:</strong> Python / <strong>Django monolith</strong>, <strong>PostgreSQL</strong>, Amazon MQ (managed queue), AWS.</li>
+      <li><strong>Frontend:</strong> React, Next.js, TypeScript.</li>
+      <li><strong>Payments:</strong> Stripe — all subscription management runs through it; supports mid-cycle proration (charge on seat add, credit on seat removal).</li>
+      <li><strong>Tooling:</strong> Mixpanel (analytics), Cursor (AI coding).</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted)">Stack implication for design rounds: <strong>meet them in the monolith on Postgres.</strong> Default to "I'd do this in Django/Postgres with transactions and constraints," and only reach for extra infra (Kafka, a separate service, a ledger DB) when you can name the boundary that earns it.</p>
+
+    <h3 class="section" id="co-talk">Talking points (shows you did the homework)</h3>
+    <ul class="tight">
+      <li>"You've built a proprietary dataset of how work actually gets done — Optimize turning that into automation ROI is a sharp wedge into the AI-at-work story."</li>
+      <li>"The billing surface is unusually rich for a company your size — PLG seats, enterprise contracts, and a per-org product all at once."</li>
+      <li>"Going from documentation tool to 'foundation for how work gets done in the age of AI' is a real repositioning — congrats on the Series C."</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUESTIONS TO ASK ============ -->
+  <section class="tab" id="tab-questions" data-toc='[
+    ["For the hiring manager / billing eng","q-hm"],
+    ["Billing / architecture deep cuts","q-arch"],
+    ["For the product partner","q-prod"],
+    ["For the co-founder / VP","q-co"],
+    ["The closing question","q-close"],
+    ["Questions to avoid","q-avoid"]
+  ]'>
+    <h2>Questions to Ask <span class="sub">curiosity = signal; ask in every round</span></h2>
+
+    <h3 class="section" id="q-hm">For the hiring manager / billing engineers</h3>
+    <div class="card"><ul class="tight" style="margin-bottom:0">
+      <li>"What does the billing team own end-to-end — subscriptions, invoicing, the ledger, entitlements, the Stripe integration, all of it?"</li>
+      <li>"What's the hardest correctness problem the billing team is wrestling with right now?"</li>
+      <li>"How much of subscription state lives in your DB vs Stripe? Are you source-of-truth or is Stripe driving?"</li>
+      <li>"What's the on-call experience like for billing? What kinds of incidents actually page you?"</li>
+      <li>"What's a billing project on the roadmap you're most excited about — usage-based pricing, enterprise invoicing, something else?"</li>
+    </ul></div>
+
+    <h3 class="section" id="q-arch">Billing / architecture deep cuts (shows depth)</h3>
+    <div class="card"><ul class="tight" style="margin-bottom:0">
+      <li>"How do you handle idempotency and reconciliation with Stripe today — central middleware, per-flow, a reconciliation job?"</li>
+      <li>"Do you have a double-entry ledger, or is billing state derived from invoices + Stripe?"</li>
+      <li>"How do entitlements stay in sync with subscription changes — same transaction, events, polling?"</li>
+      <li>"With seats + enterprise contracts + per-org Optimize, how unified is the billing model under the hood vs special-cased per product?"</li>
+      <li>"As the monolith grows, is there appetite to extract billing into its own service, or is the boundary not worth it yet?"</li>
+    </ul></div>
+
+    <h3 class="section" id="q-prod">For the product partner</h3>
+    <div class="card"><ul class="tight" style="margin-bottom:0">
+      <li>"What's the thing engineers do that makes your work easier — and the thing you wish more engineers understood about billing/monetization?"</li>
+      <li>"How early does engineering get pulled into pricing/packaging decisions?"</li>
+      <li>"What's the biggest monetization bet on the roadmap right now?"</li>
+    </ul></div>
+
+    <h3 class="section" id="q-co">For the co-founder / VP</h3>
+    <div class="card"><ul class="tight" style="margin-bottom:0">
+      <li>"Post Series C, how has the bar or the priorities shifted for engineering?"</li>
+      <li>"Where do you see Scribe in three years — and what part of the roadmap excites you most?"</li>
+      <li>"As you scale past 120 people toward doubling, what's the cultural thing you're most trying to protect?"</li>
+      <li>"What's a recent technical decision the team got wrong and changed? How did that play out?"</li>
+    </ul></div>
+
+    <h3 class="section" id="q-close">The closing question (ask every round)</h3>
+    <div class="card good">
+      <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">ASK THIS EVERY ROUND</p>
+      <p class="quote" style="margin:0">"Based on what we discussed, do you have any hesitations about my fit for this role? I'd love a chance to address them before we wrap up."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Signals confidence + self-awareness + coachability. Almost no one does it, and interviewers remember it.</p>
+    </div>
+
+    <h3 class="section" id="q-avoid">Questions NOT to ask</h3>
+    <div class="card bad"><ul class="tight" style="margin-bottom:0">
+      <li>"What does Scribe do?" — Googleable; signals you didn't prep.</li>
+      <li>"How much vacation / is it remote?" — save for recruiter / offer stage.</li>
+      <li>"How long until I get promoted?" — reads transactional.</li>
+      <li>Anything yes/no — make it open-ended so you actually learn something.</li>
+    </ul></div>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+  const tocControls = document.getElementById("toc-controls");
+  const tocFilter = document.getElementById("toc-filter");
+  const expandAllBtn = document.getElementById("expand-all");
+  const collapseAllBtn = document.getElementById("collapse-all");
+
+  function wrapInCollapsibles(section) {
+    const headings = Array.from(section.querySelectorAll("h3.section"));
+    headings.forEach((h3) => {
+      if (h3.closest("details.problem")) return;
+      const elements = [];
+      let next = h3.nextElementSibling;
+      while (next && !(next.tagName === "H3" && next.classList.contains("section"))) {
+        elements.push(next);
+        next = next.nextElementSibling;
+      }
+      const details = document.createElement("details");
+      details.className = "problem";
+      if (h3.id) { details.id = h3.id; h3.removeAttribute("id"); }
+      const summary = document.createElement("summary");
+      summary.innerHTML = h3.innerHTML;
+      details.appendChild(summary);
+      h3.parentNode.insertBefore(details, h3);
+      h3.remove();
+      elements.forEach((el) => details.appendChild(el));
+    });
+  }
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      if (label === "@group") {
+        const groupLi = document.createElement("li");
+        groupLi.className = "toc-group";
+        groupLi.textContent = id;
+        toc.appendChild(groupLi);
+        return;
+      }
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.innerHTML = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) {
+          if (target.tagName === "DETAILS") target.open = true;
+          const parentDetails = target.closest("details");
+          if (parentDetails) parentDetails.open = true;
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll("aside li a").forEach((x) => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach((s) => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) {
+      const collapsible = section.dataset.collapsible === "true";
+      if (collapsible) wrapInCollapsibles(section);
+      buildTOC(section);
+      if (collapsible) {
+        tocControls.style.display = "flex";
+        tocFilter.style.display = "block";
+        tocFilter.value = "";
+        filterTOC("");
+      } else {
+        tocControls.style.display = "none";
+        tocFilter.style.display = "none";
+      }
+      if (tabId === "design" && !section.dataset.initialOpenApplied) {
+        const first = section.querySelector("#p-sub");
+        if (first) first.open = true;
+        section.dataset.initialOpenApplied = "true";
+      }
+    }
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("scribe-tab", tabId); } catch (e) {}
+  }
+
+  function setAllOpen(open) {
+    const activeSection = document.querySelector("section.tab.active");
+    if (!activeSection) return;
+    activeSection.querySelectorAll("details.problem").forEach((d) => { d.open = open; });
+  }
+  expandAllBtn.addEventListener("click", () => setAllOpen(true));
+  collapseAllBtn.addEventListener("click", () => setAllOpen(false));
+
+  function filterTOC(query) {
+    const q = query.trim().toLowerCase();
+    const lis = Array.from(toc.querySelectorAll("li"));
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) return;
+      const text = li.textContent.toLowerCase();
+      const hidden = q !== "" && !text.includes(q);
+      li.classList.toggle("toc-hidden", hidden);
+    });
+    let currentGroup = null;
+    let currentGroupHasVisible = false;
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) {
+        if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+        currentGroup = li;
+        currentGroupHasVisible = false;
+      } else if (!li.classList.contains("toc-hidden")) {
+        currentGroupHasVisible = true;
+      }
+    });
+    if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+  }
+  tocFilter.addEventListener("input", (e) => filterTOC(e.target.value));
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "cheat";
+  try {
+    const saved = localStorage.getItem("scribe-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1200);
+      } catch (e) { btn.textContent = "Failed"; }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"cheat","2":"design","3":"coding","4":"behavioral","5":"product","6":"exec","7":"techtalk","8":"stories","9":"company","0":"questions" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+</script>
+
+</body>
+</html>

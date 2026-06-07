@@ -1,0 +1,114 @@
+.app {
+  max-width: 540px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+}
+
+.composer {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.composer__input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d0d0d8;
+  border-radius: 6px;
+  font: inherit;
+}
+.composer__input:focus {
+  outline: 2px solid #5865f2;
+  outline-offset: 1px;
+}
+.composer__add {
+  padding: 0.6rem 1rem;
+  background: #5865f2;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.error {
+  background: #fde2e1;
+  color: #8a1f1c;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+}
+
+.filters {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+.filters__btn {
+  background: transparent;
+  border: 0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  color: #666;
+  text-transform: capitalize;
+  font: inherit;
+  cursor: pointer;
+}
+.filters__btn--active {
+  background: #ececef;
+  color: #222;
+}
+
+.tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #eee;
+}
+.tasks__empty {
+  padding: 1rem 0;
+  color: #888;
+  font-style: italic;
+}
+.task {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+.task__check {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+.task__title--done {
+  text-decoration: line-through;
+  color: #999;
+}
+.task__delete {
+  background: transparent;
+  border: 0;
+  color: #999;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+.task__delete:hover {
+  color: #c00;
+}
+
+.footer {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #777;
+}

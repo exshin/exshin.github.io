@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Build a runnable copy of an exercise solution and start both servers.
+#
+# Usage: ./bin/run-exercise <exercise-folder-name>
+#   e.g. ./bin/run-exercise 01-message-list
+#
+# What it does:
+#   1. Creates work/<name>/ (a fresh sandbox; gitignored).
+#   2. Copies the bare scaffold (frontend/, backend/, bin/) into it.
+#   3. Overlays files from exercises/<name>/solution/ on top — these
+#      override scaffold files where they exist (controllers, App.jsx, …).
+#   4. Runs bundle install + db:reset + db:seed for the backend.
+#   5. Runs npm install for the frontend if node_modules is missing.
+#   6. Execs the scaffold's bin/dev from inside the sandbox to start both
+#      servers.
+#
+# Why a sandbox copy instead of modifying the scaffold in place: keeps the
+# root scaffold pristine so you can practice the exercise from scratch
+# (without solution files leaking into your starting point).
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: $0 <exercise-folder-name>" >&2
+  echo "Available exercises:" >&2
+  ls -1 "$ROOT/exercises" | grep -E '^[0-9]+-' >&2 || true
+  exit 1
+fi
+
+NAME="$1"
+EXERCISE_DIR="$ROOT/exercises/$NAME"
+SOLUTION_DIR="$EXERCISE_DIR/solution"
+WORK_DIR="$ROOT/work/$NAME"
+
+if [[ ! -d "$SOLUTION_DIR" ]]; then
+  echo "No solution found at $SOLUTION_DIR" >&2
+  exit 1
+fi
+
+# rbenv path so `bundle` / `rails` resolve the same way bin/dev does.
+if [[ -d "$HOME/.rbenv/versions/3.3.11/bin" ]]; then
+  export PATH="$HOME/.rbenv/versions/3.3.11/bin:$PATH"
+fi
+
+echo "▶ Preparing sandbox at $WORK_DIR"
+rm -rf "$WORK_DIR"
+mkdir -p "$WORK_DIR"
+
+# Copy the bare scaffold. We deliberately skip node_modules (we'll npm install
+# fresh in the sandbox so symlinks / native deps resolve correctly).
+echo "▶ Copying scaffold"
+rsync -a --exclude='node_modules' --exclude='tmp' --exclude='log' \
+      --exclude='storage' --exclude='db/*.sqlite3*' \
+      "$ROOT/frontend" "$ROOT/backend" "$ROOT/bin" "$WORK_DIR/"
+
+# Overlay solution files. cp -R preserves the directory structure so a file at
+# solution/backend/app/models/foo.rb lands at backend/app/models/foo.rb,
+# overwriting any scaffold file with the same path.
+echo "▶ Overlaying solution files"
+cp -R "$SOLUTION_DIR"/* "$WORK_DIR/"
+
+# Backend setup. db:reset drops + recreates + migrates, so this command works
+# whether or not the sandbox already has a DB. Then seed.
+echo "▶ Installing gems and preparing DB"
+(
+  cd "$WORK_DIR/backend"
+  bundle install --quiet
+  # db:reset only works if the db exists; for first-run we use prepare + seed
+  # which is idempotent.
+  bin/rails db:prepare
+  bin/rails db:seed
+)
+
+# Frontend setup. Skip install if node_modules already exists (re-running).
+if [[ ! -d "$WORK_DIR/frontend/node_modules" ]]; then
+  echo "▶ Installing npm packages"
+  (cd "$WORK_DIR/frontend" && npm install --silent)
+fi
+
+echo
+echo "▶ Sandbox ready. Starting both servers."
+echo "  Sandbox dir: $WORK_DIR"
+echo "  Frontend:    http://localhost:5173"
+echo "  Backend:     http://localhost:3000"
+echo
+
+exec "$WORK_DIR/bin/dev"

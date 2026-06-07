@@ -1,0 +1,101 @@
+.chat {
+  max-width: 720px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.chat__header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+.chat__header h1 {
+  margin: 0;
+  font-size: 1rem;
+  color: #555;
+}
+
+.messages {
+  list-style: none;
+  margin: 0;
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.message__meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+}
+.message__author {
+  font-weight: 600;
+  color: #5865f2;
+}
+.message__time {
+  color: #999;
+  font-size: 0.75rem;
+}
+.message__body {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.messages__state {
+  color: #888;
+  font-style: italic;
+}
+.messages__state--error {
+  color: crimson;
+}
+
+.composer {
+  border-top: 1px solid #eee;
+  padding: 0.75rem;
+  display: grid;
+  grid-template-columns: 160px 1fr auto;
+  gap: 0.5rem;
+  align-items: start;
+}
+.composer__author,
+.composer__body {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.95rem;
+}
+.composer__body {
+  resize: vertical;
+}
+.composer__send {
+  padding: 0.5rem 1rem;
+  border: 0;
+  background: #5865f2;
+  color: #fff;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+.composer__send:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+.composer__errors {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  list-style: none;
+  background: #fde2e1;
+  color: #8a1f1c;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}

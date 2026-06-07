@@ -2309,23 +2309,27 @@ find_missing_id(15, "1234567891011121314")         # => 15
 # Two-digit id dropped at the 1->2 digit boundary (10 dropped):
 find_missing_id(20, "12345678911121314151617181920")  # => 10</code></pre></div>
 
-    <p style="font-size:13px;margin-top:18px"><strong>Variant — the input is NOT ordered.</strong> <code class="inline">n = 5</code>, input <code class="inline">"4135"</code> → ids <code class="inline">1..5</code> were shuffled before concatenating, one is missing → answer <strong>2</strong>. The ordered trick is now useless: you can't "consume the next expected id" when they're jumbled. But you don't need order at all — the <em>sum</em> of the ids is fixed regardless of arrangement.</p>
+    <p style="font-size:13px;margin-top:18px"><strong>Variant — the input is NOT ordered.</strong> The ids are shuffled before concatenating, one is missing. The ordered cursor trick is dead (you can't "consume the next expected id" when they're jumbled), and the answer splits by digit width:</p>
+    <ul style="font-size:13px;margin:6px 0">
+      <li><strong>Single-digit (<code class="inline">n ≤ 9</code>):</strong> <code class="inline">n = 5</code>, <code class="inline">"4135"</code> → <strong>2</strong>. Each char is an id, so just use the order-independent <em>sum</em> (or XOR).</li>
+      <li><strong>Multi-digit & unpadded (<code class="inline">n ≤ 99</code>):</strong> <code class="inline">n = 15</code>, <code class="inline">"8713951011612213144"</code> → <strong>15</strong>. The sum/digit-frequency shortcut breaks (it can't tell <code class="inline">23</code> from <code class="inline">32</code>, and the same string can read as multiple sequences), so you must <em>backtrack-parse</em> the string into distinct ids and report the one that can't be placed.</li>
+    </ul>
 
     <div class="card accent">
       <p style="margin:0 0 6px 0;font-weight:600">Strategy (unordered)</p>
       <ol style="margin:0;padding-left:18px;font-size:13px">
-        <li><strong>Drop the sequence-walk — it depended on order.</strong> Shuffled input means the cursor approach can't know which id should come next. Switch to an order-independent invariant.</li>
-        <li><strong>Use the Gauss sum.</strong> The complete set <code class="inline">1..n</code> always sums to <code class="inline">n·(n+1)/2</code>, no matter the order. Sum the ids actually present and the missing one is <code class="inline">expected_sum − actual_sum</code>.</li>
-        <li><strong>For <code class="inline">n ≤ 9</code> every CHARACTER is an id.</strong> That's the asked case (<code class="inline">n = 5</code>): just add up the digits. O(L) time, O(1) space.</li>
-        <li><strong>Raise the ambiguity for <code class="inline">n ≥ 10</code> out loud.</strong> Unordered + variable-width is genuinely ill-posed: <code class="inline">"4135"</code> could be <code class="inline">[4,1,3,5]</code> or <code class="inline">[41,3,5]</code> or <code class="inline">[4,13,5]</code>… You can't recover token boundaries without help. Ask the interviewer: are ids zero-padded to a fixed 2 digits (<code class="inline">"0102…"</code>) or delimited? If padded, slice every 2 chars and reuse the same sum trick.</li>
-        <li><strong>Mention XOR as the overflow-safe alternative.</strong> <code class="inline">XOR</code> of <code class="inline">1..n</code> against all present ids leaves the missing one — same O(L)/O(1), but no risk of a huge sum overflowing in languages with fixed-width ints.</li>
+        <li><strong>Drop the sequence-walk — it depended on order.</strong> Shuffled input means the cursor approach can't know which id should come next.</li>
+        <li><strong>Easy sub-case: <code class="inline">n ≤ 9</code>, every CHARACTER is an id.</strong> That's the first asked example (<code class="inline">n = 5</code>, <code class="inline">"4135"</code>): the set <code class="inline">1..n</code> always sums to <code class="inline">n·(n+1)/2</code> regardless of order, so add the digits and return <code class="inline">expected_sum − actual_sum</code>. XOR works too and avoids overflow. O(L)/O(1).</li>
+        <li><strong>Know why the sum/digit-frequency shortcut FAILS for multi-digit.</strong> It's tempting to extend the sum trick, but unordered + unpadded is subtler: removing <code class="inline">23</code> vs <code class="inline">32</code> leaves <em>identical</em> digit counts, and the same string <code class="inline">"8713951011612213144"</code> reads as a complete <code class="inline">1..14</code> OR as <code class="inline">1..15</code> missing <code class="inline">15</code>. So you genuinely cannot avoid parsing — and <code class="inline">n</code> MUST be given, because it's what fixes the interpretation.</li>
+        <li><strong>Backtrack-partition the string (the real solution).</strong> The numbers were concatenated <em>in sequence</em>, so the string is a run of 1-or-2-digit tokens. Walk left to right; at each spot try consuming 1 then 2 chars as an id that is in <code class="inline">[1, n]</code>, has no leading zero, and isn't already used; recurse; undo on a dead end. The single id you can never place is the missing one.</li>
+        <li><strong>Complexity & framing.</strong> Backtracking is exponential in the worst case but the distinct-and-in-range pruning makes it fast for <code class="inline">n ≤ 99</code> (≤ ~189 chars). Say out loud that if ids were zero-padded to 2 (<code class="inline">"0102…"</code>) or delimited, the parse collapses back to a trivial slice-and-sum — naming that simplification is good signal.</li>
       </ol>
     </div>
 
     <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 5, s = "4135"   (ids 1..5 shuffled, one missing)
 # Output: 2
 
-def find_missing_id_unordered(n, s)
+def find_missing_id_unordered_sum(n, s)
   # The full set 1..n always sums to n*(n+1)/2 (Gauss), independent of order.
   expected_sum = n * (n + 1) / 2
 
@@ -2349,26 +2353,50 @@ def find_missing_id_xor(n, s)
   acc                                     # the unmatched id survives
 end
 
-# ---- n &gt;= 10 only works if ids are fixed-width (zero-padded to 2): "0102.." ----
-def find_missing_id_unordered_padded(n, s)
-  expected_sum = n * (n + 1) / 2
-  actual_sum = 0
-  i = 0
-  while i &lt; s.length
-    actual_sum += s[i, 2].to_i   # take 2 chars = one id
-    i += 2
+# ---- Multi-digit, unordered, UNPADDED: backtracking partition ----
+# Input:  n = 15, s = "8713951011612213144"
+#         (ids 1..15 shuffled and concatenated, no separators, one missing)
+# Output: 15
+def find_missing_id_unordered(n, s)
+  used = {}
+  return nil unless partition(s, 0, n, used)   # split the whole string
+  (1..n).find { |id| !used.key?(id) }          # the id never placed
+end
+
+# Try to consume s[pos..] entirely as DISTINCT ids in [1, n].
+# Returns true (with `used` filled) if a full valid split exists.
+def partition(s, pos, n, used)
+  return true if pos == s.length               # consumed everything -> valid
+
+  # A token is 1 or 2 digits — try both lengths at this position.
+  [1, 2].each do |len|
+    next if pos + len &gt; s.length
+    token = s[pos, len]
+    next if len == 2 &amp;&amp; token[0] == "0"         # no leading zero ("05" invalid)
+    id = token.to_i
+    next if id &lt; 1 || id &gt; n                    # must be a real id
+    next if used.key?(id)                       # ids are distinct
+
+    used[id] = true
+    return true if partition(s, pos + len, n, used)
+    used.delete(id)                             # dead end -> undo, try other len
   end
-  expected_sum - actual_sum
-end</code></pre></div>
+
+  false                                         # no split works from here
+end
+
+# Time:  worst-case exponential, but distinct+in-range pruning keeps it fast
+#        for n &lt;= 99. Space: O(n) for `used` + O(L) recursion depth.</code></pre></div>
 
     <p style="font-size:13px;margin-bottom:4px"><strong>Example use cases (unordered)</strong></p>
-    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">find_missing_id_unordered(5, "4135")        # => 2   (the asked example)
-find_missing_id_unordered(9, "31542976")    # => 8   (1..9 shuffled, 8 dropped)
-find_missing_id_xor(5, "4135")              # => 2   (same answer, overflow-safe)
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Single-digit (n <= 9): sum / XOR is enough
+find_missing_id_unordered_sum(5, "4135")     # => 2   (first asked example)
+find_missing_id_xor(5, "4135")               # => 2   (same, overflow-safe)
 
-# n >= 10 needs fixed-width padding to be unambiguous (here 1..15 minus 12,
-# shuffled, each id zero-padded to 2 chars):
-find_missing_id_unordered_padded(15, "0307011502130509081406041011")  # => 12</code></pre></div>
+# Multi-digit, unordered, unpadded: backtracking partition
+find_missing_id_unordered(15, "8713951011612213144")     # => 15  (the asked example)
+find_missing_id_unordered(12, "1234567891012")           # => 11  (1..12, 11 dropped)
+find_missing_id_unordered(20, "20123456789101213141516171819")  # => 11</code></pre></div>
 
     <div class="card chime">
       <p style="margin:0;font-size:13px"><strong>If they pivot to ANY problem in this list:</strong> the talk-track is unchanged — restate, clarify, brute force first, optimize with hash or DP, narrate the tradeoff, test with a small example, state complexity. The shape that scores is the SAME shape that would have scored on T9 — what you're showing is the loop, not the algorithm.</p>

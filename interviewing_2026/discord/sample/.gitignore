@@ -1,0 +1,8 @@
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Sandboxes created by bin/run-exercise. Each run wipes and rebuilds the dir,
+# so there's nothing here worth committing.
+work/

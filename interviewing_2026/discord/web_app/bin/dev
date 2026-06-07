@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Start the Rails backend (:3000) and Vite frontend (:5173) concurrently.
+# Ctrl-C stops both.
+
+set -e
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [ -d "$HOME/.rbenv/versions/3.3.11/bin" ]; then
+  export PATH="$HOME/.rbenv/versions/3.3.11/bin:$PATH"
+fi
+
+pids=()
+cleanup() {
+  for pid in "${pids[@]}"; do
+    kill "$pid" 2>/dev/null || true
+  done
+  wait 2>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+echo "▶ Starting Rails on http://localhost:3000"
+(cd "$ROOT/backend" && bundle exec rails server -p 3000) &
+pids+=($!)
+
+echo "▶ Starting Vite on http://localhost:5173"
+(cd "$ROOT/frontend" && npm run dev) &
+pids+=($!)
+
+wait

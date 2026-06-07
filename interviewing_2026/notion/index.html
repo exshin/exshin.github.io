@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notion · Eng · R1 Technical Prep</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --panel: #ffffff;
+    --panel-2: #f1f0ec;
+    --border: #e6e3dd;
+    --text: #37352f;
+    --muted: #8a877f;
+    --accent: #2383e2;
+    --accent-2: #0b6e99;
+    --good: #2f7d4f;
+    --warn: #b06a1c;
+    --bad: #c0392b;
+    --notion: #000000;
+    --notion-soft: #d3e5ef;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--notion); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--notion-soft); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--accent-2); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.notion { border-left: 3px solid var(--notion); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #faf9f7 !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.notion { color: #fff; background: var(--notion); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  /* Nested expand/collapse sub-sections (e.g. text-editor follow-ups) */
+  details.followup {
+    margin: 8px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+  }
+  details.followup &gt; summary {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-2);
+    cursor: pointer;
+    padding: 9px 12px;
+    list-style: none;
+    user-select: none;
+    background: var(--panel-2);
+    border-radius: 6px;
+  }
+  details.followup[open] &gt; summary {
+    border-bottom: 1px solid var(--border);
+    border-radius: 6px 6px 0 0;
+  }
+  details.followup &gt; summary:hover { background: var(--border); }
+  details.followup &gt; summary::-webkit-details-marker { display: none; }
+  details.followup &gt; summary::marker { content: ""; }
+  details.followup &gt; summary::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: 9px;
+    color: var(--muted);
+    transition: transform 0.12s ease;
+    font-size: 10px;
+    width: 8px;
+  }
+  details.followup[open] &gt; summary::before { transform: rotate(90deg); }
+  .followup-body { padding: 4px 14px 12px 14px; }
+  .followup-body &gt; *:first-child { margin-top: 8px; }
+  .followup-body &gt; *:last-child { margin-bottom: 0; }
+  .round-banner {
+    background: linear-gradient(135deg, #2b2b2b 0%, #000000 100%);
+    color: #fff; padding: 12px 18px; border-radius: 8px; margin: 0 0 16px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .round-banner .lbl { font-size: 12px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.08em; }
+  .round-banner .time { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; }
+  /* === Collapsible problem sections (auto-wrapped on Coding tab) === */
+  details.problem {
+    margin: 12px 0;
+    border-top: 1px solid var(--border);
+    padding-top: 4px;
+  }
+  details.problem:first-of-type { border-top: none; padding-top: 0; }
+  details.problem &gt; summary {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent-2);
+    cursor: pointer;
+    padding: 10px 8px;
+    list-style: none;
+    border-radius: 4px;
+    user-select: none;
+  }
+  details.problem &gt; summary:hover { background: var(--panel-2); }
+  details.problem &gt; summary::-webkit-details-marker { display: none; }
+  details.problem &gt; summary::marker { content: ""; }
+  details.problem &gt; summary::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: 10px;
+    color: var(--muted);
+    transition: transform 0.12s ease;
+    font-size: 11px;
+    width: 8px;
+  }
+  details.problem[open] &gt; summary::before { transform: rotate(90deg); }
+  details.problem[open] &gt; summary {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  /* TOC group headers — visual separators in the sidebar */
+  aside li.toc-group {
+    color: var(--accent-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    padding: 14px 10px 4px 0;
+    margin-top: 6px;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+  aside li.toc-group:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+  aside .toc-controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  aside .toc-controls button {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  aside .toc-controls button:hover {
+    color: var(--accent);
+    background: var(--panel-2);
+    border-color: var(--accent);
+  }
+  aside .toc-filter {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 10px;
+    font-family: inherit;
+  }
+  aside .toc-filter:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  aside li.toc-hidden { display: none; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Notion · Engineering <span class="badge">R1 Technical · 60m</span></h1>
+  <nav class="tabs">
+    <button data-tab="cheat" class="active">Cheat Sheet</button>
+    <button data-tab="coding">Coding (60m)</button>
+    <button data-tab="play">Playbook</button>
+    <button data-tab="model">Notion Model</button>
+    <button data-tab="company">Company</button>
+    <button data-tab="questions">Q's to Ask</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <div class="toc-controls" id="toc-controls" style="display:none">
+      <button id="expand-all" title="Expand every section">Expand all</button>
+      <button id="collapse-all" title="Collapse every section">Collapse all</button>
+    </div>
+    <input type="text" id="toc-filter" class="toc-filter" placeholder="Filter sections..." style="display:none" />
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab active" id="tab-cheat" data-toc='[
+    ["The round in one line","one"],
+    ["The loop at a glance","glance"],
+    ["★ Most likely prompts (ranked)","likely"],
+    ["The 20-second pitch","pitch"],
+    ["What Notion actually scores","scores"],
+    ["The practical-round mindset","mindset"],
+    ["Words that land well","vocab"],
+    ["Red flags to avoid","red"],
+    ["When stuck","stuck"]
+  ]'>
+    <h2>Cheat Sheet <span class="sub">scan this right before you join</span></h2>
+
+    <div class="card bad" style="border-left-width:4px;margin-bottom:24px">
+      <p style="margin:0 0 6px 0;font-weight:600;color:var(--bad)">★ First technical round (1 hr) — practical coding, NOT LeetCode</p>
+      <p style="margin:0;font-size:13px">Notion's first technical is a <strong>"build a small feature"</strong> round in a shared editor, language of choice. Expect a <strong>cluster of likely problems, not one guaranteed prompt.</strong> The <strong>most consistently reported</strong> (2025 → 2026) is the <strong>Text Editor with insert / delete / undo / redo</strong> (often handed to you as a stubbed <code class="inline">Operation</code> class). 2026 reports increasingly pair it with <strong>Sliding Window Median</strong> and a <strong>Task Queue</strong> problem, with "build a tiny in-memory store + a few APIs" also common. Drill the <strong>Coding tab → ★ Most consistently reported</strong> first, then the <strong>2026 companions</strong>. They reward <strong>clean, working, extensible code</strong> — not the cleverest Big-O.</p>
+      <p style="margin:6px 0 0 0;font-size:13px"><strong>The bar to clear:</strong> nail the data model / interface out loud first, write working code incrementally, run a trace, then take a live follow-up gracefully. Solutions are in <strong>Ruby</strong> (your choice) — the circulating skeleton is Python, so mirror its <code class="inline">Operation</code> shape if they hand you one. <strong>Possible new format:</strong> an AI-enabled round (Cursor / Claude Code) — see Playbook → AI-tool round.</p>
+    </div>
+
+    <h3 class="section" id="one">The round in one line</h3>
+    <div class="card notion">
+      <p style="margin:0">A senior engineer hands you a <strong>realistic feature</strong> and watches how you <em>design the abstraction, write clean working code, test it, and react when they extend it</em>. It is a conversation about building software, not an algorithm quiz. Treat them as a pair, not a judge.</p>
+    </div>
+
+    <h3 class="section" id="glance">The loop at a glance (for context — tomorrow is just R1)</h3>
+    <table class="rubric">
+      <tr><th>Round</th><th>Time</th><th>Format</th><th>What they really score</th></tr>
+      <tr><td><strong>R1 Technical ← YOU</strong></td><td>60 min</td><td>Shared editor, language of choice, 1 practical problem</td><td>Clean code, good abstractions, testing, communication, extensibility</td></tr>
+      <tr><td>Onsite: Functional impl</td><td>60 min</td><td>Build a feature deeper, more follow-ups</td><td>Data-structure choice, edge cases, trade-off discussion</td></tr>
+      <tr><td>Onsite: High-level design</td><td>60 min</td><td>Data modeling + SQL / indexing, practical scenarios</td><td>Schema design, querying, scaling Notion-shaped problems</td></tr>
+      <tr><td>Onsite: System design</td><td>60 min</td><td>Collab editing, search, permissions</td><td>OT/CRDT, offline-first, real-world trade-offs</td></tr>
+      <tr><td>Behavioral / values</td><td>45 min</td><td>Conversational</td><td>Craft, taste, agency, collaboration</td></tr>
+    </table>
+
+    <h3 class="section" id="likely">★ Likely prompts (a cluster — not one guaranteed problem)</h3>
+    <p style="font-size:13px;color:var(--muted);margin:0 0 8px 0">Self-reported across aggregators (1point3acres, Glassdoor, prachub), so treat as a probability map, not a leak. Prep the top of the list deepest; the rest is defense in depth.</p>
+    <table class="rubric">
+      <tr><th>Tier</th><th>Prompt</th><th>Disguised as</th></tr>
+      <tr><td>Most consistent (2025→26)</td><td><strong>Text editor: insert / delete / undo / redo</strong></td><td>Command pattern + two stacks</td></tr>
+      <tr><td>2026 companion</td><td><strong>Sliding window median</strong></td><td>Two heaps / sorted window</td></tr>
+      <tr><td>2026 companion</td><td><strong>Task queue modifications</strong> (add / next / reprioritize / cancel)</td><td>Priority queue + lazy update</td></tr>
+      <tr><td>Common</td><td><strong>In-memory store + a few APIs</strong> (often transactions)</td><td>Layered hashes / mini database</td></tr>
+      <tr><td>Notion-flavored</td><td>Table group-by aggregation · block tree render/move/indent</td><td>Hash bucketing · tree DFS</td></tr>
+      <tr><td>Defense in depth</td><td>File system, DAG toposort, LRU, rate limiter, string parsing</td><td>—</td></tr>
+    </table>
+    <p style="font-size:13px;color:var(--muted)">All in the Coding tab with full Ruby solutions (each verified by running it), traces, and follow-ups.</p>
+
+    <h3 class="section" id="pitch">The 20-second pitch (about you)</h3>
+    <div class="card notion">
+      <p style="margin:0 0 6px 0"><strong>Template:</strong> "I'm a backend engineer from Zendesk — I owned a payments/billing integration, so clean data models, correctness, and code other people can extend are my home turf. Notion appeals to me because it's an engineering-craft company: the block data model and collaborative-editing problems are exactly the kind of hard, practical systems work I like, and the product is genuinely a tool I use to think."</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">~20 seconds. Then let them drive. Hits: practical builder, correctness, craft, genuine product user.</p>
+    </div>
+
+    <h3 class="section" id="scores">What Notion actually scores (from reports)</h3>
+    <div class="grid-2">
+      <div class="card good"><strong>✓ Clean, working code</strong> — correct first, readable always. Names, small methods, no dead code.</div>
+      <div class="card good"><strong>✓ Good abstractions</strong> — the right interface / data structure for the feature. They love a clean model.</div>
+      <div class="card good"><strong>✓ Testing as you go</strong> — run it, trace examples, add asserts. "Let me verify" is a green flag.</div>
+      <div class="card good"><strong>✓ Communication</strong> — narrate decisions and trade-offs, not syntax.</div>
+      <div class="card good"><strong>✓ Extensibility</strong> — they WILL add a requirement mid-round. Code that bends without a rewrite wins.</div>
+      <div class="card good"><strong>✓ Product instinct</strong> — frame the problem as a feature for a user, not an abstract puzzle.</div>
+    </div>
+
+    <h3 class="section" id="mindset">The practical-round mindset</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>This is not LeetCode.</strong> Don't reach for the cleverest algorithm — reach for the cleanest design that works and reads well.</li>
+        <li><strong>Model before you code.</strong> Spend the first few minutes defining the interface / data shape out loud and getting a nod. That IS the signal.</li>
+        <li><strong>Build incrementally + run often.</strong> Get insert+delete working and tested, THEN add undo, THEN redo. Don't write 60 lines before running anything.</li>
+        <li><strong>Expect a live extension.</strong> "Now support insert-at-position" / "now batch operations." Leave seams. React calmly.</li>
+        <li><strong>Do less, but better.</strong> Notion culture. Don't over-engineer; build exactly what's asked, cleanly.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="vocab">Words and phrases that will land well</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Product vocab:</strong> <em>connected workspace, blocks, tools for thought, toolmaking, composability, the render tree</em></p>
+      <p style="margin:0 0 6px 0"><strong>Engineering vocab:</strong> <em>command pattern, inverse operation, single source of truth, data model, idempotent, offline-first, OT / CRDT, full-text search</em></p>
+      <p style="margin:0"><strong>Craft vocab:</strong> <em>taste, polish, "do less but better," readable, extensible, the right abstraction</em></p>
+    </div>
+
+    <h3 class="section" id="red">Red flags to avoid</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>Treating it like LeetCode.</strong> Obsessing over O(n) before you have working, clean code reads as a misfit for Notion's culture.</li>
+        <li><strong>Coding before modeling.</strong> Diving into a loop without defining the interface/data shape first.</li>
+        <li><strong>Writing a wall of code before running it.</strong> Their style rewards run-as-you-go and visible testing.</li>
+        <li><strong>Over-engineering.</strong> A 5-class cathedral for a 60-min feature. "Do less but better."</li>
+        <li><strong>Freezing on the live extension.</strong> They add requirements on purpose — that's the test, not a trap.</li>
+        <li><strong>"It's just a note-taking app."</strong> It's a connected workspace / tool-builder. Know the block model.</li>
+        <li><strong>Silent coding &gt; 30s.</strong> Narrate intent ("I'll capture what was deleted so undo can restore it").</li>
+        <li><strong>Bashing past employers.</strong> Always reframe as a problem you tried to fix.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="stuck">When stuck (any round)</h3>
+    <ul class="tight">
+      <li><strong>Restate the spec aloud.</strong> Most misses are misread requirements — especially in open-ended practical rounds.</li>
+      <li><strong>Trace one example by hand.</strong> "Let me walk insert/delete/undo through this input."</li>
+      <li><strong>Name the data model.</strong> "What's the simplest structure that makes these operations cheap?" usually unlocks it.</li>
+      <li><strong>Ask the interviewer.</strong> "Can I confirm: does delete(k) remove from the end, or at the cursor?"</li>
+      <li><strong>Out loud: "Let me get the simple version working first, then refine."</strong></li>
+    </ul>
+  </section>
+
+  <!-- ============ CODING ============ -->
+  <section class="tab" id="tab-coding" data-collapsible="true" data-toc='[
+    ["@group","Setup"],
+    ["Format &amp; what to expect","fmt"],
+    ["@group","★ Most consistently reported"],
+    ["Text Editor: undo / redo","editor"],
+    ["<span style=\"opacity:.6\">↳</span> Insert-at / delete-range","fu-insertat"],
+    ["<span style=\"opacity:.6\">↳</span> Batch / transaction","fu-batch"],
+    ["<span style=\"opacity:.6\">↳</span> Bounded history","fu-bounded"],
+    ["<span style=\"opacity:.6\">↳</span> Cursor / selection","fu-cursor"],
+    ["<span style=\"opacity:.6\">↳</span> Collaborative (OT)","fu-collab"],
+    ["@group","2026 companions"],
+    ["Sliding Window Median","swm"],
+    ["Task Queue modifications","tq"],
+    ["@group","Common"],
+    ["Binary search (+ lower bound)","bsearch"],
+    ["In-memory store + transactions","kv"],
+    ["@group","Notion-flavored"],
+    ["Block tree (the data model)","blocks"],
+    ["Nested to-dos list API","todos"],
+    ["Table group-by aggregation","agg"],
+    ["File system / nested paths","fs"],
+    ["@group","Defense in depth"],
+    ["DAG task graph (toposort)","dag"],
+    ["LRU cache","lru"],
+    ["Rate limiter / logger","rate"],
+    ["String parsing / tokenizer","parse"],
+    ["@group","Reference"],
+    ["Ruby cheats","ruby"],
+    ["Pattern recognition","recog"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">R1 Technical</div><div style="font-size:16px;font-weight:600">60 min · shared editor · language of choice · practical feature</div></div>
+      <div class="time">⏱ 60 min</div>
+    </div>
+
+    <h3 class="section" id="fmt">Format &amp; what to expect</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Practical, not LeetCode.</strong> You implement a small feature / data structure with a clean interface — often by completing pre-stubbed functions.</li>
+        <li><strong>Language of choice.</strong> Notion is a TypeScript shop (bonus signal), but Ruby reads cleanly for these LLD-style problems. The circulating skeleton is Python — mirror its <code class="inline">Operation</code> class shape if they hand you one.</li>
+        <li><strong>Shared editor</strong> (CoderPad-style). You can run code — and you should, often.</li>
+        <li><strong>Live extensions.</strong> Expect them to add a requirement once you have it working. That's the real signal.</li>
+        <li><strong>In scope:</strong> hashes, stacks/queues, trees, simple recursion, string ops, basic OOP. <strong>Rarely:</strong> exotic graph algorithms, DP puzzles.</li>
+        <li><strong>Possible AI-enabled format:</strong> a round where you code with Cursor / Claude Code. Confirm with your recruiter. See <strong>Playbook → The AI-tool round</strong> for how it's scored.</li>
+      </ul>
+    </div>
+
+    <!-- ===== TEXT EDITOR ===== -->
+    <h3 class="section" id="editor">★ Text Editor: insert / delete / undo / redo (most consistently reported)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt:</strong> Implement a text document supporting <code class="inline">insert(chars)</code> (append to end), <code class="inline">delete(k)</code> (remove up to k chars from the end), <code class="inline">undo()</code> (undo the last effective operation), and <code class="inline">redo()</code> (re-apply the last undone op). <strong>Any new operation clears the redo stack.</strong></p>
+      <p style="margin:0;font-size:13px">Often handed to you as a stubbed <code class="inline">Operation</code> base class with <code class="inline">InsertAtEndOperation</code> / <code class="inline">DeleteFromEndOperation</code> subclasses to complete. The key insight they want: <strong>each operation knows how to apply itself AND how to roll itself back (its inverse)</strong> — that's the Command pattern, and it makes undo/redo uniform.</p>
+    </div>
+
+    <h4>Talk-track (say this as you start)</h4>
+    <div class="card">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Clarify:</strong> "Does delete(k) remove from the end or at a cursor? If k &gt; length, remove all? Is undo per-operation or per-character?"</li>
+        <li><strong>Name the model:</strong> "I'll use the Command pattern — one class per operation that can <code class="inline">apply</code> and <code class="inline">rollback</code>. Two stacks: undo and redo. New action clears redo. That keeps undo/redo symmetric and trivial to extend with new op types."</li>
+        <li><strong>Build incrementally:</strong> insert + delete first, run it, then undo, then redo.</li>
+        <li><strong>Trace</strong> the example. <strong>State complexity:</strong> each op O(1) amortized for append; delete O(k) to capture removed text. <strong>Offer follow-ups.</strong></li>
+      </ol>
+    </div>
+
+    <h4>Reference solution — Command pattern (the answer they want)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># A text document with full undo/redo.
+# Core idea: every edit is an Operation object that knows how to
+# apply itself AND how to undo itself (its inverse). Undo/redo is
+# then just popping ops off two stacks and calling apply/rollback.
+class TextDocument
+  attr_reader :text
+
+  def initialize
+    @text = ""        # current document contents
+    @undo = []        # ops we can undo (newest on top)
+    @redo = []        # ops we can redo
+  end
+
+  # ---------- public API ----------
+  def insert(chars)
+    apply(InsertOp.new(chars))
+  end
+
+  def delete(k)
+    apply(DeleteOp.new(k))
+  end
+
+  def undo
+    return if @undo.empty?
+    op = @undo.pop
+    op.rollback(self)   # restore text to before this op
+    @redo.push(op)      # it can now be redone
+  end
+
+  def redo
+    return if @redo.empty?
+    op = @redo.pop
+    op.apply(self)      # re-run it
+    @undo.push(op)      # it can be undone again
+  end
+
+  # ---------- primitives the operations use ----------
+  def append(str)
+    @text += str
+  end
+
+  # Remove up to n chars from the end and RETURN what was removed,
+  # so a delete can undo itself by putting the text back.
+  def truncate(n)
+    n = [n, @text.length].min
+    removed = @text[@text.length - n, n]
+    @text = @text[0, @text.length - n]
+    removed
+  end
+
+  private
+
+  def apply(op)
+    op.apply(self)
+    @undo.push(op)
+    @redo.clear         # a brand-new action invalidates the redo history
+  end
+end
+
+# Each operation captures whatever it needs to reverse itself.
+class InsertOp
+  def initialize(chars)
+    @chars = chars
+  end
+
+  def apply(doc)
+    doc.append(@chars)
+  end
+
+  def rollback(doc)
+    doc.truncate(@chars.length)   # remove exactly what we added
+  end
+end
+
+class DeleteOp
+  def initialize(k)
+    @k = k
+    @removed = nil               # captured at apply-time; needed to undo
+  end
+
+  def apply(doc)
+    @removed = doc.truncate(@k)  # remember what we removed
+  end
+
+  def rollback(doc)
+    doc.append(@removed)         # put it back, exactly
+  end
+end</code></pre></div>
+
+    <h4>Trace (run this out loud)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">doc = TextDocument.new
+doc.insert("Hello")    # "Hello"
+doc.insert(" World")   # "Hello World"
+doc.delete(6)          # "Hello"          (removed " World")
+doc.undo               # "Hello World"    (DeleteOp re-appends " World")
+doc.undo               # "Hello"          (InsertOp(" World") rolled back)
+doc.redo               # "Hello World"    (re-applied)
+doc.insert("!")        # "Hello World!"   (new action -> redo stack cleared)
+doc.undo               # "Hello World"
+puts doc.text          # => "Hello World"</code></pre></div>
+
+    <h4>Simpler alternative — snapshot stack (the brute force; name it, don't lead with it)</h4>
+    <p style="font-size:13px">Push the whole string before each edit. Trivial to write, but O(n) memory <em>per edit</em>. Good to mention as the naive baseline, then contrast with the command pattern's O(delta) memory.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class SnapshotDoc
+  def initialize
+    @text = ""
+    @undo = []
+    @redo = []
+  end
+  attr_reader :text
+
+  def insert(chars); checkpoint; @text += chars; end
+  def delete(k);     checkpoint; @text = @text[0, [@text.length - k, 0].max]; end
+
+  def undo
+    return if @undo.empty?
+    @redo.push(@text)
+    @text = @undo.pop
+  end
+
+  def redo
+    return if @redo.empty?
+    @undo.push(@text)
+    @text = @redo.pop
+  end
+
+  private
+  def checkpoint
+    @undo.push(@text)   # save full state before mutating
+    @redo.clear
+  end
+end</code></pre></div>
+
+    <h4>Follow-ups they may add live (be ready)</h4>
+    <ul class="tight">
+      <li><strong>insert-at-position / delete-range:</strong> add <code class="inline">InsertAtOp(pos, chars)</code> — apply splices in, rollback splices out. The command pattern absorbs this with one new class; the snapshot version needs no change. Lead with "this is exactly why I chose the Command pattern."</li>
+      <li><strong>Batch / transaction:</strong> a <code class="inline">CompositeOp</code> holding a list of ops; apply runs them in order, rollback runs the inverses in <em>reverse</em> order. One undo reverts the batch.</li>
+      <li><strong>Bounded history:</strong> cap the undo stack (e.g. last 100) — drop the oldest from the bottom.</li>
+      <li><strong>Cursor / selection:</strong> track a cursor index; operations move it; undo restores it.</li>
+      <li><strong>Collaborative editing:</strong> "this is where OT or CRDTs come in — concurrent edits need transformation, not a single linear stack." (See Notion Model tab.)</li>
+    </ul>
+
+    <h4>Worked solutions for the follow-ups <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(click to expand)</span></h4>
+    <p style="font-size:13px">Each builds on the base <code class="inline">TextDocument</code> above. Notice the pattern: new behavior = a new operation class (sometimes a new primitive), and the undo/redo machinery never changes. That invariance is the point you're selling.</p>
+
+    <details class="followup" id="fu-insertat">
+    <summary>1 · Insert-at-position &amp; delete-range</summary>
+    <div class="followup-body">
+    <p style="font-size:13px">Add two primitives that work at an arbitrary index, plus one op class each. The two stacks are untouched.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># --- add these two primitives inside TextDocument ---
+
+# Insert `str` so it begins at index `pos`.
+def write_at(pos, str)
+  @text = @text[0, pos] + str + @text[pos, @text.length]
+end
+
+# Remove `len` chars starting at `pos`; RETURN what was removed (for undo).
+def erase(pos, len)
+  removed = @text[pos, len] || ""
+  @text = @text[0, pos] + @text[pos + len, @text.length]
+  removed
+end
+
+# --- and these one-line public methods inside TextDocument ---
+def insert_at(pos, chars); apply(InsertAtOp.new(pos, chars)); end
+def delete_range(pos, len); apply(DeleteRangeOp.new(pos, len)); end
+
+# --- two new operation classes (same apply/rollback shape as before) ---
+class InsertAtOp
+  def initialize(pos, chars)
+    @pos = pos
+    @chars = chars
+  end
+
+  def apply(doc)
+    doc.write_at(@pos, @chars)
+  end
+
+  def rollback(doc)
+    doc.erase(@pos, @chars.length)   # remove exactly what we inserted
+  end
+end
+
+class DeleteRangeOp
+  def initialize(pos, len)
+    @pos = pos
+    @len = len
+    @removed = nil                   # captured at apply-time
+  end
+
+  def apply(doc)
+    @removed = doc.erase(@pos, @len)
+  end
+
+  def rollback(doc)
+    doc.write_at(@pos, @removed)     # put the removed slice back
+  end
+end
+
+# doc.insert("Hello World"); doc.insert_at(5, ",")  => "Hello, World"
+# doc.undo                                           => "Hello World"</code></pre></div>
+    </div>
+    </details>
+
+    <details class="followup" id="fu-batch">
+    <summary>2 · Batch / transaction (one undo reverts many edits)</summary>
+    <div class="followup-body">
+    <p style="font-size:13px">A composite is itself an operation that holds child ops: apply them in order, roll them back in <em>reverse</em>. It pushes as a single entry, so one undo reverts the whole batch.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># An operation made of other operations (the Composite pattern).
+class CompositeOp
+  def initialize(ops)
+    @ops = ops
+  end
+
+  def apply(doc)
+    @ops.each { |op| op.apply(doc) }            # forward order
+  end
+
+  def rollback(doc)
+    @ops.reverse_each { |op| op.rollback(doc) } # reverse order to undo cleanly
+  end
+end
+
+# public method inside TextDocument:
+def batch(*ops)
+  apply(CompositeOp.new(ops))
+end
+
+# doc.batch(InsertOp.new("Hello"), InsertOp.new(" World"))  => "Hello World"
+# doc.undo   # reverts BOTH inserts at once                  => ""</code></pre></div>
+    </div>
+    </details>
+
+    <details class="followup" id="fu-bounded">
+    <summary>3 · Bounded history (cap the undo stack)</summary>
+    <div class="followup-body">
+    <p style="font-size:13px">One line in <code class="inline">apply</code>: after pushing, drop the oldest if we're over the cap. Those edits simply become non-undoable — correct behavior.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class TextDocument
+  MAX_HISTORY = 100
+
+  # ... rest unchanged ...
+
+  private
+
+  def apply(op)
+    op.apply(self)
+    @undo.push(op)
+    @undo.shift if @undo.length &gt; MAX_HISTORY   # forget the oldest edit
+    @redo.clear
+  end
+end</code></pre></div>
+    </div>
+    </details>
+
+    <details class="followup" id="fu-cursor">
+    <summary>4 · Cursor / selection</summary>
+    <div class="followup-body">
+    <p style="font-size:13px">Track a cursor index; insert/delete happen there, and each op restores the cursor on undo. Here the primitives keep the cursor consistent, so the ops stay tiny. (<code class="inline">delete</code> is a backspace: it removes the chars before the cursor.)</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class CursorDocument
+  attr_reader :text, :cursor
+
+  def initialize
+    @text = ""
+    @cursor = 0           # where the next edit happens
+    @undo = []
+    @redo = []
+  end
+
+  def insert(chars); run(CursorInsert.new(@cursor, chars)); end
+  def delete(k);     run(CursorDelete.new(@cursor, k));     end
+  def move(pos);     @cursor = pos;                          end
+
+  def undo
+    return if @undo.empty?
+    op = @undo.pop
+    op.rollback(self)
+    @redo.push(op)
+  end
+
+  def redo
+    return if @redo.empty?
+    op = @redo.pop
+    op.apply(self)
+    @undo.push(op)
+  end
+
+  # Primitives ALSO move the cursor, so undo/redo restore it for free:
+  # after writing, the cursor sits just past the new text; after erasing,
+  # it sits where the erase began.
+  def write(pos, str)
+    @text = @text[0, pos] + str + @text[pos, @text.length]
+    @cursor = pos + str.length
+  end
+
+  def erase(pos, len)
+    removed = @text[pos, len] || ""
+    @text = @text[0, pos] + @text[pos + len, @text.length]
+    @cursor = pos
+    removed
+  end
+
+  private
+
+  def run(op)
+    op.apply(self)
+    @undo.push(op)
+    @redo.clear
+  end
+end
+
+class CursorInsert
+  def initialize(cursor, chars)
+    @cursor = cursor
+    @chars = chars
+  end
+
+  def apply(doc)
+    doc.write(@cursor, @chars)        # leaves cursor after the insert
+  end
+
+  def rollback(doc)
+    doc.erase(@cursor, @chars.length) # leaves cursor back at the insert point
+  end
+end
+
+class CursorDelete
+  def initialize(cursor, k)
+    @k = [k, cursor].min              # can't delete past the start
+    @start = cursor - @k
+    @removed = nil
+  end
+
+  def apply(doc)
+    @removed = doc.erase(@start, @k)
+  end
+
+  def rollback(doc)
+    doc.write(@start, @removed)       # restores text AND cursor
+  end
+end
+
+# c.insert("Hello"); c.insert(" World")  # "Hello World", cursor 11
+# c.move(5); c.insert(",")               # "Hello, World", cursor 6
+# c.undo                                  # "Hello World", cursor 5</code></pre></div>
+    </div>
+    </details>
+
+    <details class="followup" id="fu-collab">
+    <summary>5 · Collaborative editing — illustrative operational transform</summary>
+    <div class="followup-body">
+    <div class="card warn" style="margin:6px 0">
+      <p style="margin:0;font-size:13px"><strong>Be honest here:</strong> a single undo/redo stack can't handle two people editing at once — concurrent ops must be <em>transformed</em> against each other so each user's intent survives. Real OT/CRDT also handles deletes, tie-breaking, and every op-pair; this snippet shows only the core idea (insert-vs-insert) to prove you understand the shape, not a production algorithm.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Two users edit the SAME original doc concurrently. Op = {pos:, text:}.
+# After applying `a`, transform `b` so it still lands where the user meant.
+def transform_insert(a, b)
+  if a[:pos] &lt;= b[:pos]
+    # `a` inserted to the left of `b`, so everything at/after b shifted right.
+    { pos: b[:pos] + a[:text].length, text: b[:text] }
+  else
+    b                                  # `a` was to the right -> `b` unaffected
+  end
+end
+
+def apply_insert(text, op)
+  text[0, op[:pos]] + op[:text] + text[op[:pos], text.length]
+end
+
+# base = "abc"
+# a = {pos: 0, text: "X"}   # user A: prepend X
+# b = {pos: 2, text: "Y"}   # user B: insert Y before "c"
+# after_a = apply_insert("abc", a)              # "Xabc"
+# b2 = transform_insert(a, b)                   # {pos: 3, text: "Y"}
+# apply_insert(after_a, b2)                     # "XabYc"  (both intents kept)</code></pre></div>
+    </div>
+    </details>
+
+    <!-- ===== SLIDING WINDOW MEDIAN ===== -->
+    <h3 class="section" id="swm">Sliding Window Median (2026 companion · LC 480)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt:</strong> Given an array <code class="inline">nums</code> and a window size <code class="inline">k</code>, return the median of every window as it slides one step at a time. Median of an even-sized window is the average of the two middles.</p>
+      <p style="margin:0;font-size:13px">This is the one genuinely algorithmic prompt in Notion's recent cluster. <strong>Lead with the clean sorted-window approach</strong> (maintain the window sorted; binary-search to remove the outgoing element and insert the incoming one) — easy to narrate and obviously correct. <strong>Then name the optimization:</strong> two heaps (a max-heap of the lower half, min-heap of the upper half) with lazy deletion gives O(log k) per step vs. O(k) for the sorted list. State that trade-off out loud even if you code the simpler one.</p>
+    </div>
+    <h4>Sorted-window solution (clean, O(k) per step — code this)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Median of a SORTED array: the middle for odd length,
+# the average of the two middles for even length.
+def median_of(sorted)
+  mid = sorted.length / 2
+  if sorted.length.odd?
+    sorted[mid].to_f
+  else
+    (sorted[mid - 1] + sorted[mid]) / 2.0
+  end
+end
+
+# Keep the current window SORTED. Each step: drop the element leaving
+# the window, insert the one entering it, both via binary search.
+def median_sliding_window(nums, k)
+  window = nums[0, k].sort
+  medians = [median_of(window)]
+
+  (k...nums.length).each do |i|
+    # remove the outgoing value nums[i-k] (bsearch finds its leftmost copy)
+    out = nums[i - k]
+    window.delete_at(window.bsearch_index { |x| x &gt;= out })
+
+    # insert the incoming value nums[i] at its sorted position
+    inp = nums[i]
+    pos = window.bsearch_index { |x| x &gt;= inp } || window.length
+    window.insert(pos, inp)
+
+    medians &lt;&lt; median_of(window)
+  end
+  medians
+end
+
+# median_sliding_window([1,3,-1,-3,5,3,6,7], 3) => [1.0,-1.0,-1.0,3.0,5.0,6.0]</code></pre></div>
+    <h4>The optimization to name (don't have to code it)</h4>
+    <div class="card">
+      <p style="margin:0;font-size:13px"><strong>Two heaps:</strong> a max-heap (<code class="inline">lo</code>) for the smaller half and a min-heap (<code class="inline">hi</code>) for the larger half, kept balanced so the median is the top of <code class="inline">lo</code> (odd) or the average of both tops (even). The hard part is <em>removing</em> the element leaving the window — heaps don't support arbitrary delete, so you use <strong>lazy deletion</strong>: keep a hash of "to-delete" counts and purge entries only when they surface at a heap top. That's the O(log k) answer; say it, then decide with the interviewer whether it's worth coding in the time left.</p>
+    </div>
+
+    <!-- ===== TASK QUEUE ===== -->
+    <h3 class="section" id="tq">Task Queue / scheduler modifications (2026 companion)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt (representative — the exact spec varies by report):</strong> Implement a task queue / scheduler with:</p>
+      <ul class="tight" style="margin:0 0 6px 18px">
+        <li><code class="inline">add(task_id, priority)</code> — enqueue a task with a priority (higher = more urgent).</li>
+        <li><code class="inline">next_task</code> — remove and return the most urgent task.</li>
+        <li><code class="inline">update_priority(task_id, p)</code> — change a queued task's priority.</li>
+        <li><code class="inline">cancel(task_id)</code> — remove a task so it never runs.</li>
+      </ul>
+      <p style="margin:0;font-size:13px">Ties (equal priority) break by <strong>insertion order</strong> — earliest task first.</p>
+    </div>
+
+    <h4>Reading the problem: where's the difficulty?</h4>
+    <div class="card">
+      <p style="margin:0 0 6px 0;font-size:13px">If the only operations were <code class="inline">add</code> and <code class="inline">next_task</code>, a <strong>binary heap (priority queue)</strong> would be the textbook answer: O(log n) for both. But the twist is <code class="inline">update_priority</code> and <code class="inline">cancel</code> — and a plain heap <em>can't</em> efficiently change or remove an element in the middle; it only knows about its top.</p>
+      <p style="margin:0;font-size:13px">So the design question is: how do I support fast update/cancel? The simplest correct structure is a <strong>hash from <code class="inline">task_id</code> to its priority</strong>. Updating or cancelling a task is then just a hash write or delete — O(1). The cost moves to <code class="inline">next_task</code>, which scans the hash to find the most urgent task — O(n). For an interview that's a perfectly good first answer; you then <em>name</em> the optimization rather than rushing to it.</p>
+    </div>
+
+    <h4>The data we keep</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><code class="inline">@tasks</code> — a hash <code class="inline">task_id =&gt; { priority:, order: }</code>. Each task is ONE entry holding both its priority and its arrival step. This IS the queue.</li>
+        <li><code class="inline">@next_order</code> — a counter that goes up by one on each new task, so arrival steps are unique and increasing (smaller = added earlier = wins ties).</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px;color:var(--muted)">Keeping priority and order together makes each task a <strong>single source of truth</strong>: add/update/cancel each touch exactly one entry, so the two values can never drift out of sync. (An earlier draft used two parallel hashes — cleaner to write on a whiteboard, but then <code class="inline">cancel</code> has to remember to delete from both, which is a desync bug waiting to happen.)</p>
+    </div>
+
+    <h4>The solution (every method short and obvious)</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class TaskQueue
+  def initialize
+    @tasks = {}        # task_id =&gt; { priority:, order: }  (this is the queue)
+    @next_order = 0    # increases by 1 per task, so earlier = smaller number
+  end
+
+  # Add a task, or re-add one. Re-adding updates the priority but KEEPS the
+  # original arrival order, so a task that's been waiting keeps its place.
+  def add(task_id, priority)
+    if @tasks.key?(task_id)
+      @tasks[task_id][:priority] = priority
+    else
+      @tasks[task_id] = { priority: priority, order: @next_order }
+      @next_order += 1
+    end
+  end
+
+  # Change a task's priority. If we don't know the task (never added, or
+  # already run/cancelled), do nothing.
+  def update_priority(task_id, priority)
+    return unless @tasks.key?(task_id)
+    @tasks[task_id][:priority] = priority
+  end
+
+  # Remove a task entirely so it will never run. One entry, one delete.
+  def cancel(task_id)
+    @tasks.delete(task_id)
+  end
+
+  # Remove and return the most urgent task:
+  #   1. the highest priority, and
+  #   2. among ties, the one that was added earliest.
+  def next_task
+    return nil if @tasks.empty?
+
+    highest    = @tasks.values.map { |t| t[:priority] }.max         # best priority present
+    candidates = @tasks.keys.select { |id| @tasks[id][:priority] == highest }
+    winner     = candidates.min_by { |id| @tasks[id][:order] }      # earliest arrival wins
+
+    cancel(winner)   # dequeue it
+    winner
+  end
+end</code></pre></div>
+    <p style="font-size:13px;margin:8px 0 0 0"><strong>One step further (say this out loud):</strong> in real code I'd make the task a value object instead of a bare hash — dot-access reads better and a typo'd field fails loudly:</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">Task = Struct.new(:priority, :order)
+
+# add:    @tasks[task_id] = Task.new(priority, @next_order)
+# access: @tasks[id].priority   /   @tasks[id].order</code></pre></div>
+
+    <h4>Trace it out loud</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">q = TaskQueue.new
+q.add("a", 1)         # {a:{priority:1, order:0}}
+q.add("b", 5)         # {a:{1,0}, b:{5,1}}
+q.add("c", 3)         # {a:{1,0}, b:{5,1}, c:{3,2}}
+
+q.next_task                  # highest=5    -&gt; "b"   (now removed)
+q.update_priority("a", 10)   # a jumps the line: a now {priority:10, order:0}
+q.next_task                  # highest=10   -&gt; "a"
+
+q.add("d", 3)         # {c:{3,2}, d:{3,3}}   order c=2 &lt; d=3
+q.add("e", 3)         # {c:{3,2}, d:{3,3}, e:{3,4}}
+q.next_task           # three-way tie at 3 -&gt; earliest is "c"
+q.cancel("d")         # remove d before it ever runs
+q.next_task           # "e"   (d was cancelled, skipped entirely)
+q.next_task           # nil   (queue empty)</code></pre></div>
+
+    <h4>Complexity &amp; the upgrade to name</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><code class="inline">add</code>, <code class="inline">update_priority</code>, <code class="inline">cancel</code>: <strong>O(1)</strong>.</li>
+        <li><code class="inline">next_task</code>: <strong>O(n)</strong> — it scans every queued task. Fine for interview scale; say so.</li>
+        <li><strong>Upgrade (state it, decide together whether to code it):</strong> use a <strong>binary heap</strong> ordered by <code class="inline">(priority, arrival)</code> to make <code class="inline">next_task</code> O(log n). To handle update/cancel, use <strong>lazy deletion</strong>: keep the <code class="inline">@tasks</code> hash as the source of truth, push a new heap entry on update, and when you pop, <em>skip</em> any entry whose priority no longer matches the hash (or whose task was cancelled). You trade a little memory to avoid an expensive arbitrary-delete.</li>
+      </ul>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted)">Follow-ups: scheduled/delayed tasks (only runnable after time T — add a <code class="inline">ready_at</code> and filter <code class="inline">next_task</code> to ready tasks, or use a time-ordered structure); dependencies between tasks (becomes the DAG / topological-sort problem below); fairness / round-robin so low-priority tasks don't starve; persisting the queue so it survives a restart.</p>
+
+    <!-- ===== BINARY SEARCH ===== -->
+    <h3 class="section" id="bsearch">Binary search (+ lower bound)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt:</strong> Given a <strong>sorted</strong> array, return the index of <code class="inline">target</code> (or <code class="inline">-1</code> if absent). <strong>Follow-up:</strong> return the position where <code class="inline">target</code> would be inserted to keep the array sorted (the "lower bound").</p>
+      <p style="margin:0;font-size:13px">A fundamental that shows up directly or hidden inside other problems (it's what the Sliding Window Median solution uses to place elements). The signal is <strong>off-by-one discipline</strong>: be deliberate about inclusive vs. exclusive bounds and why the loop terminates. Ruby has <code class="inline">Array#bsearch_index</code> built in, but interviewers usually want you to write it by hand — mention the builtin, then write it.</p>
+    </div>
+
+    <h4>Classic binary search — find the target, or -1</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Inclusive bounds: lo and hi both point at real, searchable indices.
+# Loop runs while the range [lo..hi] is non-empty, i.e. lo &lt;= hi.
+def binary_search(nums, target)
+  lo = 0
+  hi = nums.length - 1            # hi is a valid index (inclusive)
+
+  while lo &lt;= hi
+    mid = (lo + hi) / 2           # integer division; Ruby ints don't overflow
+    if nums[mid] == target
+      return mid                  # found it
+    elsif nums[mid] &lt; target
+      lo = mid + 1                # target must be in the right half
+    else
+      hi = mid - 1               # target must be in the left half
+    end
+  end
+
+  -1                             # range emptied out -> not present
+end
+
+# binary_search([1,3,5,7,9], 7) => 3
+# binary_search([1,3,5,7,9], 4) => -1</code></pre></div>
+
+    <h4>Lower bound — first index whose value is &gt;= target (the insertion point)</h4>
+    <p style="font-size:13px">The more reusable variant: it answers "where would <code class="inline">target</code> go?" and finds the <em>leftmost</em> match when there are duplicates. Note the bounds differ on purpose — <code class="inline">hi</code> starts at <code class="inline">length</code> (one past the end) so the answer can be "append here," and the loop is <code class="inline">lo &lt; hi</code> with <code class="inline">hi = mid</code> (never <code class="inline">mid - 1</code>) so we never skip the candidate.</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Exclusive upper bound: hi can equal length (a valid "insert at end" answer).
+def lower_bound(nums, target)
+  lo = 0
+  hi = nums.length               # NOT length - 1
+
+  while lo &lt; hi
+    mid = (lo + hi) / 2
+    if nums[mid] &lt; target
+      lo = mid + 1               # everything up to mid is too small
+    else
+      hi = mid                   # mid might be the answer -> keep it in range
+    end
+  end
+
+  lo                             # == hi: the first index with value &gt;= target
+end
+
+# lower_bound([1,3,5,7,9], 4)  => 2   (5 is the first value &gt;= 4)
+# lower_bound([1,3,5,7,9], 10) => 5   (past the end: insert at the end)
+# lower_bound([2,2,2], 2)      => 0   (leftmost of the duplicates)
+
+# Ruby builtin equivalent (find-minimum mode):
+# nums.bsearch_index { |x| x &gt;= target }   # nil if none qualify</code></pre></div>
+    <p style="font-size:13px;color:var(--muted)">O(log n) time, O(1) space. Follow-ups: upper bound (first index &gt; target → count occurrences as <code class="inline">upper - lower</code>), search a rotated sorted array, find first/last position of a target, search for a boundary/condition rather than a value.</p>
+
+    <!-- ===== KV STORE ===== -->
+    <h3 class="section" id="kv">In-memory store + transactions (the "build a few APIs" round)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt:</strong> Build a key-value store with <code class="inline">get</code>, <code class="inline">set</code>, <code class="inline">delete</code>, and nested transactions: <code class="inline">begin</code>, <code class="inline">commit</code>, <code class="inline">rollback</code>. A common phone-screen framing of "implement a tiny server / a few APIs — an in-memory store is fine."</p>
+      <p style="margin:0;font-size:13px">Key insight: a <strong>stack of transaction layers</strong>. Reads search top-down; writes go to the top layer; commit merges down; rollback discards the top. Use a tombstone marker so a delete inside a transaction can shadow a committed value.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class KVStore
+  TOMBSTONE = :__deleted__   # marks "deleted within a transaction"
+
+  def initialize
+    @base = {}     # committed data
+    @txns = []     # stack of pending layers (each a Hash of writes)
+  end
+
+  # Read: newest layer wins; fall through to base.
+  def get(key)
+    @txns.reverse_each do |layer|
+      next unless layer.key?(key)
+      val = layer[key]
+      return val == TOMBSTONE ? nil : val
+    end
+    @base[key]
+  end
+
+  def set(key, value)
+    layer = @txns.last || @base
+    layer[key] = value
+  end
+
+  def delete(key)
+    if @txns.empty?
+      @base.delete(key)
+    else
+      @txns.last[key] = TOMBSTONE   # shadow lower layers without touching them
+    end
+  end
+
+  def begin
+    @txns.push({})
+  end
+
+  # Merge the top layer into the one below (or base).
+  def commit
+    raise "no open transaction" if @txns.empty?
+    layer  = @txns.pop
+    target = @txns.last || @base
+    layer.each do |k, v|
+      if v == TOMBSTONE
+        @txns.empty? ? @base.delete(k) : (target[k] = TOMBSTONE)
+      else
+        target[k] = v
+      end
+    end
+  end
+
+  def rollback
+    raise "no open transaction" if @txns.empty?
+    @txns.pop   # throw away pending writes
+  end
+end</code></pre></div>
+    <h4>Trace</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">kv = KVStore.new
+kv.set("a", 1)
+kv.begin
+kv.set("a", 2)
+kv.get("a")     # => 2   (top layer)
+kv.rollback
+kv.get("a")     # => 1   (pending write discarded)
+kv.begin
+kv.delete("a")
+kv.get("a")     # => nil (tombstone)
+kv.commit
+kv.get("a")     # => nil (committed)</code></pre></div>
+    <p style="font-size:13px;color:var(--muted)">Follow-ups: TTL/expiry, list keys by prefix, snapshot/restore, persistence to a log (append-only), concurrent access (a lock per key).</p>
+
+    <!-- ===== BLOCK TREE ===== -->
+    <h3 class="section" id="blocks">Block tree — Notion's actual data model</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt (Notion-flavored):</strong> A page is a tree of blocks; each block has an id, text, and ordered children. Implement: render to indented text, move a block under a new parent, and indent/outdent a block.</p>
+      <p style="margin:0;font-size:13px">In Notion, <strong>indentation is structural</strong> — it reflects the parent/child render tree, not styling. Many "manipulate this nested thing" prompts are this in disguise. Reach for recursion + a parent/children map.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># A block holds its own children (the render tree).
+class Block
+  attr_accessor :id, :text, :children
+  def initialize(id, text, children = [])
+    @id = id
+    @text = text
+    @children = children
+  end
+end
+
+# Render the subtree as indented plain text (depth-first).
+def render(block, depth = 0)
+  lines = ["  " * depth + block.text]
+  block.children.each do |child|
+    lines.concat(render(child, depth + 1))
+  end
+  lines
+end
+
+# Index every block by id, and remember each block's parent,
+# so move/indent operations are O(1) lookups.
+def index(root)
+  by_id, parent = {}, {}
+  stack = [[root, nil]]
+  until stack.empty?
+    node, par = stack.pop
+    by_id[node.id] = node
+    parent[node.id] = par
+    node.children.each { |c| stack.push([c, node]) }
+  end
+  [by_id, parent]
+end
+
+# Move `block_id` to be the last child of `new_parent_id`.
+def move(root, block_id, new_parent_id)
+  by_id, parent = index(root)
+  node, old_parent = by_id[block_id], parent[block_id]
+  old_parent.children.delete(node)               # detach
+  by_id[new_parent_id].children.push(node)       # re-attach
+end
+
+# Indent: make a block a child of its previous sibling (like Tab in Notion).
+def indent(root, block_id)
+  _, parent = index(root)
+  par = parent[block_id]
+  idx = par.children.index { |c| c.id == block_id }
+  return if idx.nil? || idx == 0      # nothing to indent under
+  node = par.children.delete_at(idx)
+  par.children[idx - 1].children.push(node)
+end</code></pre></div>
+    <p style="font-size:13px;color:var(--muted)">Follow-ups: outdent (inverse), serialize to JSON, find a block by id, compute a block's full path, permissions inherited down the tree.</p>
+
+    <!-- ===== NESTED TODOS ===== -->
+    <h3 class="section" id="todos">Nested to-dos list API</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Prompt:</strong> Build an in-memory API for a hierarchical to-do list — todos can nest under other todos to any depth. Support <code class="inline">add(text, parent_id = nil)</code>, <code class="inline">set_done(id)</code>, <code class="inline">remove(id)</code>, and <code class="inline">render</code> (the indented list with checkboxes).</p>
+      <p style="margin:0;font-size:13px">This is the <strong>"build a few APIs over an in-memory store"</strong> round wearing a Notion costume — a to-do block in Notion <em>is</em> a node in a nested tree. The whole problem is a tree keyed by id, so reach for the same toolkit as the block tree: a <code class="inline">hash of id =&gt; node</code> with a <code class="inline">children</code> list and a <code class="inline">parent</code> pointer.</p>
+    </div>
+
+    <h4>Two design questions to raise out loud</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Does completing a parent complete its subtasks?</strong> Usually yes — confirm it, then cascade. (Shown below.)</li>
+        <li><strong>Does deleting a todo delete its subtree?</strong> Almost always yes — otherwise the children are orphaned. Cascade the delete.</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px;color:var(--muted)">Trick that simplifies everything: a <strong>virtual root</strong>. Top-level todos are just children of a hidden root node, so "add to the top level" and "add under a parent" are the same code path.</p>
+    </div>
+
+    <h4>The solution</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class TodoList
+  ROOT = 0   # virtual root: real top-level todos are its children
+
+  def initialize
+    @nodes = { ROOT =&gt; node("", nil) }   # id =&gt; { text:, done:, parent:, children: [] }
+    @next_id = 1
+  end
+
+  # Add a todo (optionally under a parent) and return its new id.
+  def add(text, parent_id = ROOT)
+    id = @next_id
+    @next_id += 1
+    @nodes[id] = node(text, parent_id)
+    @nodes[parent_id][:children] &lt;&lt; id    # append under the parent (order preserved)
+    id
+  end
+
+  # Mark a todo done/undone, cascading to all of its subtasks.
+  def set_done(id, done = true)
+    return unless @nodes.key?(id)
+    @nodes[id][:done] = done
+    @nodes[id][:children].each { |child| set_done(child, done) }
+  end
+
+  # Delete a todo and its entire subtree.
+  def remove(id)
+    return if id == ROOT || !@nodes.key?(id)   # never delete the virtual root
+    parent = @nodes[id][:parent]
+    @nodes[parent][:children].delete(id)        # detach from its parent
+    delete_subtree(id)                          # free the node and its descendants
+  end
+
+  # Render as indented text with checkboxes.
+  def render
+    lines = []
+    @nodes[ROOT][:children].each { |id| render_into(id, 0, lines) }
+    lines
+  end
+
+  private
+
+  def node(text, parent_id)
+    { text: text, done: false, parent: parent_id, children: [] }
+  end
+
+  def delete_subtree(id)
+    @nodes[id][:children].each { |child| delete_subtree(child) }   # depth-first
+    @nodes.delete(id)
+  end
+
+  def render_into(id, depth, lines)
+    n = @nodes[id]
+    box = n[:done] ? "[x]" : "[ ]"
+    lines &lt;&lt; ("  " * depth) + "#{box} #{n[:text]}"
+    n[:children].each { |child| render_into(child, depth + 1, lines) }
+  end
+end</code></pre></div>
+
+    <h4>Trace</h4>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">t = TodoList.new
+groceries = t.add("Groceries")
+t.add("Milk", groceries)
+eggs = t.add("Eggs", groceries)
+t.add("Free range", eggs)
+t.add("Ship project")
+
+t.set_done(groceries)   # completing the parent cascades to every subtask
+t.render
+#   [x] Groceries
+#     [x] Milk
+#     [x] Eggs
+#       [x] Free range
+#   [ ] Ship project
+
+t.remove(eggs)          # removes "Eggs" AND "Free range" (its subtree)</code></pre></div>
+    <p style="font-size:13px;color:var(--muted)">Follow-ups: <code class="inline">progress(id)</code> = done / total in a subtree (one recursive count); <code class="inline">move(id, new_parent)</code> — detach + re-attach, and reject a move into one's own descendant (cycle); reordering siblings; serialize to / load from JSON; due dates and sorting. Every one of these is a small tree walk over the same <code class="inline">@nodes</code> hash.</p>
+
+    <!-- ===== AGGREGATION ===== -->
+    <h3 class="section" id="agg">Table group-by aggregation (Notion DB rollups)</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> Given rows of <code class="inline">{ key:, value: }</code>, group by key and aggregate (sum / count / avg / min / max). This is the "implement table aggregation" warm-up — Notion databases are tables with rollups.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Simple: sum values per group.
+def sum_by_key(rows)
+  totals = Hash.new(0)
+  rows.each { |row| totals[row[:key]] += row[:value] }
+  totals
+end
+
+# General: pluggable aggregations in one pass over the data.
+def aggregate(rows)
+  acc = Hash.new { |h, k| h[k] = { count: 0, sum: 0, min: nil, max: nil } }
+  rows.each do |row|
+    k, v = row[:key], row[:value]
+    a = acc[k]
+    a[:count] += 1
+    a[:sum]   += v
+    a[:min]    = v if a[:min].nil? || v &lt; a[:min]
+    a[:max]    = v if a[:max].nil? || v &gt; a[:max]
+  end
+  acc.transform_values { |a| a.merge(avg: a[:sum].to_f / a[:count]) }
+end
+
+# rows = [{key:"a",value:3},{key:"b",value:5},{key:"a",value:7}]
+# sum_by_key(rows) => {"a"=>10, "b"=>5}</code></pre></div>
+    <p style="font-size:13px;color:var(--muted)">Follow-ups: group by multiple columns, filter then aggregate, sort groups, streaming rows (keep it one-pass).</p>
+
+    <!-- ===== FILE SYSTEM ===== -->
+    <h3 class="section" id="fs">File system / nested paths</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> Implement an in-memory file system: <code class="inline">mkdir(path)</code>, <code class="inline">add_file(path, content)</code>, <code class="inline">ls(path)</code>. Model it as a nested hash (a trie of path segments) — same tree skill as the block model.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class FileSystem
+  def initialize
+    @root = {}            # nested Hash; files stored under a :__file__ key
+  end
+
+  def mkdir(path)
+    walk(split(path), create: true)
+  end
+
+  def add_file(path, content)
+    parts = split(path)
+    dir = walk(parts[0...-1], create: true)
+    dir[parts.last] = { __file__: content }
+  end
+
+  # Return sorted names in a directory; if path is a file, return [basename].
+  def ls(path)
+    node = walk(split(path), create: false)
+    return [split(path).last] if node.key?(:__file__)
+    node.keys.reject { |k| k == :__file__ }.sort
+  end
+
+  private
+
+  def split(path)
+    path.split("/").reject(&:empty?)
+  end
+
+  def walk(parts, create:)
+    node = @root
+    parts.each do |part|
+      node[part] = {} if !node.key?(part) &amp;&amp; create
+      node = node[part] or raise "no such path"
+    end
+    node
+  end
+end</code></pre></div>
+
+    <!-- ===== DAG ===== -->
+    <h3 class="section" id="dag">DAG task graph (topological order)</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> Build a graph of tasks with dependencies; return a valid execution order (or detect a cycle). Kahn's algorithm (BFS on in-degrees) — clean and cycle-detecting.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class TaskGraph
+  def initialize
+    @deps = Hash.new { |h, k| h[k] = [] }   # task =&gt; tasks that depend on it
+    @indeg = Hash.new(0)                     # task =&gt; number of prerequisites
+    @tasks = []
+  end
+
+  def add_task(id)
+    return if @indeg.key?(id)
+    @tasks &lt;&lt; id
+    @indeg[id] = 0
+  end
+
+  # `task` requires `prereq` to run first.
+  def add_dependency(task, prereq)
+    add_task(task); add_task(prereq)
+    @deps[prereq] &lt;&lt; task
+    @indeg[task] += 1
+  end
+
+  # Topological order, or nil if there's a cycle.
+  def order
+    indeg = @indeg.dup
+    queue = @tasks.select { |t| indeg[t] == 0 }
+    result = []
+    until queue.empty?
+      t = queue.shift
+      result &lt;&lt; t
+      @deps[t].each do |nxt|
+        indeg[nxt] -= 1
+        queue &lt;&lt; nxt if indeg[nxt] == 0
+      end
+    end
+    result.length == @tasks.length ? result : nil   # nil =&gt; cycle
+  end
+end</code></pre></div>
+
+    <!-- ===== LRU ===== -->
+    <h3 class="section" id="lru">LRU cache</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> <code class="inline">get</code>/<code class="inline">put</code> in O(1) with a capacity; evict least-recently-used. Ruby's <code class="inline">Hash</code> preserves insertion order, so delete+reinsert moves a key to "most recent" — no manual linked list needed (mention you'd use a doubly-linked list + hash in a language without ordered maps).</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class LRUCache
+  def initialize(capacity)
+    @cap = capacity
+    @h = {}   # insertion-ordered: front = oldest, back = newest
+  end
+
+  def get(key)
+    return nil unless @h.key?(key)
+    val = @h.delete(key)
+    @h[key] = val            # reinsert -&gt; now most-recent
+    val
+  end
+
+  def put(key, value)
+    @h.delete(key)           # remove if present so it re-inserts at the back
+    @h[key] = value
+    @h.delete(@h.keys.first) if @h.size &gt; @cap   # evict oldest
+  end
+end</code></pre></div>
+
+    <!-- ===== RATE LIMITER ===== -->
+    <h3 class="section" id="rate">Rate limiter / logger (sliding window)</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> "Should this message print?" — allow a key at most once per N seconds (logger), or N times per window (rate limiter). Track timestamps per key.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Logger: allow a message at most once every `interval` seconds.
+class Logger
+  def initialize(interval = 10)
+    @interval = interval
+    @last = {}                      # message =&gt; last-allowed timestamp
+  end
+
+  def should_print?(timestamp, message)
+    if !@last.key?(message) || timestamp - @last[message] &gt;= @interval
+      @last[message] = timestamp
+      true
+    else
+      false
+    end
+  end
+end
+
+# Rate limiter: at most `limit` events per `window` seconds, per key.
+class RateLimiter
+  def initialize(limit, window)
+    @limit = limit
+    @window = window
+    @events = Hash.new { |h, k| h[k] = [] }   # key =&gt; recent timestamps
+  end
+
+  def allow?(key, now)
+    q = @events[key]
+    q.shift while !q.empty? &amp;&amp; q.first &lt;= now - @window   # drop stale
+    return false if q.length &gt;= @limit
+    q &lt;&lt; now
+    true
+  end
+end</code></pre></div>
+
+    <!-- ===== PARSING ===== -->
+    <h3 class="section" id="parse">String parsing / tokenizer</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Prompt:</strong> Parse a small format — e.g. tokenize markdown-ish text into runs, or expand <code class="inline">"3[ab]2[c]"</code>. String manipulation shows up framed as "parse this document/input." Lead with a single left-to-right pass and a stack for nesting.</p>
+    </div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Decode "3[ab]2[c]" =&gt; "ababab" + "cc" = "abababcc"
+# Stack pattern: push context on '[', resolve on ']'.
+def decode(s)
+  count_stack = []
+  str_stack  = []
+  current = ""
+  num = 0
+  s.each_char do |ch|
+    if ch =~ /\d/
+      num = num * 10 + ch.to_i
+    elsif ch == "["
+      count_stack.push(num)
+      str_stack.push(current)
+      num = 0
+      current = ""
+    elsif ch == "]"
+      repeat = count_stack.pop
+      current = str_stack.pop + current * repeat
+    else
+      current += ch
+    end
+  end
+  current
+end
+
+# decode("3[ab]2[c]") => "abababcc"</code></pre></div>
+
+    <!-- ===== RUBY CHEATS ===== -->
+    <h3 class="section" id="ruby">Ruby cheats (so syntax never slows you down)</h3>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># --- Hashes ---
+h = Hash.new(0)                 # default 0 (counters)
+h = Hash.new { |hh, k| hh[k] = [] }  # default [] (grouping)
+h.transform_values { |v| v * 2 }
+h.sort_by { |k, v| -v }         # by value desc -> array of [k,v]
+h.group_by { |x| x.even? }      # on arrays/enumerables
+
+# --- Arrays ---
+a.each_with_index { |x, i| ... }
+a.each_slice(2).to_a            # chunks
+a.each_cons(2).to_a             # sliding pairs
+a.tally                         # element =&gt; count
+a.min_by { |x| x.abs }; a.max_by { ... }
+a.sum; a.minmax
+a.partition { |x| x &gt; 0 }       # =&gt; [matching, rest]
+
+# --- Strings ---
+s[0, n]; s[-n..]; s.chars; s.scan(/\w+/)
+s.start_with?("ab"); s.gsub(/x/, "y")
+
+# --- Stacks / queues ---
+stack = []; stack.push(x); stack.pop
+queue = []; queue.push(x); queue.shift   # O(n) shift; fine at interview scale
+
+# --- Struct for quick value objects ---
+Point = Struct.new(:x, :y)
+p = Point.new(1, 2); p.x
+
+# --- Inline tests (run these out loud) ---
+raise "fail" unless decode("3[ab]") == "ababab"</code></pre></div>
+
+    <!-- ===== PATTERN RECOGNITION ===== -->
+    <h3 class="section" id="recog">Pattern recognition — map the prompt to a tool</h3>
+    <table class="rubric">
+      <tr><th>If the prompt says…</th><th>Reach for</th></tr>
+      <tr><td>undo / redo / history / versions</td><td>Command pattern + two stacks (capture the inverse)</td></tr>
+      <tr><td>transactions / begin-commit-rollback / sandbox</td><td>Stack of layered hashes + tombstones</td></tr>
+      <tr><td>nested / indented / blocks / outline / hierarchy</td><td>Tree + recursion; index by id with a parent map</td></tr>
+      <tr><td>group by / aggregate / rollup / count per</td><td>Hash bucketing in one pass</td></tr>
+      <tr><td>dependencies / build order / prerequisites</td><td>Topological sort (Kahn's), detect cycles</td></tr>
+      <tr><td>most-recent / cache / capacity / evict</td><td>Ordered hash (or hash + doubly-linked list)</td></tr>
+      <tr><td>per N seconds / throttle / "should print"</td><td>Timestamps per key; sliding window</td></tr>
+      <tr><td>sorted input / "find where x goes" / search a boundary</td><td>Binary search; lower/upper bound for insertion points + duplicates</td></tr>
+      <tr><td>median / k-th of a moving window</td><td>Two heaps (lazy delete) or a sorted window</td></tr>
+      <tr><td>priority + reprioritize / cancel / scheduler</td><td>Hash for O(1) update/cancel; heap w/ lazy deletion for O(log n)</td></tr>
+      <tr><td>parse / expand / matching brackets / nesting</td><td>Single pass + a stack for context</td></tr>
+      <tr><td>paths / directories / prefixes</td><td>Nested hash / trie of segments</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ PLAYBOOK ============ -->
+  <section class="tab" id="tab-play" data-toc='[
+    ["The 60-minute shape","shape"],
+    ["The practical-round framework","frame"],
+    ["★ The AI-tool round (new in 2026)","ai"],
+    ["Narration that scores","narrate"],
+    ["Testing as you go","test"],
+    ["Handling the live extension","extend"],
+    ["Edge-case checklist","edges"],
+    ["If you get stuck","stuck"]
+  ]'>
+    <h2>Playbook <span class="sub">how to run a practical coding round</span></h2>
+
+    <h3 class="section" id="shape">The 60-minute shape</h3>
+    <table class="rubric">
+      <tr><th>Time</th><th>Phase</th><th>What you're doing</th></tr>
+      <tr><td>0–3 min</td><td>Clarify</td><td>Restate the feature, ask 2–3 sharp questions (edge cases, scope, exact behavior).</td></tr>
+      <tr><td>3–8 min</td><td>Model</td><td>Define the interface + data structure OUT LOUD. Get a nod before coding. This is the strongest signal.</td></tr>
+      <tr><td>8–35 min</td><td>Build incrementally</td><td>Smallest working slice first, run it, then add the next piece. Test after each.</td></tr>
+      <tr><td>35–50 min</td><td>Extend</td><td>They add a requirement. Show your design absorbs it. Discuss trade-offs.</td></tr>
+      <tr><td>50–60 min</td><td>Polish + Qs</td><td>Edge cases, complexity, "what I'd do with more time," then your questions.</td></tr>
+    </table>
+
+    <h3 class="section" id="frame">The practical-round framework (use every time)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Restate</strong> the feature in your own words — confirm you're solving the right thing.</li>
+        <li><strong>Clarify</strong> behavior and edges: "delete(k) with k &gt; length?", "is undo per-op or per-char?", "do operations mutate or return new state?"</li>
+        <li><strong>Propose the model</strong> — name the data structure and the interface. "I'll use X because it makes operation Y cheap and is easy to extend." Get a nod.</li>
+        <li><strong>Stub the API first</strong> — write the method signatures, then fill them in. Shows structure.</li>
+        <li><strong>Build the simplest slice, then run it.</strong> Don't write everything before executing.</li>
+        <li><strong>Narrate intent, not syntax</strong> — explain non-obvious choices only.</li>
+        <li><strong>Trace an example</strong> + state complexity unprompted.</li>
+        <li><strong>End with:</strong> "Want me to add tests, handle more edge cases, or extend it?"</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="ai">★ The AI-tool round (new in 2026)</h3>
+    <div class="card warn">
+      <p style="margin:0 0 6px 0;font-weight:600;color:var(--warn)">Notion has reportedly added an AI-enabled interview that expects fluency with tools like Cursor and Claude Code.</p>
+      <p style="margin:0;font-size:13px">This may be a separate round or an option within the coding round — confirm with your recruiter which format you'll get. If it's AI-enabled, the thing being measured changes: it's no longer "can you write the code from memory," it's <strong>"do I trust your judgment when you're driving an AI."</strong> Notion eats its own dog food here — they recently opened the workspace to Claude Code / Cursor / Codex as native agents, so they care that you use these tools well.</p>
+    </div>
+    <div class="card good">
+      <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">HOW TO SCORE WELL WITH AI IN THE ROOM</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Drive, don't defer.</strong> You own the design and the decisions; the AI is a fast pair, not the engineer. State your plan <em>before</em> you prompt, then steer it toward that plan.</li>
+        <li><strong>Treat every output as a first draft.</strong> Blind acceptance is the fastest way to fail. Read what it produced, say what's right and what's suspect, and fix or re-prompt. The critique is the signal.</li>
+        <li><strong>Narrate the prompt and the why.</strong> "I'm asking it to scaffold the Operation classes so I can focus on the undo/redo logic" shows intentional use, not vibe-coding.</li>
+        <li><strong>Verify, out loud.</strong> Run it, add asserts, trace an example — same testing discipline as a normal round, but now you're also auditing the AI. Catching its bug is a big green flag.</li>
+        <li><strong>Keep the abstraction yours.</strong> Don't let AI sprawl the design. "Do less, but better" still applies — prune what it over-generates.</li>
+        <li><strong>Know the tool's moves.</strong> Be comfortable with inline edits, multi-file context, asking for a diff, and rejecting a suggestion. Fumbling the UI reads as inexperience.</li>
+        <li><strong>Own mistakes fast.</strong> If the AI (or you) shipped a bug, name it and fix it calmly — "would I trust this person when things get messy" is literally what they're scoring.</li>
+      </ul>
+    </div>
+    <div class="card bad">
+      <p style="margin:0 0 4px 0;color:var(--bad);font-size:12px">AI-ROUND ANTI-PATTERNS</p>
+      <ul class="tight" style="margin:0 0 0 16px">
+        <li>Pasting the prompt and accepting whatever comes back without reading it ("prompt jockey").</li>
+        <li>Going silent while the AI works — narrate what you're evaluating.</li>
+        <li>Letting the AI pick the data model for you; you should already know the shape (see Coding tab).</li>
+        <li>Not being able to explain code the AI wrote — if you ship it, you must be able to defend every line.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="narrate">Narration that scores (vs. noise)</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">SAY THIS</p>
+        <ul class="tight" style="margin:0 0 0 16px">
+          <li>"I'll capture the deleted text on the op so undo can restore it."</li>
+          <li>"A stack of layers means commit is just a merge-down — that's why I chose it."</li>
+          <li>"Let me run this before I add undo, to be sure the base works."</li>
+          <li>"That's O(k) for the copy; the rest is O(1)."</li>
+        </ul>
+      </div>
+      <div class="card bad">
+        <p style="margin:0 0 4px 0;color:var(--bad);font-size:12px">SKIP THIS</p>
+        <ul class="tight" style="margin:0 0 0 16px">
+          <li>"Now I'll write a for loop…"</li>
+          <li>Silent typing for a minute.</li>
+          <li>"This is probably wrong but…" (just say what you're testing).</li>
+          <li>Reciting Big-O of every line.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="test">Testing as you go (a Notion green flag)</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>After each method works, run a quick assertion or print. Their guidance literally values candidates who verify.</li>
+        <li>Keep a scratch driver at the bottom — the trace blocks in the Coding tab are exactly this.</li>
+        <li>Test the happy path, then one edge (empty input, k &gt; length, undo with empty history).</li>
+        <li>When a follow-up lands, add a test for it first — shows you think in behavior.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="extend">Handling the live extension (the real test)</h3>
+    <div class="card notion">
+      <p style="margin:0 0 6px 0">They WILL add a requirement once it works. This is designed to see if your abstraction bends or breaks.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Pause and restate</strong> the new requirement. Don't rush.</li>
+        <li><strong>Connect it to your model:</strong> "Because each op is its own class, I just add one more type." That sentence is the whole point — your earlier design choice pays off here.</li>
+        <li><strong>If it doesn't fit cleanly,</strong> say so honestly and describe the refactor: "My current model assumes append-only; to support insert-at-position I'd change truncate into a splice." Reasoning beats pretending.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="edges">Edge-case checklist (skim before "I'm done")</h3>
+    <div class="grid-2">
+      <div class="card">
+        <ul class="tight" style="margin:0 0 0 16px">
+          <li>Empty input / empty document</li>
+          <li>Operation when history is empty (undo/redo no-op)</li>
+          <li>k larger than available (clamp, don't crash)</li>
+          <li>Duplicate keys / repeated ids</li>
+        </ul>
+      </div>
+      <div class="card">
+        <ul class="tight" style="margin:0 0 0 16px">
+          <li>New action clears redo (don't forget!)</li>
+          <li>Mutation vs. fresh copy (aliasing bugs)</li>
+          <li>Order preserved where it matters</li>
+          <li>Off-by-one on ranges/indices</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="stuck">If you get stuck</h3>
+    <ul class="tight">
+      <li><strong>Re-read the spec aloud.</strong> Practical prompts are open — re-confirm the exact behavior.</li>
+      <li><strong>Trace the smallest example by hand</strong> on the side.</li>
+      <li><strong>Ask "what's the simplest structure that makes these ops cheap?"</strong> — it usually names the answer.</li>
+      <li><strong>Get the naive version working,</strong> then say "now let me make it cleaner / faster." Working-then-better always beats stuck-on-perfect.</li>
+    </ul>
+  </section>
+
+  <!-- ============ NOTION MODEL ============ -->
+  <section class="tab" id="tab-model" data-toc='[
+    ["Why this tab exists","why"],
+    ["The block data model","blocks"],
+    ["The render tree","render"],
+    ["Indentation is structure","indent"],
+    ["Lite system-design awareness","design"],
+    ["Soundbites to drop","drop"]
+  ]'>
+    <h2>Notion Model <span class="sub">the data model behind the product</span></h2>
+
+    <h3 class="section" id="why">Why this tab exists</h3>
+    <div class="card notion">
+      <p style="margin:0">Your R1 is coding, but many Notion practical problems are <strong>"manipulate this nested structure"</strong> — which is the block model in disguise. Knowing how Notion is actually built lets you (a) recognize the pattern fast and (b) drop a credible soundbite that signals you understand the product as a system, not just an app.</p>
+    </div>
+
+    <h3 class="section" id="blocks">The block data model</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Everything is a block.</strong> A paragraph, a heading, a to-do, an image, a page — all blocks. A page is just a block whose children are other blocks.</li>
+        <li>Each block has an <strong>id, a type, properties</strong> (its content/text), and an <strong>ordered list of child block ids</strong>.</li>
+        <li>The block's <strong>type</strong> determines how it renders and how it treats its children.</li>
+        <li>This uniformity is the "LEGO" philosophy: a small set of composable primitives builds docs, wikis, databases, and projects.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="render">The render tree</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">The hierarchy of blocks and the children they render is called the <strong>render tree</strong>. It isn't a clean textbook tree — different block types render children differently (a toggle hides them, a column lays them side by side) — but for interview purposes, model it as a tree of blocks each holding child ids.</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)">Practical takeaway: index blocks by id in a hash, keep a parent pointer, and most operations (move, indent, delete-subtree) become O(1) lookups + a tree walk.</p>
+    </div>
+
+    <h3 class="section" id="indent">Indentation is structure, not style</h3>
+    <div class="card warn">
+      <p style="margin:0">When you indent a block in Notion you're <strong>changing the parent/child relationship</strong> in the render tree — not adding left-padding. This is the single most "Notion" fact about the data model, and it's exactly the insight the block-tree coding problem is testing. (See Coding tab → Block tree.)</p>
+    </div>
+
+    <h3 class="section" id="design">Lite system-design awareness (if it comes up later)</h3>
+    <table class="rubric">
+      <tr><th>Topic</th><th>The one thing to say</th></tr>
+      <tr><td>Collaborative editing</td><td>Concurrent edits need <strong>OT (operational transform)</strong> or <strong>CRDTs</strong> — transform/merge concurrent ops rather than a single linear undo stack.</td></tr>
+      <tr><td>Offline-first</td><td>Client holds local state, queues operations, syncs and reconciles when back online. Idempotent ops + version vectors.</td></tr>
+      <tr><td>Full-text search across blocks</td><td>Inverted index over block text; update on edit; rank + permission-filter results.</td></tr>
+      <tr><td>Permissions</td><td>Inherited <strong>down the block tree</strong> from the page/workspace, with overrides — a tree-walk again.</td></tr>
+      <tr><td>Storage</td><td>Blocks in Postgres (a row per block with a parent reference); the tree is reconstructed by parent id.</td></tr>
+    </table>
+
+    <h3 class="section" id="drop">Soundbites to drop (proves you get it)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"Everything in Notion being a block is a beautiful constraint — one composable primitive behind docs, databases, and pages."</li>
+        <li>"Indentation mapping to the render tree instead of styling is the kind of design decision that makes the product feel coherent."</li>
+        <li>"The collaborative-editing and offline-sync problems are what I find most interesting here technically — that's real CRDT/OT territory."</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ COMPANY ============ -->
+  <section class="tab" id="tab-company" data-toc='[
+    ["The 10-second why-Notion","why"],
+    ["Mission &amp; lineage","mission"],
+    ["The product surface","product"],
+    ["What Notion actually values","values"],
+    ["Recent moves (2024–2026)","recent"],
+    ["Who they compete with","comp"],
+    ["Things to drop in conversation","drop"]
+  ]'>
+    <h2>Company <span class="sub">enough to sound like you belong</span></h2>
+
+    <h3 class="section" id="why">The 10-second why-Notion</h3>
+    <div class="card notion">
+      <p class="quote" style="margin:0">"Notion is one of the few software companies that treats engineering as craft and the product as a tool for thought. The block model and the collaborative-systems problems underneath it are genuinely hard and genuinely interesting — and it's a product I actually use to think. That combination of craft, hard systems, and a tool I believe in is rare."</p>
+    </div>
+
+    <h3 class="section" id="mission">Mission &amp; lineage</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Mission:</strong> make <strong>toolmaking ubiquitous</strong> — give everyone, not just programmers, the ability to shape software tools that fit how they work.</li>
+        <li><strong>Lineage:</strong> rooted in the "<strong>tools for thought</strong>" tradition — Douglas Engelbart (augmenting human intellect), Alan Kay, Ted Nelson (hypertext). Founder Ivan Zhao talks about this openly; nodding to it signals you get the why, not just the what.</li>
+        <li><strong>One-liner:</strong> Notion is the <strong>connected workspace</strong> — docs, wikis, projects, and databases in one composable system, increasingly with AI woven through it.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="product">The product surface</h3>
+    <table class="rubric">
+      <tr><th>Surface</th><th>What it is</th></tr>
+      <tr><td><strong>Docs &amp; wikis</strong></td><td>The core block editor; knowledge bases for teams.</td></tr>
+      <tr><td><strong>Databases &amp; projects</strong></td><td>Tables/boards/calendars with relations and rollups; project management.</td></tr>
+      <tr><td><strong>Notion AI</strong></td><td>Writing, Q&amp;A over your workspace, enterprise search, AI meeting notes, agents.</td></tr>
+      <tr><td><strong>Calendar</strong></td><td>Notion Calendar (grew out of the Cron acquisition).</td></tr>
+      <tr><td><strong>Mail</strong></td><td>Notion Mail — Gmail-based email client, AI-assisted.</td></tr>
+      <tr><td><strong>Sites</strong></td><td>Publish Notion pages as websites.</td></tr>
+    </table>
+
+    <h3 class="section" id="values">What Notion actually values (culture markers — not an official numbered list)</h3>
+    <div class="grid-2">
+      <div class="card"><strong>Craft &amp; taste</strong> — they care about polish and the details. "Is this actually good?" is a real question in reviews.</div>
+      <div class="card"><strong>Do less, but better</strong> — simplicity over feature-bloat. Build exactly what's needed, well.</div>
+      <div class="card"><strong>High agency / generalists</strong> — small teams, full-stack ownership, figure-it-out engineers.</div>
+      <div class="card"><strong>User &amp; toolmaker empowerment</strong> — software should bend to the user, not the reverse.</div>
+      <div class="card"><strong>Practical over theoretical</strong> — real engineering judgment beats algorithm-contest skill (why R1 isn't LeetCode).</div>
+      <div class="card"><strong>Product-minded</strong> — engineers reason about the user, not just the code.</div>
+    </div>
+
+    <h3 class="section" id="recent">Recent moves (2024–2026)</h3>
+    <table class="rubric">
+      <tr><th>When</th><th>What</th><th>Why it matters</th></tr>
+      <tr><td>2025</td><td>Notion 3.0 — AI <strong>agents</strong></td><td>Big bet on AI that takes multi-step actions inside your workspace, not just chat.</td></tr>
+      <tr><td>2024–2025</td><td>Notion <strong>Mail</strong> + <strong>Calendar</strong> expansion</td><td>Moving from "workspace" toward an all-in-one work hub; competing with Google Workspace.</td></tr>
+      <tr><td>2024–2025</td><td>Enterprise search + AI Q&amp;A + AI Meeting Notes</td><td>Pushing upmarket into enterprise; AI as a core surface, not a feature.</td></tr>
+      <tr><td>Ongoing</td><td>Scale &amp; performance of the block model</td><td>Millions of users, huge workspaces — real offline-sync, search, and perf engineering.</td></tr>
+    </table>
+
+    <h3 class="section" id="comp">Who they compete with</h3>
+    <table class="rubric">
+      <tr><th>Competitor</th><th>How Notion differs</th></tr>
+      <tr><td><strong>Confluence / Atlassian</strong></td><td>Notion is more flexible and composable; one block model vs. separate rigid products.</td></tr>
+      <tr><td><strong>Google Docs / Workspace</strong></td><td>Notion unifies docs + databases + projects; Workspace is separate apps.</td></tr>
+      <tr><td><strong>Coda</strong></td><td>Closest philosophical rival (docs-as-apps); Notion has far larger adoption.</td></tr>
+      <tr><td><strong>Airtable / ClickUp / Linear</strong></td><td>Point tools for databases / PM; Notion is the connected superset (Linear is more focused/eng-loved).</td></tr>
+      <tr><td><strong>Obsidian</strong></td><td>Local-first notes for individuals; Notion is collaborative and team-first.</td></tr>
+    </table>
+
+    <h3 class="section" id="drop">Things to drop into conversation</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"The 'toolmaking ubiquitous' mission and the Engelbart 'tools for thought' lineage are a big part of why I'm drawn here."</li>
+        <li>"The block model is such a clean constraint — one primitive behind everything."</li>
+        <li>"Notion 3.0's move to AI agents acting inside the workspace is the part of the roadmap I'm most curious about technically."</li>
+        <li>"I appreciate that the interview is practical rather than LeetCode — it tells me a lot about how the team values real engineering judgment."</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Q's TO ASK ============ -->
+  <section class="tab" id="tab-questions" data-toc='[
+    ["The strategy","strat"],
+    ["For your R1 interviewer (IC)","ic"],
+    ["About the work / codebase","work"],
+    ["About Notion / strategy","co"],
+    ["The closing question (always)","close"],
+    ["Questions NOT to ask","avoid"]
+  ]'>
+    <h2>Questions to Ask <span class="sub">have 3 ready</span></h2>
+
+    <h3 class="section" id="strat">The strategy</h3>
+    <div class="card notion">
+      <p style="margin:0 0 6px 0">Have <strong>3 ready</strong>: one about <em>the work/team</em>, one about <em>Notion's direction</em>, one about <em>how this role succeeds</em>. The best question is usually one they just teed up — pre-write the safety net, reach for a real-time one if you have it.</p>
+    </div>
+
+    <h3 class="section" id="ic">For your R1 interviewer (a senior IC)</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"What does a typical project look like end-to-end for an engineer on your team — how much is yours to own?"</li>
+        <li>"Notion's known for craft and 'do less but better' — how does that actually show up in code review and shipping decisions?"</li>
+        <li>"What's the hardest engineering problem your team is working on right now?"</li>
+        <li>"How does the block data model hold up as workspaces get huge? What's the gnarliest part — sync, search, perf?"</li>
+        <li>"How is the team weaving AI in — is it a separate surface or threaded through the product?"</li>
+        <li>"What's something you shipped recently that you were proud of the craft on?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="work">About the work / codebase</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"How big are teams, and how much is a generalist expected to span front-to-back?"</li>
+        <li>"What's the biggest piece of technical debt right now, and how are you thinking about it?"</li>
+        <li>"How do you balance shipping fast with the polish Notion is known for?"</li>
+        <li>"What's the on-call / reliability culture like for a product this real-time?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="co">About Notion / strategy</h3>
+    <div class="card">
+      <ul class="tight">
+        <li>"With Mail and Calendar, Notion's expanding from workspace to a work hub — how is that shaping engineering priorities?"</li>
+        <li>"Where do you see the product in 3 years — is AI agents the center of gravity now?"</li>
+        <li>"What's the cultural shift as Notion scales into enterprise?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="close">The closing question (always)</h3>
+    <div class="card good">
+      <p style="margin:0 0 4px 0;color:var(--good);font-size:12px">ASK THIS EVERY ROUND</p>
+      <p class="quote" style="margin:0">"Based on what we discussed, do you have any hesitations about my fit for this role? I'd love a chance to address them before we wrap up."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Signals confidence + self-awareness + coachability. Almost no candidates do this, and interviewers remember it.</p>
+    </div>
+
+    <h3 class="section" id="avoid">Questions NOT to ask</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li>"What does Notion do?" / "Who are your competitors?" — Googleable.</li>
+        <li>"Is it just a note-taking app?" — signals you don't get the product.</li>
+        <li>"How much vacation / is it remote?" — save for recruiter / offer stage.</li>
+        <li>"How long until I get promoted?" — reads transactional.</li>
+        <li>Anything yes/no — make it open-ended so you actually learn something.</li>
+      </ul>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+  const tocControls = document.getElementById("toc-controls");
+  const tocFilter = document.getElementById("toc-filter");
+  const expandAllBtn = document.getElementById("expand-all");
+  const collapseAllBtn = document.getElementById("collapse-all");
+
+  // Wrap each h3.section + its following content in a <details class="problem">
+  // so it becomes a collapsible section. Idempotent — safe to call repeatedly.
+  function wrapInCollapsibles(section) {
+    const headings = Array.from(section.querySelectorAll("h3.section"));
+    headings.forEach((h3) => {
+      if (h3.closest("details.problem")) return;
+      const elements = [];
+      let next = h3.nextElementSibling;
+      while (next && !(next.tagName === "H3" && next.classList.contains("section"))) {
+        elements.push(next);
+        next = next.nextElementSibling;
+      }
+      const details = document.createElement("details");
+      details.className = "problem";
+      if (h3.id) {
+        details.id = h3.id;
+        h3.removeAttribute("id");
+      }
+      const summary = document.createElement("summary");
+      summary.innerHTML = h3.innerHTML;
+      details.appendChild(summary);
+      h3.parentNode.insertBefore(details, h3);
+      h3.remove();
+      elements.forEach((el) => details.appendChild(el));
+    });
+  }
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      if (label === "@group") {
+        const groupLi = document.createElement("li");
+        groupLi.className = "toc-group";
+        groupLi.textContent = id;
+        toc.appendChild(groupLi);
+        return;
+      }
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.innerHTML = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) {
+          if (target.tagName === "DETAILS") target.open = true;
+          // Open every ancestor <details> too, so nested sub-sections
+          // (e.g. text-editor follow-ups) are revealed before scrolling.
+          let anc = target.parentElement ? target.parentElement.closest("details") : null;
+          while (anc) {
+            anc.open = true;
+            anc = anc.parentElement ? anc.parentElement.closest("details") : null;
+          }
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll("aside li a").forEach((x) => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach((s) => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) {
+      const collapsible = section.dataset.collapsible === "true";
+      if (collapsible) wrapInCollapsibles(section);
+      buildTOC(section);
+      if (collapsible) {
+        tocControls.style.display = "flex";
+        tocFilter.style.display = "block";
+        tocFilter.value = "";
+        filterTOC("");
+      } else {
+        tocControls.style.display = "none";
+        tocFilter.style.display = "none";
+      }
+      // First-visit default for coding tab: open the Text Editor problem
+      if (tabId === "coding" && !section.dataset.initialOpenApplied) {
+        const ed = section.querySelector("#editor");
+        if (ed) ed.open = true;
+        section.dataset.initialOpenApplied = "true";
+      }
+    }
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("notion-tab", tabId); } catch (e) {}
+  }
+
+  function setAllOpen(open) {
+    const activeSection = document.querySelector("section.tab.active");
+    if (!activeSection) return;
+    activeSection.querySelectorAll("details.problem").forEach((d) => { d.open = open; });
+  }
+  expandAllBtn.addEventListener("click", () => setAllOpen(true));
+  collapseAllBtn.addEventListener("click", () => setAllOpen(false));
+
+  function filterTOC(query) {
+    const q = query.trim().toLowerCase();
+    const lis = Array.from(toc.querySelectorAll("li"));
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) return;
+      const text = li.textContent.toLowerCase();
+      const hidden = q !== "" && !text.includes(q);
+      li.classList.toggle("toc-hidden", hidden);
+    });
+    let currentGroup = null;
+    let currentGroupHasVisible = false;
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) {
+        if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+        currentGroup = li;
+        currentGroupHasVisible = false;
+      } else if (!li.classList.contains("toc-hidden")) {
+        currentGroupHasVisible = true;
+      }
+    });
+    if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+  }
+  tocFilter.addEventListener("input", (e) => filterTOC(e.target.value));
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "cheat";
+  try {
+    const saved = localStorage.getItem("notion-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => {
+          btn.textContent = "Copy";
+          btn.classList.remove("copied");
+        }, 1200);
+      } catch (e) {
+        btn.textContent = "Failed";
+      }
+    });
+  });
+
+  // Keyboard shortcuts: 1-6 jumps to tab
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"cheat","2":"coding","3":"play","4":"model","5":"company","6":"questions" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+</script>
+
+</body>
+</html>

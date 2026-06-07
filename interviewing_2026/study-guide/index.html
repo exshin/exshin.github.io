@@ -1,0 +1,3336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Interview · Study Guide</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #f5f6fa;
+    --panel: #ffffff;
+    --panel-2: #eef0f7;
+    --border: #d9dcec;
+    --text: #1b1d2a;
+    --muted: #6a6f85;
+    --accent: #4338ca;
+    --accent-2: #6d5ae6;
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --brand: #6366f1;
+    --brand-dark: #3730a3;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--brand-dark); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 230px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--accent-2); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.brand { border-left: 3px solid var(--brand); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #f8f9fd !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 8px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .lang-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 14px 0 0 0; }
+  .lang-label.ruby { color: #9b1c2e; }
+  .lang-label.python { color: #2b5b84; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: #fff; background: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.brand { color: #fff; background: var(--brand-dark); }
+  .pill.muted { color: var(--muted); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  table.rubric code.inline { white-space: nowrap; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  /* === Collapsible problem sections === */
+  details.problem {
+    margin: 12px 0;
+    border-top: 1px solid var(--border);
+    padding-top: 4px;
+  }
+  details.problem:first-of-type { border-top: none; padding-top: 0; }
+  details.problem > summary {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent-2);
+    cursor: pointer;
+    padding: 10px 8px;
+    list-style: none;
+    border-radius: 4px;
+    user-select: none;
+  }
+  details.problem > summary:hover { background: var(--panel-2); }
+  details.problem > summary::-webkit-details-marker { display: none; }
+  details.problem > summary::marker { content: ""; }
+  details.problem > summary::before {
+    content: "▸";
+    display: inline-block;
+    margin-right: 10px;
+    color: var(--muted);
+    transition: transform 0.12s ease;
+    font-size: 11px;
+    width: 8px;
+  }
+  details.problem[open] > summary::before { transform: rotate(90deg); }
+  details.problem[open] > summary {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  aside li.toc-group {
+    color: var(--accent-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    padding: 14px 10px 4px 0;
+    margin-top: 6px;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+  aside li.toc-group:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  aside .toc-controls {
+    display: flex; gap: 6px; margin-bottom: 12px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  aside .toc-controls button {
+    flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: inherit;
+  }
+  aside .toc-controls button:hover { color: var(--accent); background: var(--panel-2); border-color: var(--accent); }
+  aside .toc-filter {
+    width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-bottom: 10px; font-family: inherit;
+  }
+  aside .toc-filter:focus { outline: none; border-color: var(--accent); }
+  aside li.toc-hidden { display: none; }
+  .round-banner {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+    color: #fff; padding: 12px 18px; border-radius: 8px; margin: 0 0 16px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .round-banner .lbl { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.08em; }
+  .round-banner .time { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Technical Interview <span class="badge">Study Guide</span></h1>
+  <nav class="tabs">
+    <button data-tab="strategy" class="active">Strategy</button>
+    <button data-tab="arrays">Arrays &amp; Hashing</button>
+    <button data-tab="twoptr">Two Ptr / Window</button>
+    <button data-tab="binsearch">Binary Search</button>
+    <button data-tab="stack">Stack</button>
+    <button data-tab="linked">Linked Lists</button>
+    <button data-tab="trees">Trees</button>
+    <button data-tab="heaps">Heaps / Intervals</button>
+    <button data-tab="graphs">Graphs</button>
+    <button data-tab="backtrack">Backtracking</button>
+    <button data-tab="dp">DP</button>
+    <button data-tab="design">Design / OOD</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <div class="toc-controls" id="toc-controls" style="display:none">
+      <button id="expand-all" title="Expand every section">Expand all</button>
+      <button id="collapse-all" title="Collapse every section">Collapse all</button>
+    </div>
+    <input type="text" id="toc-filter" class="toc-filter" placeholder="Filter sections..." style="display:none" />
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ STRATEGY ============ -->
+  <section class="tab active" id="tab-strategy" data-toc='[
+    ["@group","Orientation"],
+    ["How to use this guide","use"],
+    ["Legend: badges","legend"],
+    ["@group","The Method"],
+    ["Universal solving framework","framework"],
+    ["Pattern-recognition decision tree","recog"],
+    ["Complexity cheat sheet","bigO"],
+    ["@group","Language"],
+    ["Ruby ↔ Python idioms","idioms"],
+    ["@group","Plan"],
+    ["Suggested study order","order"],
+    ["Progress tracker","progress"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">General Coding Prep</div><div style="font-size:16px;font-weight:600">Pattern-first · Ruby + Python · revise as you go</div></div>
+      <div class="time">★ living doc</div>
+    </div>
+
+    <h3 class="section" id="use">How to use this guide</h3>
+    <div class="card accent">
+      <p style="margin:0 0 8px 0">This is a <strong>pattern-organized</strong> drill book. Each tab is one pattern family. Within a tab, every problem has: a prompt, a <strong>strategy</strong> (how to recognize and attack it), explicit <strong>complexity</strong>, and full solutions in <strong>both Ruby and Python</strong> with heavy comments.</p>
+      <ul class="tight" style="margin:8px 0 0 18px">
+        <li><strong>Navigate fast:</strong> use the sidebar TOC (grouped &amp; filterable), the tab bar, or keys <kbd>1</kbd>–<kbd>9</kbd>/<kbd>0</kbd>/<kbd>-</kbd>/<kbd>=</kbd>.</li>
+        <li><strong>Problems are collapsible</strong> — click a title to expand. "Expand all" / "Collapse all" in the sidebar.</li>
+        <li><strong>Reviewed ✓</strong> = you already drilled this in a prior prep (Chime/Scribe). Kept here on purpose so you can re-review.</li>
+        <li><strong>This is a living list.</strong> Tell me "add X" / "drop Y" / "I'm solid on Z" and we revise.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="legend">Legend</h3>
+    <div class="card">
+      <p style="margin:0"><span class="pill good">✓ Reviewed</span> already drilled — re-review only &nbsp; <span class="pill brand">New</span> high-probability, not yet drilled here &nbsp; <span class="pill warn">New skill</span> targets a gap (binary search, heaps/intervals, graphs, backtracking)</p>
+    </div>
+
+    <h3 class="section" id="framework">Universal solving framework (say it out loud, every time)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Restate</strong> the problem in your own words.</li>
+        <li><strong>Clarify</strong> 2–3 things: input size &amp; ranges, duplicates?, sorted?, can I mutate?, what to return on empty / no-solution?</li>
+        <li><strong>Examples</strong>: walk the given one by hand; invent one tiny edge case (empty, single, all-equal).</li>
+        <li><strong>Brute force first</strong>, out loud, with its complexity — even if you won't code it. ("Naive is O(n²) because…")</li>
+        <li><strong>Name the pattern</strong> and the better complexity you're targeting. Get a nod before coding.</li>
+        <li><strong>Code</strong>, narrating only non-obvious decisions (skip "now a for loop").</li>
+        <li><strong>Trace</strong> your code on the concrete example.</li>
+        <li><strong>State complexity</strong> (time + space) unprompted, then ask: "Want me to optimize, add tests, or handle more edges?"</li>
+      </ol>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">The single biggest score lever is <strong>narrating the brute-force → optimized transition</strong> and <strong>why</strong> each optimization helps. Interviewers buy reasoning, not just the final code.</p>
+    </div>
+
+    <h3 class="section" id="recog">Pattern-recognition decision tree</h3>
+    <div class="card brand">
+      <table class="rubric">
+        <tr><th>If you see…</th><th>Reach for</th><th>Tab</th></tr>
+        <tr><td>"have you seen this value", pair sums to target, counting/grouping</td><td>Hash map / set</td><td>Arrays &amp; Hashing</td></tr>
+        <tr><td>sorted array, "pair/triple", in-place, no extra space</td><td>Two pointers</td><td>Two Ptr / Window</td></tr>
+        <tr><td>"longest/shortest substring/subarray with property", contiguous</td><td>Sliding window</td><td>Two Ptr / Window</td></tr>
+        <tr><td>subarray <em>sum</em> = k, range sums</td><td>Prefix sum (+ hash)</td><td>Arrays &amp; Hashing</td></tr>
+        <tr><td>sorted input &amp; "find X" / "minimum capacity that works"</td><td>Binary search (incl. on the answer)</td><td>Binary Search</td></tr>
+        <tr><td>matching pairs, "next greater", undo, nesting</td><td>Stack (often monotonic)</td><td>Stack</td></tr>
+        <tr><td>"top/smallest K", "median of stream", merge K lists</td><td>Heap / priority queue</td><td>Heaps / Intervals</td></tr>
+        <tr><td>overlapping ranges, meeting rooms, scheduling</td><td>Sort by start + sweep / heap</td><td>Heaps / Intervals</td></tr>
+        <tr><td>grid / nodes &amp; edges, "reachable", "connected", shortest unweighted</td><td>BFS / DFS / union-find / topo</td><td>Graphs</td></tr>
+        <tr><td>"all combinations/permutations/subsets", build &amp; undo</td><td>Backtracking</td><td>Backtracking</td></tr>
+        <tr><td>"number of ways", "min/max cost", overlapping subproblems</td><td>DP (memo → tabulate)</td><td>DP</td></tr>
+        <tr><td>"design a class/system that supports ops"</td><td>OOD: pick data structures per op</td><td>Design / OOD</td></tr>
+      </table>
+    </div>
+
+    <h3 class="section" id="bigO">Complexity cheat sheet</h3>
+    <div class="grid-2">
+      <div class="card">
+        <h4 style="margin-top:0">Common time complexities</h4>
+        <table class="rubric">
+          <tr><th>Pattern</th><th>Time</th></tr>
+          <tr><td>Hash lookup / push / pop</td><td><code class="inline">O(1)</code> amortized</td></tr>
+          <tr><td>Single scan / two pointers / window</td><td><code class="inline">O(n)</code></td></tr>
+          <tr><td>Binary search</td><td><code class="inline">O(log n)</code></td></tr>
+          <tr><td>Sort, heap of n</td><td><code class="inline">O(n log n)</code></td></tr>
+          <tr><td>Heap push/pop (k items)</td><td><code class="inline">O(log k)</code></td></tr>
+          <tr><td>Nested loops / DP grid</td><td><code class="inline">O(n²)</code></td></tr>
+          <tr><td>Subsets / backtracking</td><td><code class="inline">O(2ⁿ)</code> / <code class="inline">O(n!)</code></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h4 style="margin-top:0">Space gotchas</h4>
+        <ul class="tight" style="margin:0 0 0 16px">
+          <li>Recursion uses <strong>stack space</strong> = max depth (tree height, n for a list/chain).</li>
+          <li>A hash of n keys is <code class="inline">O(n)</code> space — say so.</li>
+          <li>"In place" means <code class="inline">O(1)</code> extra; sorting is usually <code class="inline">O(n)</code> or <code class="inline">O(log n)</code> stack.</li>
+          <li>Output size doesn't count as "extra" space, but mention it for enumeration (e.g. all subsets is <code class="inline">O(2ⁿ)</code> output).</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="idioms">Ruby ↔ Python idioms (the ones that bite in interviews)</h3>
+    <div class="card">
+      <table class="rubric">
+        <tr><th>Task</th><th>Ruby</th><th>Python</th></tr>
+        <tr><td>Hash with default 0 (counter)</td><td><code class="inline">h = Hash.new(0)</code></td><td><code class="inline">from collections import Counter / defaultdict(int)</code></td></tr>
+        <tr><td>Hash with default []</td><td><code class="inline">Hash.new { |h,k| h[k] = [] }</code></td><td><code class="inline">defaultdict(list)</code></td></tr>
+        <tr><td>Set</td><td><code class="inline">require 'set'; Set.new</code></td><td><code class="inline">set()</code></td></tr>
+        <tr><td>Queue (popleft)</td><td><code class="inline">arr.shift</code> (O(n)!) — use a deque idiom or index</td><td><code class="inline">from collections import deque</code></td></tr>
+        <tr><td>Min-heap</td><td>no stdlib heap — sort, or roll your own / gem</td><td><code class="inline">import heapq</code></td></tr>
+        <tr><td>Sort by key</td><td><code class="inline">arr.sort_by { |x| x[1] }</code></td><td><code class="inline">sorted(arr, key=lambda x: x[1])</code></td></tr>
+        <tr><td>Max int / infinity</td><td><code class="inline">Float::INFINITY</code></td><td><code class="inline">float('inf')</code></td></tr>
+        <tr><td>Integer division</td><td><code class="inline">7 / 2 == 3</code></td><td><code class="inline">7 // 2 == 3</code></td></tr>
+        <tr><td>Char ↔ code</td><td><code class="inline">'a'.ord / 97.chr</code></td><td><code class="inline">ord('a') / chr(97)</code></td></tr>
+        <tr><td>Enumerate w/ index</td><td><code class="inline">arr.each_with_index</code></td><td><code class="inline">enumerate(arr)</code></td></tr>
+      </table>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px"><strong>Ruby's biggest interview trap:</strong> <code class="inline">Array#shift</code>/<code class="inline">unshift</code> are O(n). For BFS/queues, push to the end and track a read index, or reverse-and-pop. <strong>Python's:</strong> a plain <code class="inline">list.pop(0)</code> is also O(n) — use <code class="inline">collections.deque</code>.</p>
+    </div>
+
+    <h3 class="section" id="order">Suggested study order</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Re-warm (✓):</strong> Arrays &amp; Hashing → Two Ptr/Window → Trees. You've drilled most; aim for speed &amp; clean narration.</li>
+        <li><strong>Fill the gaps (New skill):</strong> Binary Search → Heaps/Intervals → Graphs → Backtracking. These are your highest-leverage new ground.</li>
+        <li><strong>Consolidate:</strong> DP (you know the canon — practice deriving the recurrence aloud) and Design/OOD.</li>
+        <li><strong>Daily:</strong> 2 problems — one Reviewed for speed, one New for coverage. Code in Ruby, then re-implement in Python (cements both).</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="progress">Progress tracker</h3>
+    <div class="card warn">
+      <p style="margin:0 0 6px 0">Mark these off as you go (tell me and I'll update, or edit the file):</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>☐ Binary search on the answer (Koko) — explain the "feasibility predicate" idea</li>
+        <li>☐ Meeting Rooms II — heap-of-end-times vs. sweep-line both ways</li>
+        <li>☐ Course Schedule — Kahn's (BFS indegree) AND DFS cycle-detect</li>
+        <li>☐ Union-Find — path compression + union by rank from memory</li>
+        <li>☐ Backtracking template — subsets/permutations/combination-sum from one skeleton</li>
+        <li>☐ Median from data stream — two-heap balance invariant</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ ARRAYS & HASHING ============ -->
+  <section class="tab" id="tab-arrays" data-collapsible="true" data-toc='[
+    ["@group","Hashing core"],
+    ["Two Sum","two-sum"],
+    ["Group Anagrams","anagrams"],
+    ["Top K Frequent","topk"],
+    ["@group","Prefix sum"],
+    ["Subarray Sum = K","subk"],
+    ["Product Except Self","product"]
+  ]'>
+    <h2>Arrays &amp; Hashing <span class="sub">trade space for time — the most common interview move</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>The mental model:</strong> a hash map turns "have I seen / how many / where is" questions from an O(n) inner scan into an O(1) lookup. <strong>Prefix sums</strong> turn "sum of a range" into a subtraction. Reach here first when you catch yourself writing a nested loop over the same array.</p>
+    </div>
+
+    <h3 class="section" id="two-sum">Two Sum <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Given <code class="inline">nums</code> and a <code class="inline">target</code>, return indices of the two numbers that add to <code class="inline">target</code>. Exactly one answer; can't reuse an element. <span style="color:var(--muted)">(LC 1)</span></div>
+    <p><strong>Strategy:</strong> One pass. For each number, the partner you need is <code class="inline">target - num</code>. Keep a hash of <code class="inline">value =&gt; index</code> of everything seen so far; check for the partner <em>before</em> inserting the current number so you never pair an element with itself.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n). (Brute force is O(n²) — say that first, then improve.)</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [2, 7, 11, 15], target = 9
+# Output: [0, 1]   (because nums[0] + nums[1] == 9)
+
+def two_sum(nums, target)
+  seen = {}                       # value =&gt; index we saw it at
+  nums.each_with_index do |num, i|
+    complement = target - num     # the partner that would complete the pair
+    # If we've already seen the partner, we're done. Check BEFORE inserting
+    # so a single element can't be used twice.
+    return [seen[complement], i] if seen.key?(complement)
+    seen[num] = i                 # remember this number for future partners
+  end
+  []                              # problem guarantees a solution; defensive return
+end
+
+p two_sum([2, 7, 11, 15], 9)     # =&gt; [0, 1]
+p two_sum([3, 2, 4], 6)          # =&gt; [1, 2]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [2, 7, 11, 15], target = 9
+# Output: [0, 1]
+
+def two_sum(nums, target):
+    seen = {}                          # value -> index we saw it at
+    for i, num in enumerate(nums):
+        complement = target - num      # partner that completes the pair
+        if complement in seen:         # check BEFORE inserting current num
+            return [seen[complement], i]
+        seen[num] = i                  # remember for future partners
+    return []                          # guaranteed solution; defensive
+
+print(two_sum([2, 7, 11, 15], 9))      # -> [0, 1]
+print(two_sum([3, 2, 4], 6))           # -> [1, 2]</code></pre></div>
+
+    <h3 class="section" id="anagrams">Group Anagrams <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Given a list of strings, group the ones that are anagrams of each other. <span style="color:var(--muted)">(LC 49)</span></div>
+    <p><strong>Strategy:</strong> Two strings are anagrams iff they share a <em>canonical key</em>. Cheapest correct key: the sorted characters (<code class="inline">"eat" -&gt; "aet"</code>). Bucket every word under its key in a hash of <code class="inline">key =&gt; [words]</code>. (Faster key: a 26-length count tuple — O(n·k) instead of O(n·k log k) — mention it.)</p>
+    <p><strong>Complexity:</strong> Time O(n · k log k) for n words of length k · Space O(n · k).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  ["eat","tea","tan","ate","nat","bat"]
+# Output: [["eat","tea","ate"], ["tan","nat"], ["bat"]]
+
+def group_anagrams(words)
+  # Hash whose missing keys auto-initialize to [] so we can push freely.
+  groups = Hash.new { |h, k| h[k] = [] }
+  words.each do |word|
+    key = word.chars.sort.join      # "tea" -&gt; "aet" — same for all anagrams
+    groups[key] &lt;&lt; word
+  end
+  groups.values                     # we only care about the grouped lists
+end
+
+p group_anagrams(["eat","tea","tan","ate","nat","bat"])</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  ["eat","tea","tan","ate","nat","bat"]
+# Output: [["eat","tea","ate"], ["tan","nat"], ["bat"]]
+
+from collections import defaultdict
+
+def group_anagrams(words):
+    groups = defaultdict(list)           # missing key -> [] automatically
+    for word in words:
+        key = "".join(sorted(word))      # "tea" -> "aet", shared by anagrams
+        groups[key].append(word)
+    return list(groups.values())
+
+print(group_anagrams(["eat","tea","tan","ate","nat","bat"]))</code></pre></div>
+
+    <h3 class="section" id="topk">Top K Frequent Elements <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return the <code class="inline">k</code> most frequent elements in <code class="inline">nums</code>. <span style="color:var(--muted)">(LC 347)</span></div>
+    <p><strong>Strategy:</strong> Count with a hash. Then two good options: (a) <strong>bucket sort</strong> by frequency — index = frequency, value = list of numbers with that frequency — and walk buckets from high to low for O(n); or (b) a size-k <strong>min-heap</strong> for O(n log k). Bucket sort is the optimal answer; state both.</p>
+    <p><strong>Complexity:</strong> Bucket O(n) time / O(n) space · Heap O(n log k) time / O(k) space.</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [1,1,1,2,2,3], k = 2
+# Output: [1, 2]   (order among ties not required)
+
+def top_k_frequent(nums, k)
+  counts = Hash.new(0)
+  nums.each { |n| counts[n] += 1 }     # value =&gt; frequency
+
+  # Bucket sort: buckets[f] holds all numbers seen exactly f times.
+  # Max possible frequency is nums.length, so size that many + 1.
+  buckets = Array.new(nums.length + 1) { [] }
+  counts.each { |num, freq| buckets[freq] &lt;&lt; num }
+
+  result = []
+  # Walk from highest frequency down until we've collected k numbers.
+  buckets.length.downto(0) do |freq|
+    buckets[freq].each do |num|
+      result &lt;&lt; num
+      return result if result.length == k
+    end
+  end
+  result
+end
+
+p top_k_frequent([1,1,1,2,2,3], 2)    # =&gt; [1, 2]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [1,1,1,2,2,3], k = 2
+# Output: [1, 2]
+
+from collections import Counter
+
+def top_k_frequent(nums, k):
+    counts = Counter(nums)                 # value -> frequency
+
+    # buckets[f] holds all numbers that occur exactly f times.
+    buckets = [[] for _ in range(len(nums) + 1)]
+    for num, freq in counts.items():
+        buckets[freq].append(num)
+
+    result = []
+    for freq in range(len(nums), 0, -1):   # high frequency -> low
+        for num in buckets[freq]:
+            result.append(num)
+            if len(result) == k:
+                return result
+    return result
+
+print(top_k_frequent([1,1,1,2,2,3], 2))    # -> [1, 2]
+
+# --- Heap alternative (O(n log k)) -------------------------------
+# import heapq
+# return [n for n, _ in heapq.nlargest(k, counts.items(), key=lambda kv: kv[1])]</code></pre></div>
+
+    <h3 class="section" id="subk">Subarray Sum Equals K <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Count the number of contiguous subarrays whose sum equals <code class="inline">k</code>. Values may be negative. <span style="color:var(--muted)">(LC 560)</span></div>
+    <p><strong>Strategy:</strong> The classic <strong>prefix-sum + hash</strong>. Let <code class="inline">prefix</code> = sum of everything so far. A subarray ending here sums to <code class="inline">k</code> exactly when some earlier prefix equals <code class="inline">prefix - k</code>. Keep a hash of <code class="inline">prefix_value =&gt; how many times seen</code>; add that count. Seed with <code class="inline">{0 =&gt; 1}</code> so a subarray starting at index 0 is counted. (Sliding window does NOT work — negatives break monotonicity. Say this.)</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [1, 1, 1], k = 2
+# Output: 2   (subarrays [1,1] at indices 0-1 and 1-2)
+
+def subarray_sum(nums, k)
+  count  = 0
+  prefix = 0
+  seen   = Hash.new(0)
+  seen[0] = 1                       # empty prefix: enables subarrays from index 0
+  nums.each do |num|
+    prefix += num                   # running sum of nums[0..i]
+    # If (prefix - k) was a prefix we saw before, every such occurrence marks
+    # the start of a subarray ending here that sums to k.
+    count += seen[prefix - k]
+    seen[prefix] += 1               # record this prefix for future indices
+  end
+  count
+end
+
+p subarray_sum([1, 1, 1], 2)       # =&gt; 2
+p subarray_sum([1, 2, 3], 3)       # =&gt; 2  ([1,2] and [3])</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [1, 1, 1], k = 2
+# Output: 2
+
+from collections import defaultdict
+
+def subarray_sum(nums, k):
+    count = 0
+    prefix = 0
+    seen = defaultdict(int)
+    seen[0] = 1                       # empty prefix: subarrays starting at 0
+    for num in nums:
+        prefix += num                 # running sum
+        count += seen[prefix - k]     # earlier prefixes that close a k-sum here
+        seen[prefix] += 1
+    return count
+
+print(subarray_sum([1, 1, 1], 2))     # -> 2
+print(subarray_sum([1, 2, 3], 3))     # -> 2</code></pre></div>
+
+    <h3 class="section" id="product">Product of Array Except Self <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return an array where <code class="inline">out[i]</code> is the product of all elements except <code class="inline">nums[i]</code>. No division allowed; O(n) time. <span style="color:var(--muted)">(LC 238)</span></div>
+    <p><strong>Strategy:</strong> <code class="inline">out[i] = (product of everything left of i) × (product of everything right of i)</code>. Do a left-to-right pass filling prefix products, then a right-to-left pass multiplying in suffix products with a running variable. The output array doubles as scratch space → O(1) extra.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1) extra (output aside).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [1, 2, 3, 4]
+# Output: [24, 12, 8, 6]
+
+def product_except_self(nums)
+  n = nums.length
+  out = Array.new(n, 1)
+
+  # Pass 1 (left -&gt; right): out[i] = product of everything strictly left of i.
+  prefix = 1
+  (0...n).each do |i|
+    out[i] = prefix
+    prefix *= nums[i]               # extend the running left-product
+  end
+
+  # Pass 2 (right -&gt; left): multiply in the product of everything to the right.
+  suffix = 1
+  (n - 1).downto(0) do |i|
+    out[i] *= suffix
+    suffix *= nums[i]               # extend the running right-product
+  end
+  out
+end
+
+p product_except_self([1, 2, 3, 4]) # =&gt; [24, 12, 8, 6]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [1, 2, 3, 4]
+# Output: [24, 12, 8, 6]
+
+def product_except_self(nums):
+    n = len(nums)
+    out = [1] * n
+
+    prefix = 1                        # product of everything strictly left of i
+    for i in range(n):
+        out[i] = prefix
+        prefix *= nums[i]
+
+    suffix = 1                        # product of everything strictly right of i
+    for i in range(n - 1, -1, -1):
+        out[i] *= suffix
+        suffix *= nums[i]
+    return out
+
+print(product_except_self([1, 2, 3, 4]))  # -> [24, 12, 8, 6]</code></pre></div>
+  </section>
+
+  <!-- ============ TWO POINTERS / SLIDING WINDOW ============ -->
+  <section class="tab" id="tab-twoptr" data-collapsible="true" data-toc='[
+    ["@group","Two pointers"],
+    ["3Sum","threesum"],
+    ["Container With Most Water","container"],
+    ["@group","Sliding window"],
+    ["Longest Substring No Repeat","longest-norepeat"],
+    ["Longest Repeating Char Replace","char-replace"],
+    ["Minimum Window Substring","min-window"]
+  ]'>
+    <h2>Two Pointers &amp; Sliding Window <span class="sub">turn O(n²) scans into O(n) sweeps</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>Two pointers:</strong> on <em>sorted</em> data, move a left/right pair inward based on a comparison. <strong>Sliding window:</strong> for "longest/shortest contiguous run with property P" — expand <code class="inline">right</code> to include, shrink <code class="inline">left</code> while the window is invalid. The window's contents are usually tracked in a hash/counter.</p>
+    </div>
+
+    <h3 class="section" id="threesum">3Sum <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return all unique triplets <code class="inline">[a, b, c]</code> in <code class="inline">nums</code> with <code class="inline">a + b + c == 0</code>. <span style="color:var(--muted)">(LC 15)</span></div>
+    <p><strong>Strategy:</strong> Sort. Fix each <code class="inline">i</code>; the rest reduces to "two-sum on a sorted array" using two pointers <code class="inline">lo/hi</code> moving inward: sum too small → <code class="inline">lo++</code>, too big → <code class="inline">hi--</code>, equal → record. The trick is <strong>skipping duplicates</strong> at <code class="inline">i</code>, <code class="inline">lo</code>, and <code class="inline">hi</code> to keep triplets unique.</p>
+    <p><strong>Complexity:</strong> Time O(n²) · Space O(1) extra (ignoring output / sort stack).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [-1, 0, 1, 2, -1, -4]
+# Output: [[-1, -1, 2], [-1, 0, 1]]
+
+def three_sum(nums)
+  nums = nums.sort                 # enables two-pointer + easy dup-skipping
+  result = []
+  n = nums.length
+  (0...n).each do |i|
+    next if i &gt; 0 &amp;&amp; nums[i] == nums[i - 1]   # skip duplicate anchor values
+    break if nums[i] &gt; 0                       # sorted: no way to reach 0 anymore
+    lo, hi = i + 1, n - 1
+    while lo &lt; hi
+      total = nums[i] + nums[lo] + nums[hi]
+      if total &lt; 0
+        lo += 1                    # need a bigger sum
+      elsif total &gt; 0
+        hi -= 1                    # need a smaller sum
+      else
+        result &lt;&lt; [nums[i], nums[lo], nums[hi]]
+        lo += 1; hi -= 1
+        lo += 1 while lo &lt; hi &amp;&amp; nums[lo] == nums[lo - 1]  # skip dup lefts
+        hi -= 1 while lo &lt; hi &amp;&amp; nums[hi] == nums[hi + 1]  # skip dup rights
+      end
+    end
+  end
+  result
+end
+
+p three_sum([-1, 0, 1, 2, -1, -4])   # =&gt; [[-1, -1, 2], [-1, 0, 1]]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [-1, 0, 1, 2, -1, -4]
+# Output: [[-1, -1, 2], [-1, 0, 1]]
+
+def three_sum(nums):
+    nums.sort()
+    result = []
+    n = len(nums)
+    for i in range(n):
+        if i &gt; 0 and nums[i] == nums[i - 1]:   # skip duplicate anchor
+            continue
+        if nums[i] &gt; 0:                        # sorted: can't sum to 0 anymore
+            break
+        lo, hi = i + 1, n - 1
+        while lo &lt; hi:
+            total = nums[i] + nums[lo] + nums[hi]
+            if total &lt; 0:
+                lo += 1
+            elif total &gt; 0:
+                hi -= 1
+            else:
+                result.append([nums[i], nums[lo], nums[hi]])
+                lo += 1
+                hi -= 1
+                while lo &lt; hi and nums[lo] == nums[lo - 1]:  # skip dup lefts
+                    lo += 1
+                while lo &lt; hi and nums[hi] == nums[hi + 1]:  # skip dup rights
+                    hi -= 1
+    return result
+
+print(three_sum([-1, 0, 1, 2, -1, -4]))   # -> [[-1, -1, 2], [-1, 0, 1]]</code></pre></div>
+
+    <h3 class="section" id="container">Container With Most Water <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Each <code class="inline">height[i]</code> is a vertical line. Pick two lines that with the x-axis form a container holding the most water. <span style="color:var(--muted)">(LC 11)</span></div>
+    <p><strong>Strategy:</strong> Two pointers at the ends. Area = <code class="inline">min(left, right) × width</code>. The width only shrinks as pointers move in, so to have any hope of a bigger area you must raise the limiting (shorter) wall — <strong>always move the pointer at the shorter line</strong>. Greedy, provably optimal.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  height = [1,8,6,2,5,4,8,3,7]
+# Output: 49
+
+def max_area(height)
+  lo, hi = 0, height.length - 1
+  best = 0
+  while lo &lt; hi
+    width = hi - lo
+    h = [height[lo], height[hi]].min   # water is capped by the shorter wall
+    best = [best, width * h].max
+    # Moving the taller wall can never help (width drops, height capped by
+    # the short one). Move the shorter wall to look for a taller bound.
+    if height[lo] &lt; height[hi]
+      lo += 1
+    else
+      hi -= 1
+    end
+  end
+  best
+end
+
+p max_area([1,8,6,2,5,4,8,3,7])    # =&gt; 49</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  height = [1,8,6,2,5,4,8,3,7]
+# Output: 49
+
+def max_area(height):
+    lo, hi = 0, len(height) - 1
+    best = 0
+    while lo &lt; hi:
+        width = hi - lo
+        h = min(height[lo], height[hi])   # capped by shorter wall
+        best = max(best, width * h)
+        if height[lo] &lt; height[hi]:        # move the limiting (shorter) wall
+            lo += 1
+        else:
+            hi -= 1
+    return best
+
+print(max_area([1,8,6,2,5,4,8,3,7]))      # -> 49</code></pre></div>
+
+    <h3 class="section" id="longest-norepeat">Longest Substring Without Repeating Characters <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Length of the longest substring of <code class="inline">s</code> with all distinct characters. <span style="color:var(--muted)">(LC 3)</span></div>
+    <p><strong>Strategy:</strong> Sliding window with a hash of <code class="inline">char =&gt; last index seen</code>. Expand <code class="inline">right</code>. When the current char was seen at or after <code class="inline">left</code>, jump <code class="inline">left</code> to just past its previous position (no need to step one at a time). Track the max width.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(min(n, alphabet)).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  s = "abcabcbb"
+# Output: 3   ("abc")
+
+def length_of_longest_substring(s)
+  last = {}                        # char =&gt; most recent index
+  left = 0
+  best = 0
+  s.chars.each_with_index do |ch, right|
+    # If we've seen ch inside the current window, shrink from the left to
+    # just past its last occurrence so the window stays duplicate-free.
+    if last.key?(ch) &amp;&amp; last[ch] &gt;= left
+      left = last[ch] + 1
+    end
+    last[ch] = right
+    best = [best, right - left + 1].max
+  end
+  best
+end
+
+p length_of_longest_substring("abcabcbb")  # =&gt; 3
+p length_of_longest_substring("bbbbb")      # =&gt; 1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  s = "abcabcbb"
+# Output: 3   ("abc")
+
+def length_of_longest_substring(s):
+    last = {}                         # char -> most recent index
+    left = 0
+    best = 0
+    for right, ch in enumerate(s):
+        if ch in last and last[ch] &gt;= left:
+            left = last[ch] + 1       # jump past the previous occurrence
+        last[ch] = right
+        best = max(best, right - left + 1)
+    return best
+
+print(length_of_longest_substring("abcabcbb"))  # -> 3
+print(length_of_longest_substring("bbbbb"))      # -> 1</code></pre></div>
+
+    <h3 class="section" id="char-replace">Longest Repeating Character Replacement <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> You may replace at most <code class="inline">k</code> characters in <code class="inline">s</code>. Return the length of the longest substring of a single repeated letter you can make. <span style="color:var(--muted)">(LC 424)</span></div>
+    <p><strong>Strategy:</strong> Sliding window with a count of letters in the window. A window is valid when <code class="inline">window_size - count_of_most_frequent_letter &lt;= k</code> (the non-majority letters are the ones we'd replace). Grow <code class="inline">right</code>; if invalid, slide <code class="inline">left</code> forward once (the window never needs to shrink below the best seen). Track max window size.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1) (26 letters).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  s = "AABABBA", k = 1
+# Output: 4   (replace one B in "AABA"->? -&gt; "AAAA"-ish window of length 4)
+
+def character_replacement(s, k)
+  counts = Hash.new(0)
+  left = 0
+  max_freq = 0                     # highest single-letter count in the window
+  best = 0
+  s.chars.each_with_index do |ch, right|
+    counts[ch] += 1
+    max_freq = [max_freq, counts[ch]].max
+    # Replacements needed = window length - most common letter's count.
+    # If that exceeds k, the window is invalid -&gt; slide left by one.
+    if (right - left + 1) - max_freq &gt; k
+      counts[s[left]] -= 1
+      left += 1
+    end
+    best = [best, right - left + 1].max
+  end
+  best
+end
+
+p character_replacement("AABABBA", 1)   # =&gt; 4</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  s = "AABABBA", k = 1
+# Output: 4
+
+from collections import defaultdict
+
+def character_replacement(s, k):
+    counts = defaultdict(int)
+    left = 0
+    max_freq = 0                       # most common letter's count in window
+    best = 0
+    for right, ch in enumerate(s):
+        counts[ch] += 1
+        max_freq = max(max_freq, counts[ch])
+        if (right - left + 1) - max_freq &gt; k:   # too many to replace
+            counts[s[left]] -= 1
+            left += 1
+        best = max(best, right - left + 1)
+    return best
+
+print(character_replacement("AABABBA", 1))   # -> 4</code></pre></div>
+
+    <h3 class="section" id="min-window">Minimum Window Substring <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Smallest substring of <code class="inline">s</code> that contains every character of <code class="inline">t</code> (with multiplicity). Return "" if none. <span style="color:var(--muted)">(LC 76 · hard)</span></div>
+    <p><strong>Strategy:</strong> Sliding window with a "need" counter (chars required from <code class="inline">t</code>) and a <code class="inline">have/required</code> match count. Expand <code class="inline">right</code>; whenever the window is <em>complete</em>, record it and shrink <code class="inline">left</code> aggressively to find the minimum, decrementing matches as you drop chars. The <code class="inline">have == required</code> check is the heart of it.</p>
+    <p><strong>Complexity:</strong> Time O(n + m) · Space O(unique chars in t).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  s = "ADOBECODEBANC", t = "ABC"
+# Output: "BANC"
+
+def min_window(s, t)
+  return "" if t.empty? || s.length &lt; t.length
+  need = Hash.new(0)
+  t.each_char { |c| need[c] += 1 }
+  required = need.size             # distinct chars we must fully satisfy
+
+  window = Hash.new(0)
+  have = 0                         # how many distinct chars are fully satisfied
+  best_len = Float::INFINITY
+  best_start = 0
+  left = 0
+
+  s.chars.each_with_index do |ch, right|
+    window[ch] += 1
+    have += 1 if need.key?(ch) &amp;&amp; window[ch] == need[ch]
+
+    # While the window has everything, try to shrink it from the left.
+    while have == required
+      if (right - left + 1) &lt; best_len
+        best_len = right - left + 1
+        best_start = left
+      end
+      drop = s[left]
+      window[drop] -= 1
+      have -= 1 if need.key?(drop) &amp;&amp; window[drop] &lt; need[drop]
+      left += 1
+    end
+  end
+
+  best_len == Float::INFINITY ? "" : s[best_start, best_len]
+end
+
+p min_window("ADOBECODEBANC", "ABC")   # =&gt; "BANC"</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  s = "ADOBECODEBANC", t = "ABC"
+# Output: "BANC"
+
+from collections import Counter, defaultdict
+
+def min_window(s, t):
+    if not t or len(s) &lt; len(t):
+        return ""
+    need = Counter(t)
+    required = len(need)              # distinct chars to satisfy
+
+    window = defaultdict(int)
+    have = 0
+    best_len = float('inf')
+    best_start = 0
+    left = 0
+
+    for right, ch in enumerate(s):
+        window[ch] += 1
+        if ch in need and window[ch] == need[ch]:
+            have += 1
+
+        while have == required:       # window complete -> shrink to minimize
+            if right - left + 1 &lt; best_len:
+                best_len = right - left + 1
+                best_start = left
+            drop = s[left]
+            window[drop] -= 1
+            if drop in need and window[drop] &lt; need[drop]:
+                have -= 1
+            left += 1
+
+    return "" if best_len == float('inf') else s[best_start:best_start + best_len]
+
+print(min_window("ADOBECODEBANC", "ABC"))   # -> "BANC"</code></pre></div>
+  </section>
+
+  <!-- ============ BINARY SEARCH ============ -->
+  <section class="tab" id="tab-binsearch" data-collapsible="true" data-toc='[
+    ["@group","Foundations"],
+    ["Template + invariants","bs-template"],
+    ["Classic Binary Search","bs-classic"],
+    ["First &amp; Last Position","bs-firstlast"],
+    ["@group","Rotated arrays"],
+    ["Find Minimum in Rotated","bs-min"],
+    ["Search in Rotated Array","bs-rotated"],
+    ["@group","Search on the answer"],
+    ["Koko Eating Bananas","bs-koko"]
+  ]'>
+    <h2>Binary Search <span class="sub">★ gap-filler — the "halve the search space" pattern</span></h2>
+    <div class="card warn">
+      <p style="margin:0"><strong>When:</strong> the input is sorted, OR you can phrase the answer as "the smallest/largest value X for which a yes/no predicate <code class="inline">feasible(X)</code> flips from false to true." That second form — <strong>binary search on the answer</strong> — is the senior move most people miss. The whole family is about maintaining a half-open invariant and never going infinite.</p>
+    </div>
+
+    <h3 class="section" id="bs-template">Template + invariants (read this first)</h3>
+    <div class="card brand">
+      <ul class="tight" style="margin:0 0 0 16px">
+        <li>Use <code class="inline">lo, hi</code> and loop <strong>while <code class="inline">lo &lt;= hi</code></strong> for "find exact value"; loop <strong>while <code class="inline">lo &lt; hi</code></strong> for "find boundary / leftmost." Pick one convention and stick to it.</li>
+        <li>Compute <code class="inline">mid = lo + (hi - lo) / 2</code> — avoids overflow in other languages and reads as intent.</li>
+        <li>Every branch must <strong>shrink the range</strong> (move <code class="inline">lo</code> or <code class="inline">hi</code> past <code class="inline">mid</code>), or you loop forever. This is the #1 binary-search bug.</li>
+        <li>For "search on answer": define <code class="inline">feasible(x)</code> monotonic (false…false, true…true), then binary-search the smallest <code class="inline">x</code> with <code class="inline">feasible(x) == true</code>.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="bs-classic">Classic Binary Search <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return the index of <code class="inline">target</code> in a sorted array, or -1. <span style="color:var(--muted)">(LC 704)</span></div>
+    <p><strong>Strategy:</strong> The canonical exact-match template with <code class="inline">lo &lt;= hi</code>. Compare <code class="inline">mid</code> to target and discard the impossible half.</p>
+    <p><strong>Complexity:</strong> Time O(log n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [-1, 0, 3, 5, 9, 12], target = 9
+# Output: 4
+
+def binary_search(nums, target)
+  lo, hi = 0, nums.length - 1      # inclusive range [lo, hi]
+  while lo &lt;= hi
+    mid = lo + (hi - lo) / 2        # midpoint without overflow
+    if nums[mid] == target
+      return mid
+    elsif nums[mid] &lt; target
+      lo = mid + 1                  # target is in the right half
+    else
+      hi = mid - 1                  # target is in the left half
+    end
+  end
+  -1                               # range collapsed: not present
+end
+
+p binary_search([-1, 0, 3, 5, 9, 12], 9)   # =&gt; 4
+p binary_search([-1, 0, 3, 5, 9, 12], 2)   # =&gt; -1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [-1, 0, 3, 5, 9, 12], target = 9
+# Output: 4
+
+def binary_search(nums, target):
+    lo, hi = 0, len(nums) - 1         # inclusive [lo, hi]
+    while lo &lt;= hi:
+        mid = lo + (hi - lo) // 2      # // = integer division
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] &lt; target:
+            lo = mid + 1              # search right half
+        else:
+            hi = mid - 1             # search left half
+    return -1
+
+print(binary_search([-1, 0, 3, 5, 9, 12], 9))   # -> 4
+print(binary_search([-1, 0, 3, 5, 9, 12], 2))   # -> -1</code></pre></div>
+
+    <h3 class="section" id="bs-firstlast">Find First &amp; Last Position <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> In a sorted array with duplicates, return the first and last index of <code class="inline">target</code>, or <code class="inline">[-1, -1]</code>. <span style="color:var(--muted)">(LC 34)</span></div>
+    <p><strong>Strategy:</strong> Two boundary searches. A <strong>lower-bound</strong> search finds the leftmost index where <code class="inline">nums[i] &gt;= target</code>; an <strong>upper-bound</strong> finds the leftmost where <code class="inline">nums[i] &gt; target</code>. The answer is <code class="inline">[lower, upper - 1]</code> when <code class="inline">target</code> actually appears. This "find the boundary" framing generalizes to tons of problems.</p>
+    <p><strong>Complexity:</strong> Time O(log n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [5, 7, 7, 8, 8, 10], target = 8
+# Output: [3, 4]
+
+# Leftmost index i where nums[i] &gt;= x  (a.k.a. lower_bound / bisect_left)
+def lower_bound(nums, x)
+  lo, hi = 0, nums.length          # note: hi is EXCLUSIVE here, loop lo &lt; hi
+  while lo &lt; hi
+    mid = lo + (hi - lo) / 2
+    if nums[mid] &lt; x
+      lo = mid + 1                  # mid too small; answer is to the right
+    else
+      hi = mid                     # mid could be the boundary; keep it in range
+    end
+  end
+  lo                               # first index not less than x (may == length)
+end
+
+def search_range(nums, target)
+  start = lower_bound(nums, target)
+  # target absent if the boundary is past the end or points at a different value
+  return [-1, -1] if start == nums.length || nums[start] != target
+  last = lower_bound(nums, target + 1) - 1   # one before first value &gt; target
+  [start, last]
+end
+
+p search_range([5, 7, 7, 8, 8, 10], 8)   # =&gt; [3, 4]
+p search_range([5, 7, 7, 8, 8, 10], 6)   # =&gt; [-1, -1]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [5, 7, 7, 8, 8, 10], target = 8
+# Output: [3, 4]
+
+def lower_bound(nums, x):
+    lo, hi = 0, len(nums)            # hi EXCLUSIVE; loop lo &lt; hi
+    while lo &lt; hi:
+        mid = lo + (hi - lo) // 2
+        if nums[mid] &lt; x:
+            lo = mid + 1            # too small -> go right
+        else:
+            hi = mid               # candidate boundary -> keep
+    return lo
+
+def search_range(nums, target):
+    start = lower_bound(nums, target)
+    if start == len(nums) or nums[start] != target:
+        return [-1, -1]
+    last = lower_bound(nums, target + 1) - 1
+    return [start, last]
+
+print(search_range([5, 7, 7, 8, 8, 10], 8))   # -> [3, 4]
+print(search_range([5, 7, 7, 8, 8, 10], 6))   # -> [-1, -1]
+# (Python stdlib: bisect.bisect_left / bisect_right do exactly this.)</code></pre></div>
+
+    <h3 class="section" id="bs-min">Find Minimum in Rotated Sorted Array <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> A sorted array was rotated at some pivot (no duplicates). Find the minimum. <span style="color:var(--muted)">(LC 153)</span></div>
+    <p><strong>Strategy:</strong> The min is the only "inflection" point. Compare <code class="inline">nums[mid]</code> to <code class="inline">nums[hi]</code>: if <code class="inline">nums[mid] &gt; nums[hi]</code>, the rotation/min is strictly to the right (<code class="inline">lo = mid + 1</code>); otherwise the min is at <code class="inline">mid</code> or to its left (<code class="inline">hi = mid</code>). Comparing against <code class="inline">hi</code> (not <code class="inline">lo</code>) avoids an edge case.</p>
+    <p><strong>Complexity:</strong> Time O(log n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [4, 5, 6, 7, 0, 1, 2]
+# Output: 0
+
+def find_min(nums)
+  lo, hi = 0, nums.length - 1
+  while lo &lt; hi                     # stop when the range is a single element
+    mid = lo + (hi - lo) / 2
+    if nums[mid] &gt; nums[hi]
+      lo = mid + 1                  # mid is in the "high" segment; min is right
+    else
+      hi = mid                     # min is mid or to its left
+    end
+  end
+  nums[lo]                          # lo == hi points at the minimum
+end
+
+p find_min([4, 5, 6, 7, 0, 1, 2])   # =&gt; 0
+p find_min([3, 1, 2])               # =&gt; 1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [4, 5, 6, 7, 0, 1, 2]
+# Output: 0
+
+def find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt; hi:
+        mid = lo + (hi - lo) // 2
+        if nums[mid] &gt; nums[hi]:
+            lo = mid + 1           # min is strictly right of mid
+        else:
+            hi = mid               # min is mid or left of it
+    return nums[lo]
+
+print(find_min([4, 5, 6, 7, 0, 1, 2]))   # -> 0
+print(find_min([3, 1, 2]))               # -> 1</code></pre></div>
+
+    <h3 class="section" id="bs-rotated">Search in Rotated Sorted Array <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Find <code class="inline">target</code>'s index in a rotated sorted array (distinct values), or -1, in O(log n). <span style="color:var(--muted)">(LC 33)</span></div>
+    <p><strong>Strategy:</strong> At each step <strong>one half is always properly sorted</strong>. Detect which (compare <code class="inline">nums[lo]</code> to <code class="inline">nums[mid]</code>). If the sorted half contains the target (range check), search it; otherwise search the other half. This "which half is clean, is target in it" reasoning is the whole trick.</p>
+    <p><strong>Complexity:</strong> Time O(log n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [4, 5, 6, 7, 0, 1, 2], target = 0
+# Output: 4
+
+def search_rotated(nums, target)
+  lo, hi = 0, nums.length - 1
+  while lo &lt;= hi
+    mid = lo + (hi - lo) / 2
+    return mid if nums[mid] == target
+
+    if nums[lo] &lt;= nums[mid]        # LEFT half [lo..mid] is sorted
+      if nums[lo] &lt;= target &amp;&amp; target &lt; nums[mid]
+        hi = mid - 1               # target lies inside the sorted left half
+      else
+        lo = mid + 1               # otherwise it's in the right half
+      end
+    else                           # RIGHT half [mid..hi] is sorted
+      if nums[mid] &lt; target &amp;&amp; target &lt;= nums[hi]
+        lo = mid + 1               # target lies inside the sorted right half
+      else
+        hi = mid - 1
+      end
+    end
+  end
+  -1
+end
+
+p search_rotated([4, 5, 6, 7, 0, 1, 2], 0)   # =&gt; 4
+p search_rotated([4, 5, 6, 7, 0, 1, 2], 3)   # =&gt; -1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [4, 5, 6, 7, 0, 1, 2], target = 0
+# Output: 4
+
+def search_rotated(nums, target):
+    lo, hi = 0, len(nums) - 1
+    while lo &lt;= hi:
+        mid = lo + (hi - lo) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[lo] &lt;= nums[mid]:           # left half sorted
+            if nums[lo] &lt;= target &lt; nums[mid]:
+                hi = mid - 1
+            else:
+                lo = mid + 1
+        else:                              # right half sorted
+            if nums[mid] &lt; target &lt;= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+    return -1
+
+print(search_rotated([4, 5, 6, 7, 0, 1, 2], 0))   # -> 4
+print(search_rotated([4, 5, 6, 7, 0, 1, 2], 3))   # -> -1</code></pre></div>
+
+    <h3 class="section" id="bs-koko">Koko Eating Bananas <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Piles of bananas; Koko eats at speed <code class="inline">k</code> per hour (one pile at a time, leftovers wait). Find the minimum <code class="inline">k</code> to finish all piles within <code class="inline">h</code> hours. <span style="color:var(--muted)">(LC 875)</span></div>
+    <p><strong>Strategy:</strong> The textbook <strong>binary search on the answer</strong>. Speed is between 1 and <code class="inline">max(piles)</code>. <code class="inline">feasible(k)</code> = "can finish in ≤ h hours at speed k" is monotonic (faster is always ≥ as feasible). Hours at speed k = <code class="inline">sum(ceil(pile / k))</code>. Binary-search the smallest feasible k. <strong>This framing — bounds + monotonic predicate — is the high-value pattern to internalize.</strong></p>
+    <p><strong>Complexity:</strong> Time O(n · log(max pile)) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  piles = [3, 6, 7, 11], h = 8
+# Output: 4
+
+def min_eating_speed(piles, h)
+  # hours needed to clear all piles at speed k (ceil division per pile)
+  hours_at = ->(k) { piles.sum { |p| (p + k - 1) / k } }
+
+  lo, hi = 1, piles.max            # speed range [1, biggest pile]
+  while lo &lt; hi                    # searching for the leftmost feasible speed
+    mid = lo + (hi - lo) / 2
+    if hours_at.call(mid) &lt;= h
+      hi = mid                     # mid works; maybe a smaller speed also works
+    else
+      lo = mid + 1                 # too slow; need a faster speed
+    end
+  end
+  lo                               # smallest k with hours_at(k) &lt;= h
+end
+
+p min_eating_speed([3, 6, 7, 11], 8)   # =&gt; 4
+p min_eating_speed([30, 11, 23, 4, 20], 5)  # =&gt; 30</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  piles = [3, 6, 7, 11], h = 8
+# Output: 4
+
+import math
+
+def min_eating_speed(piles, h):
+    def hours_at(k):
+        return sum(math.ceil(p / k) for p in piles)   # or (p + k - 1)//k
+
+    lo, hi = 1, max(piles)            # speed range [1, biggest pile]
+    while lo &lt; hi:                    # find leftmost feasible speed
+        mid = lo + (hi - lo) // 2
+        if hours_at(mid) &lt;= h:
+            hi = mid                  # feasible; try slower
+        else:
+            lo = mid + 1             # too slow; go faster
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))          # -> 4
+print(min_eating_speed([30, 11, 23, 4, 20], 5))    # -> 30</code></pre></div>
+  </section>
+
+  <!-- ============ STACK ============ -->
+  <section class="tab" id="tab-stack" data-collapsible="true" data-toc='[
+    ["@group","Matching"],
+    ["Valid Parentheses","valid-parens"],
+    ["Evaluate RPN","rpn"],
+    ["@group","Augmented stacks"],
+    ["Min Stack","min-stack"],
+    ["@group","Monotonic stack"],
+    ["Daily Temperatures","daily-temps"]
+  ]'>
+    <h2>Stack <span class="sub">LIFO — matching, undo, and "next greater" in one pass</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>Signals:</strong> nested/balanced structure, "most recent unmatched thing," or "next greater/smaller element." A <strong>monotonic stack</strong> (kept increasing or decreasing) answers next-greater-type questions in O(n) by popping everything the new element dominates.</p>
+    </div>
+
+    <h3 class="section" id="valid-parens">Valid Parentheses <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Given a string of <code class="inline">()[]{}</code>, decide if every bracket is closed by the right type in the right order. <span style="color:var(--muted)">(LC 20)</span></div>
+    <p><strong>Strategy:</strong> Push opening brackets. On a closer, the top of the stack must be its matching opener — else invalid. Map closers→openers for a clean check. Valid iff the stack is empty at the end.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  s = "([)]"  -&gt; false ;  s = "()[]{}" -&gt; true
+
+def valid_parentheses(s)
+  pairs = { ")" =&gt; "(", "]" =&gt; "[", "}" =&gt; "{" }   # closer =&gt; its opener
+  stack = []
+  s.each_char do |ch|
+    if pairs.key?(ch)              # it's a closer
+      # Must match the most recently opened bracket.
+      return false if stack.empty? || stack.pop != pairs[ch]
+    else
+      stack.push(ch)               # opener: remember it
+    end
+  end
+  stack.empty?                     # leftover openers =&gt; invalid
+end
+
+p valid_parentheses("()[]{}")     # =&gt; true
+p valid_parentheses("([)]")       # =&gt; false</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  s = "([)]" -> False ; s = "()[]{}" -> True
+
+def valid_parentheses(s):
+    pairs = {")": "(", "]": "[", "}": "{"}   # closer -> opener
+    stack = []
+    for ch in s:
+        if ch in pairs:                       # closer
+            if not stack or stack.pop() != pairs[ch]:
+                return False
+        else:
+            stack.append(ch)                  # opener
+    return not stack                          # empty stack == valid
+
+print(valid_parentheses("()[]{}"))   # -> True
+print(valid_parentheses("([)]"))     # -> False</code></pre></div>
+
+    <h3 class="section" id="rpn">Evaluate Reverse Polish Notation <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Evaluate an arithmetic expression in RPN (postfix), e.g. <code class="inline">["2","1","+","3","*"]</code> = 9. <span style="color:var(--muted)">(LC 150)</span></div>
+    <p><strong>Strategy:</strong> Push numbers. On an operator, pop the top two operands, apply, push the result. Watch operand order for <code class="inline">-</code> and <code class="inline">/</code> (second-popped is the left operand), and truncate division toward zero.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  ["2","1","+","3","*"]  -&gt; 9 ;  ["4","13","5","/","+"] -&gt; 6
+
+def eval_rpn(tokens)
+  ops = %w[+ - * /]
+  stack = []
+  tokens.each do |tok|
+    if ops.include?(tok)
+      b = stack.pop                # second operand (right)
+      a = stack.pop                # first operand (left)
+      result =
+        case tok
+        when "+" then a + b
+        when "-" then a - b
+        when "*" then a * b
+        when "/" then (a.to_f / b).truncate   # truncate toward zero
+        end
+      stack.push(result.to_i)
+    else
+      stack.push(tok.to_i)         # it's a number
+    end
+  end
+  stack.last
+end
+
+p eval_rpn(["2","1","+","3","*"])     # =&gt; 9
+p eval_rpn(["4","13","5","/","+"])    # =&gt; 6</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  ["2","1","+","3","*"] -> 9 ; ["4","13","5","/","+"] -> 6
+
+def eval_rpn(tokens):
+    ops = {"+", "-", "*", "/"}
+    stack = []
+    for tok in tokens:
+        if tok in ops:
+            b = stack.pop()                 # right operand
+            a = stack.pop()                 # left operand
+            if tok == "+":   stack.append(a + b)
+            elif tok == "-": stack.append(a - b)
+            elif tok == "*": stack.append(a * b)
+            else:            stack.append(int(a / b))  # truncate toward 0
+        else:
+            stack.append(int(tok))
+    return stack[-1]
+
+print(eval_rpn(["2","1","+","3","*"]))    # -> 9
+print(eval_rpn(["4","13","5","/","+"]))   # -> 6</code></pre></div>
+
+    <h3 class="section" id="min-stack">Min Stack <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Design a stack supporting <code class="inline">push</code>, <code class="inline">pop</code>, <code class="inline">top</code>, and <code class="inline">get_min</code> all in O(1). <span style="color:var(--muted)">(LC 155)</span></div>
+    <p><strong>Strategy:</strong> Keep a second "mins" stack in lockstep: each entry is the minimum of everything at or below it. On push, store <code class="inline">min(new, current_min)</code>; pop both together. <code class="inline">get_min</code> is just the top of the mins stack.</p>
+    <p><strong>Complexity:</strong> All ops O(1) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class MinStack
+  def initialize
+    @stack = []
+    @mins  = []                    # @mins[i] = min of @stack[0..i]
+  end
+
+  def push(val)
+    @stack.push(val)
+    # New running minimum is val or the previous minimum, whichever is smaller.
+    current_min = @mins.empty? ? val : [val, @mins.last].min
+    @mins.push(current_min)
+  end
+
+  def pop
+    @mins.pop                      # keep the two stacks in lockstep
+    @stack.pop
+  end
+
+  def top
+    @stack.last
+  end
+
+  def get_min
+    @mins.last                     # O(1) minimum
+  end
+end
+
+s = MinStack.new
+s.push(-2); s.push(0); s.push(-3)
+p s.get_min   # =&gt; -3
+s.pop
+p s.top       # =&gt; 0
+p s.get_min   # =&gt; -2</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">class MinStack:
+    def __init__(self):
+        self.stack = []
+        self.mins = []                 # mins[i] = min of stack[0..i]
+
+    def push(self, val):
+        self.stack.append(val)
+        current_min = val if not self.mins else min(val, self.mins[-1])
+        self.mins.append(current_min)
+
+    def pop(self):
+        self.mins.pop()                # lockstep
+        return self.stack.pop()
+
+    def top(self):
+        return self.stack[-1]
+
+    def get_min(self):
+        return self.mins[-1]           # O(1)
+
+s = MinStack()
+s.push(-2); s.push(0); s.push(-3)
+print(s.get_min())   # -> -3
+s.pop()
+print(s.top())       # -> 0
+print(s.get_min())   # -> -2</code></pre></div>
+
+    <h3 class="section" id="daily-temps">Daily Temperatures (monotonic stack) <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> For each day, how many days until a warmer temperature? 0 if none. <span style="color:var(--muted)">(LC 739)</span></div>
+    <p><strong>Strategy:</strong> The flagship <strong>monotonic decreasing stack</strong>. Stack holds <em>indices</em> of days still waiting for something warmer. For each new day, pop every waiting day it's warmer than and record the gap. Each index is pushed/popped once → O(n). Learn this template: it answers all "next greater/smaller element" questions.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  temps = [73, 74, 75, 71, 69, 72, 76, 73]
+# Output: [1, 1, 4, 2, 1, 1, 0, 0]
+
+def daily_temperatures(temps)
+  answer = Array.new(temps.length, 0)
+  stack = []                       # indices of days awaiting a warmer day
+  temps.each_with_index do |temp, i|
+    # While today is warmer than the day on top, that day's wait ends now.
+    while !stack.empty? &amp;&amp; temps[stack.last] &lt; temp
+      prev = stack.pop
+      answer[prev] = i - prev      # number of days waited
+    end
+    stack.push(i)                  # today now waits for its warmer day
+  end
+  answer
+end
+
+p daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73])
+# =&gt; [1, 1, 4, 2, 1, 1, 0, 0]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  temps = [73, 74, 75, 71, 69, 72, 76, 73]
+# Output: [1, 1, 4, 2, 1, 1, 0, 0]
+
+def daily_temperatures(temps):
+    answer = [0] * len(temps)
+    stack = []                        # indices awaiting a warmer day
+    for i, temp in enumerate(temps):
+        while stack and temps[stack[-1]] &lt; temp:
+            prev = stack.pop()
+            answer[prev] = i - prev   # days waited
+        stack.append(i)
+    return answer
+
+print(daily_temperatures([73, 74, 75, 71, 69, 72, 76, 73]))
+# -> [1, 1, 4, 2, 1, 1, 0, 0]</code></pre></div>
+  </section>
+
+  <!-- ============ LINKED LISTS ============ -->
+  <section class="tab" id="tab-linked" data-collapsible="true" data-toc='[
+    ["@group","Pointer mechanics"],
+    ["Node definition","ll-node"],
+    ["Reverse Linked List","ll-reverse"],
+    ["Merge Two Sorted Lists","ll-merge"],
+    ["@group","Two-pointer tricks"],
+    ["Detect Cycle (Floyd)","ll-cycle"],
+    ["Remove Nth From End","ll-removenth"]
+  ]'>
+    <h2>Linked Lists <span class="sub">careful pointer rewiring — draw it before you code it</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>Two reusable tricks dominate this topic:</strong> (1) a <strong>dummy head</strong> node so you never special-case the front; (2) <strong>fast/slow pointers</strong> for cycles, middles, and "nth from end." Always sketch the before/after pointers on paper — off-by-one rewiring is the classic bug.</p>
+    </div>
+
+    <h3 class="section" id="ll-node">Node definition (used below)</h3>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class ListNode
+  attr_accessor :val, :next
+  def initialize(val = 0, nxt = nil)
+    @val = val
+    @next = nxt
+  end
+end
+
+# Helper to build a list from an array, for testing.
+def build(arr)
+  dummy = ListNode.new
+  tail = dummy
+  arr.each { |v| tail.next = ListNode.new(v); tail = tail.next }
+  dummy.next
+end
+
+# Helper to turn a list back into an array.
+def to_a(node)
+  out = []
+  while node
+    out &lt;&lt; node.val
+    node = node.next
+  end
+  out
+end</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">class ListNode:
+    def __init__(self, val=0, nxt=None):
+        self.val = val
+        self.next = nxt
+
+def build(arr):                      # array -> linked list (for testing)
+    dummy = ListNode()
+    tail = dummy
+    for v in arr:
+        tail.next = ListNode(v)
+        tail = tail.next
+    return dummy.next
+
+def to_list(node):                   # linked list -> array
+    out = []
+    while node:
+        out.append(node.val)
+        node = node.next
+    return out</code></pre></div>
+
+    <h3 class="section" id="ll-reverse">Reverse Linked List <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Reverse a singly linked list; return the new head. <span style="color:var(--muted)">(LC 206)</span></div>
+    <p><strong>Strategy:</strong> Iterate with three pointers — <code class="inline">prev</code>, <code class="inline">curr</code>, and a saved <code class="inline">next</code>. At each node, point <code class="inline">curr.next</code> back to <code class="inline">prev</code>, then advance all three. <code class="inline">prev</code> ends as the new head.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  1 -&gt; 2 -&gt; 3 -&gt; nil      Output: 3 -&gt; 2 -&gt; 1 -&gt; nil
+
+def reverse_list(head)
+  prev = nil
+  curr = head
+  while curr
+    nxt = curr.next                # save the rest of the list
+    curr.next = prev               # flip this node's pointer backward
+    prev = curr                    # advance prev and curr forward
+    curr = nxt
+  end
+  prev                             # new head (old tail)
+end
+
+p to_a(reverse_list(build([1, 2, 3])))   # =&gt; [3, 2, 1]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  1 -> 2 -> 3 -> None     Output: 3 -> 2 -> 1 -> None
+
+def reverse_list(head):
+    prev = None
+    curr = head
+    while curr:
+        nxt = curr.next            # save rest of list
+        curr.next = prev           # flip pointer backward
+        prev = curr                # advance
+        curr = nxt
+    return prev                    # new head
+
+print(to_list(reverse_list(build([1, 2, 3]))))   # -> [3, 2, 1]</code></pre></div>
+
+    <h3 class="section" id="ll-merge">Merge Two Sorted Lists <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Merge two sorted linked lists into one sorted list. <span style="color:var(--muted)">(LC 21)</span></div>
+    <p><strong>Strategy:</strong> Classic <strong>dummy head</strong>. Walk both lists, attaching the smaller current node to the tail. When one runs out, attach the rest of the other. The dummy lets you treat the first append like any other.</p>
+    <p><strong>Complexity:</strong> Time O(n + m) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  1-&gt;2-&gt;4 , 1-&gt;3-&gt;4   Output: 1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4
+
+def merge_two_lists(l1, l2)
+  dummy = ListNode.new             # sentinel so we never special-case the head
+  tail = dummy
+  while l1 &amp;&amp; l2
+    if l1.val &lt;= l2.val
+      tail.next = l1; l1 = l1.next
+    else
+      tail.next = l2; l2 = l2.next
+    end
+    tail = tail.next
+  end
+  tail.next = l1 || l2             # attach whatever remains
+  dummy.next
+end
+
+p to_a(merge_two_lists(build([1,2,4]), build([1,3,4])))  # =&gt; [1,1,2,3,4,4]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  1->2->4 , 1->3->4   Output: 1->1->2->3->4->4
+
+def merge_two_lists(l1, l2):
+    dummy = ListNode()             # sentinel head
+    tail = dummy
+    while l1 and l2:
+        if l1.val &lt;= l2.val:
+            tail.next, l1 = l1, l1.next
+        else:
+            tail.next, l2 = l2, l2.next
+        tail = tail.next
+    tail.next = l1 or l2           # attach the remainder
+    return dummy.next
+
+print(to_list(merge_two_lists(build([1,2,4]), build([1,3,4]))))  # -> [1,1,2,3,4,4]</code></pre></div>
+
+    <h3 class="section" id="ll-cycle">Detect Cycle (Floyd's tortoise &amp; hare) <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Does the linked list contain a cycle? <span style="color:var(--muted)">(LC 141)</span></div>
+    <p><strong>Strategy:</strong> Two pointers, one moving 1 step and one 2 steps. If there's a cycle they must eventually meet (the fast one laps the slow one); if fast reaches <code class="inline">nil</code>, no cycle. O(1) space — the win over a hash set of seen nodes (which also works, mention it).</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def has_cycle(head)
+  slow = head
+  fast = head
+  while fast &amp;&amp; fast.next          # need two steps available for fast
+    slow = slow.next               # +1
+    fast = fast.next.next          # +2
+    return true if slow == fast    # same node =&gt; they're on a loop
+  end
+  false                            # fast fell off the end =&gt; no cycle
+end</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">def has_cycle(head):
+    slow = fast = head
+    while fast and fast.next:        # need room for fast's two hops
+        slow = slow.next             # +1
+        fast = fast.next.next        # +2
+        if slow is fast:             # met -> cycle
+            return True
+    return False                     # fast reached end -> no cycle</code></pre></div>
+
+    <h3 class="section" id="ll-removenth">Remove Nth Node From End <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Remove the n-th node from the end of the list in one pass. <span style="color:var(--muted)">(LC 19)</span></div>
+    <p><strong>Strategy:</strong> Dummy head + two pointers spaced <code class="inline">n</code> apart. Advance <code class="inline">fast</code> by n, then move both until <code class="inline">fast</code> hits the end — now <code class="inline">slow</code> sits just before the target, ready to unlink it. The gap encodes "n from the end" without a length pass.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  1-&gt;2-&gt;3-&gt;4-&gt;5, n = 2   Output: 1-&gt;2-&gt;3-&gt;5
+
+def remove_nth_from_end(head, n)
+  dummy = ListNode.new(0, head)    # handles removing the real head cleanly
+  fast = dummy
+  slow = dummy
+  n.times { fast = fast.next }     # open a gap of n between slow and fast
+  while fast.next                  # advance both until fast is at the last node
+    fast = fast.next
+    slow = slow.next
+  end
+  slow.next = slow.next.next       # unlink the target (slow is just before it)
+  dummy.next
+end
+
+p to_a(remove_nth_from_end(build([1,2,3,4,5]), 2))   # =&gt; [1,2,3,5]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  1->2->3->4->5, n = 2   Output: 1->2->3->5
+
+def remove_nth_from_end(head, n):
+    dummy = ListNode(0, head)        # simplifies head removal
+    fast = slow = dummy
+    for _ in range(n):
+        fast = fast.next             # open a gap of n
+    while fast.next:                 # move both until fast is last
+        fast = fast.next
+        slow = slow.next
+    slow.next = slow.next.next       # unlink target
+    return dummy.next
+
+print(to_list(remove_nth_from_end(build([1,2,3,4,5]), 2)))   # -> [1,2,3,5]</code></pre></div>
+  </section>
+
+  <!-- ============ TREES ============ -->
+  <section class="tab" id="tab-trees" data-collapsible="true" data-toc='[
+    ["@group","Setup"],
+    ["Node definition","tr-node"],
+    ["@group","DFS"],
+    ["Validate BST","tr-bst"],
+    ["Lowest Common Ancestor","tr-lca"],
+    ["@group","BFS"],
+    ["Level Order Traversal","tr-level"],
+    ["@group","Hard"],
+    ["Serialize &amp; Deserialize","tr-serial"]
+  ]'>
+    <h2>Trees <span class="sub">recursion that carries state down and bubbles answers up</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>Two engines:</strong> <strong>DFS</strong> (recursion) when the answer at a node depends on its subtrees — decide what to <em>pass down</em> (bounds, depth) and what to <em>return up</em> (a value, a found node). <strong>BFS</strong> (queue) when you need level-by-level or shortest-path-in-edges behavior. State complexity in terms of nodes <code class="inline">n</code> and height <code class="inline">h</code> (recursion stack = O(h)).</p>
+    </div>
+
+    <h3 class="section" id="tr-node">Node definition (used below)</h3>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class TreeNode
+  attr_accessor :val, :left, :right
+  def initialize(val = 0, left = nil, right = nil)
+    @val = val; @left = left; @right = right
+  end
+end</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right</code></pre></div>
+
+    <h3 class="section" id="tr-bst">Validate Binary Search Tree <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Is the tree a valid BST? (Every left descendant &lt; node &lt; every right descendant — not just direct children.) <span style="color:var(--muted)">(LC 98)</span></div>
+    <p><strong>Strategy:</strong> DFS carrying an <strong>allowed open interval</strong> <code class="inline">(low, high)</code> <em>down</em>. Each node must lie strictly inside; recurse left with <code class="inline">high = node.val</code> and right with <code class="inline">low = node.val</code>. The bounds are the whole trick — a node-vs-children check is the classic wrong answer.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(h).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Returns true iff every node fits within the bounds inherited from ancestors.
+def valid_bst?(node, low = -Float::INFINITY, high = Float::INFINITY)
+  return true if node.nil?                       # empty subtree is valid
+  return false unless node.val &gt; low &amp;&amp; node.val &lt; high  # must fit open interval
+  # Left subtree's values must all be &lt; node.val; right's must all be &gt; node.val.
+  valid_bst?(node.left, low, node.val) &amp;&amp;
+    valid_bst?(node.right, node.val, high)
+end
+
+root = TreeNode.new(5, TreeNode.new(3), TreeNode.new(8))
+p valid_bst?(root)   # =&gt; true</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">def valid_bst(node, low=float('-inf'), high=float('inf')):
+    if node is None:                  # empty subtree is valid
+        return True
+    if not (low &lt; node.val &lt; high):    # must fit the open interval
+        return False
+    return (valid_bst(node.left, low, node.val) and
+            valid_bst(node.right, node.val, high))
+
+root = TreeNode(5, TreeNode(3), TreeNode(8))
+print(valid_bst(root))   # -> True</code></pre></div>
+
+    <h3 class="section" id="tr-lca">Lowest Common Ancestor (binary tree) <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Given two nodes <code class="inline">p</code> and <code class="inline">q</code>, return their lowest common ancestor in a binary tree (not necessarily a BST). <span style="color:var(--muted)">(LC 236)</span></div>
+    <p><strong>Strategy:</strong> DFS that returns "did I find p or q (or the LCA) in this subtree." If a node <em>is</em> p or q, return it. Recurse both sides: if <strong>both</strong> sides return non-nil, this node is the split point → it's the LCA. Otherwise bubble up whichever side found something.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(h).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">def lowest_common_ancestor(root, p, q)
+  return nil if root.nil?
+  # If this node is one of the targets, it can be the LCA (or part of the path).
+  return root if root == p || root == q
+
+  left  = lowest_common_ancestor(root.left, p, q)
+  right = lowest_common_ancestor(root.right, p, q)
+
+  # Found targets on BOTH sides =&gt; this node is where they split =&gt; LCA.
+  return root if left &amp;&amp; right
+  # Otherwise propagate the non-nil side (or nil if neither found anything).
+  left || right
+end</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">def lowest_common_ancestor(root, p, q):
+    if root is None:
+        return None
+    if root is p or root is q:        # node itself is a target
+        return root
+
+    left = lowest_common_ancestor(root.left, p, q)
+    right = lowest_common_ancestor(root.right, p, q)
+
+    if left and right:                # targets split here -> LCA
+        return root
+    return left or right              # bubble up the side that found one</code></pre></div>
+
+    <h3 class="section" id="tr-level">Binary Tree Level Order Traversal <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return node values grouped by level, top to bottom. <span style="color:var(--muted)">(LC 102)</span></div>
+    <p><strong>Strategy:</strong> BFS with a queue. The key idea: at the start of each outer loop, <strong>snapshot the current queue size</strong> — that's exactly one level's worth of nodes. Process that many, enqueuing their children for the next level.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Output for tree [3,[9],[20,[15],[7]]]: [[3], [9, 20], [15, 7]]
+
+def level_order(root)
+  return [] if root.nil?
+  result = []
+  queue = [root]                   # use index/rotation to avoid O(n) shift
+  until queue.empty?
+    level_size = queue.length      # snapshot: how many nodes on this level
+    level = []
+    level_size.times do
+      node = queue.shift           # (fine for clarity; deque-style for perf)
+      level &lt;&lt; node.val
+      queue &lt;&lt; node.left  if node.left
+      queue &lt;&lt; node.right if node.right
+    end
+    result &lt;&lt; level
+  end
+  result
+end</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Output for tree [3,[9],[20,[15],[7]]]: [[3], [9, 20], [15, 7]]
+
+from collections import deque
+
+def level_order(root):
+    if root is None:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        level_size = len(queue)       # snapshot one level's worth
+        level = []
+        for _ in range(level_size):
+            node = queue.popleft()    # O(1) with a deque
+            level.append(node.val)
+            if node.left:  queue.append(node.left)
+            if node.right: queue.append(node.right)
+        result.append(level)
+    return result</code></pre></div>
+
+    <h3 class="section" id="tr-serial">Serialize &amp; Deserialize Binary Tree <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Encode a tree to a string and decode it back. <span style="color:var(--muted)">(LC 297 · hard)</span></div>
+    <p><strong>Strategy:</strong> Pre-order DFS with explicit <code class="inline">null</code> markers makes the structure unambiguous. Serialize: emit <code class="inline">val</code> then recurse left, right, emitting a sentinel for empty children. Deserialize: consume tokens in the same pre-order, rebuilding recursively (a sentinel returns <code class="inline">nil</code>). The matching traversal order is what makes it reversible.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">NULL = "#"
+
+def serialize(root)
+  out = []
+  dfs = lambda do |node|
+    if node.nil?
+      out &lt;&lt; NULL                   # marker keeps structure unambiguous
+      return
+    end
+    out &lt;&lt; node.val.to_s
+    dfs.call(node.left)            # pre-order: root, left, right
+    dfs.call(node.right)
+  end
+  dfs.call(root)
+  out.join(",")
+end
+
+def deserialize(data)
+  tokens = data.split(",")
+  i = 0
+  build = lambda do
+    tok = tokens[i]; i += 1        # consume in the SAME pre-order
+    return nil if tok == NULL
+    node = TreeNode.new(tok.to_i)
+    node.left  = build.call
+    node.right = build.call
+    node
+  end
+  build.call
+end
+
+s = serialize(TreeNode.new(1, TreeNode.new(2), TreeNode.new(3)))
+p s                                # =&gt; "1,2,#,#,3,#,#"
+p deserialize(s).val               # =&gt; 1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">NULL = "#"
+
+def serialize(root):
+    out = []
+    def dfs(node):
+        if node is None:
+            out.append(NULL)           # marker for empty child
+            return
+        out.append(str(node.val))
+        dfs(node.left)                 # pre-order: root, left, right
+        dfs(node.right)
+    dfs(root)
+    return ",".join(out)
+
+def deserialize(data):
+    tokens = iter(data.split(","))     # iterator consumes in pre-order
+    def build():
+        tok = next(tokens)
+        if tok == NULL:
+            return None
+        node = TreeNode(int(tok))
+        node.left = build()
+        node.right = build()
+        return node
+    return build()
+
+s = serialize(TreeNode(1, TreeNode(2), TreeNode(3)))
+print(s)                               # -> "1,2,#,#,3,#,#"
+print(deserialize(s).val)              # -> 1</code></pre></div>
+  </section>
+
+  <!-- ============ HEAPS / INTERVALS ============ -->
+  <section class="tab" id="tab-heaps" data-collapsible="true" data-toc='[
+    ["@group","Ruby heap"],
+    ["Ruby heap helper (no stdlib)","heap-helper"],
+    ["@group","Top-K"],
+    ["Kth Largest Element","kth-largest"],
+    ["K Closest Points","k-closest"],
+    ["@group","Intervals"],
+    ["Merge Intervals","merge-intervals"],
+    ["Meeting Rooms II","meeting-rooms"],
+    ["@group","Streaming"],
+    ["Median from Data Stream","median-stream"]
+  ]'>
+    <h2>Heaps &amp; Intervals <span class="sub">★ gap-filler — "best-so-far" and "overlapping ranges"</span></h2>
+    <div class="card warn">
+      <p style="margin:0"><strong>Heap signals:</strong> "k largest/smallest," "median of a stream," "merge k sorted." A heap gives you the current min/max in O(1) and reshuffles in O(log n). <strong>Interval signals:</strong> ranges that might overlap — almost always <strong>sort by start</strong>, then sweep; counting concurrent intervals is a min-heap of end times. <strong>Python has <code class="inline">heapq</code> (min-heap); Ruby has none</strong>, so use the helper below or a sort.</p>
+    </div>
+
+    <h3 class="section" id="heap-helper">Ruby heap helper (Python users skip — use <code class="inline">heapq</code>)</h3>
+    <p><strong>Why:</strong> Ruby ships no priority queue. Memorize this ~25-line binary heap; it's min-heap by default and takes a comparator block for max-heaps or custom keys. (In Python, <code class="inline">import heapq</code> and push tuples; for a max-heap push negated keys.)</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class Heap
+  # Pass a block returning -1/0/1; default is a MIN-heap on the element itself.
+  def initialize(&amp;cmp)
+    @d = []
+    @cmp = cmp || ->(a, b) { a &lt;=&gt; b }
+  end
+  def size;   @d.size;   end
+  def empty?; @d.empty?; end
+  def peek;   @d[0];     end
+
+  def push(x)
+    @d &lt;&lt; x
+    i = @d.size - 1
+    while i &gt; 0                          # sift up while smaller than parent
+      par = (i - 1) / 2
+      break if @cmp.call(@d[i], @d[par]) &gt;= 0
+      @d[i], @d[par] = @d[par], @d[i]
+      i = par
+    end
+  end
+
+  def pop
+    top = @d[0]
+    last = @d.pop
+    unless @d.empty?
+      @d[0] = last; i = 0; n = @d.size
+      loop do                            # sift down to the smaller child
+        l, r, best = 2*i + 1, 2*i + 2, i
+        best = l if l &lt; n &amp;&amp; @cmp.call(@d[l], @d[best]) &lt; 0
+        best = r if r &lt; n &amp;&amp; @cmp.call(@d[r], @d[best]) &lt; 0
+        break if best == i
+        @d[i], @d[best] = @d[best], @d[i]; i = best
+      end
+    end
+    top
+  end
+end</code></pre></div>
+
+    <h3 class="section" id="kth-largest">Kth Largest Element in an Array <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return the k-th largest element (k-th in sorted order, not k-th distinct). <span style="color:var(--muted)">(LC 215)</span></div>
+    <p><strong>Strategy:</strong> A <strong>size-k min-heap</strong>: push elements, and once it exceeds k, pop the smallest. The heap always holds the k largest seen; its root is the answer. O(n log k) — better than sorting's O(n log n) when k is small. (Quickselect gives O(n) average; mention it.)</p>
+    <p><strong>Complexity:</strong> Time O(n log k) · Space O(k).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [3,2,1,5,6,4], k = 2   Output: 5
+
+def find_kth_largest(nums, k)
+  heap = Heap.new                  # min-heap (uses helper above)
+  nums.each do |num|
+    heap.push(num)
+    heap.pop if heap.size &gt; k       # keep only the k largest seen so far
+  end
+  heap.peek                         # smallest of the k largest = k-th largest
+end
+
+p find_kth_largest([3,2,1,5,6,4], 2)   # =&gt; 5
+# Simpler if allowed: nums.sort[-k]  (O(n log n))</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [3,2,1,5,6,4], k = 2   Output: 5
+
+import heapq
+
+def find_kth_largest(nums, k):
+    heap = []                          # min-heap of the k largest seen
+    for num in nums:
+        heapq.heappush(heap, num)
+        if len(heap) &gt; k:
+            heapq.heappop(heap)        # drop the smallest -> keep top k
+    return heap[0]                     # root = k-th largest
+
+print(find_kth_largest([3,2,1,5,6,4], 2))   # -> 5
+# One-liner if allowed: heapq.nlargest(k, nums)[-1]</code></pre></div>
+
+    <h3 class="section" id="k-closest">K Closest Points to Origin <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return the <code class="inline">k</code> points closest to the origin. <span style="color:var(--muted)">(LC 973)</span></div>
+    <p><strong>Strategy:</strong> Same size-k heap idea, but it must be a <strong>max-heap on distance</strong> so we can evict the farthest. Compare squared distance (<code class="inline">x²+y²</code>) — no need for <code class="inline">sqrt</code>. Keep k closest; pop the farthest when over k.</p>
+    <p><strong>Complexity:</strong> Time O(n log k) · Space O(k).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  points = [[1,3],[-2,2]], k = 1   Output: [[-2,2]]
+
+def k_closest(points, k)
+  # MAX-heap by squared distance: comparator flips the sign so the largest
+  # distance sits at the root and gets evicted first.
+  heap = Heap.new { |a, b| b[0] &lt;=&gt; a[0] }   # a,b are [dist2, point]
+  points.each do |x, y|
+    dist2 = x*x + y*y
+    heap.push([dist2, [x, y]])
+    heap.pop if heap.size &gt; k       # remove the farthest of the bunch
+  end
+  result = []
+  result &lt;&lt; heap.pop[1] until heap.empty?
+  result
+end
+
+p k_closest([[1,3],[-2,2]], 1)     # =&gt; [[-2, 2]]
+# Simpler if allowed: points.sort_by { |x,y| x*x + y*y }.first(k)</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  points = [[1,3],[-2,2]], k = 1   Output: [[-2,2]]
+
+import heapq
+
+def k_closest(points, k):
+    # Python heapq is a MIN-heap; to keep k CLOSEST we evict the farthest,
+    # so store NEGATED distance -> root is the farthest of the current k.
+    heap = []
+    for x, y in points:
+        dist2 = x*x + y*y
+        heapq.heappush(heap, (-dist2, x, y))
+        if len(heap) &gt; k:
+            heapq.heappop(heap)        # drop the farthest
+    return [[x, y] for _, x, y in heap]
+
+print(k_closest([[1,3],[-2,2]], 1))    # -> [[-2, 2]]
+# One-liner: heapq.nsmallest(k, points, key=lambda p: p[0]**2 + p[1]**2)</code></pre></div>
+
+    <h3 class="section" id="merge-intervals">Merge Intervals <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Merge all overlapping intervals. <span style="color:var(--muted)">(LC 56)</span></div>
+    <p><strong>Strategy:</strong> <strong>Sort by start.</strong> Walk through; if the current interval starts at or before the last merged one's end, extend that end (<code class="inline">max</code>); otherwise it's a new disjoint interval. Sorting is what guarantees overlaps are adjacent.</p>
+    <p><strong>Complexity:</strong> Time O(n log n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  [[1,3],[2,6],[8,10],[15,18]]   Output: [[1,6],[8,10],[15,18]]
+
+def merge_intervals(intervals)
+  intervals = intervals.sort_by { |start, _| start }   # sort by start time
+  merged = []
+  intervals.each do |start, finish|
+    if merged.any? &amp;&amp; start &lt;= merged.last[1]
+      # Overlaps the last merged interval -&gt; extend its end.
+      merged.last[1] = [merged.last[1], finish].max
+    else
+      merged &lt;&lt; [start, finish]     # disjoint -&gt; start a new interval
+    end
+  end
+  merged
+end
+
+p merge_intervals([[1,3],[2,6],[8,10],[15,18]])   # =&gt; [[1,6],[8,10],[15,18]]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  [[1,3],[2,6],[8,10],[15,18]]   Output: [[1,6],[8,10],[15,18]]
+
+def merge_intervals(intervals):
+    intervals.sort(key=lambda iv: iv[0])    # sort by start
+    merged = []
+    for start, finish in intervals:
+        if merged and start &lt;= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], finish)   # extend
+        else:
+            merged.append([start, finish])               # new interval
+    return merged
+
+print(merge_intervals([[1,3],[2,6],[8,10],[15,18]]))   # -> [[1,6],[8,10],[15,18]]</code></pre></div>
+
+    <h3 class="section" id="meeting-rooms">Meeting Rooms II <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Given meeting intervals, return the minimum number of rooms needed (max concurrent meetings). <span style="color:var(--muted)">(LC 253)</span></div>
+    <p><strong>Strategy — two equivalent views:</strong> (1) <strong>Min-heap of end times:</strong> sort by start; for each meeting, if the earliest-ending room is free (its end ≤ this start) reuse it, else allocate a room; heap size = rooms. (2) <strong>Sweep line:</strong> sort starts and ends separately; walk a +1/−1 counter, tracking the peak. The heap version is shown; the sweep is the heap-free alternative — know both.</p>
+    <p><strong>Complexity:</strong> Time O(n log n) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  [[0,30],[5,10],[15,20]]   Output: 2
+
+def min_meeting_rooms(intervals)
+  return 0 if intervals.empty?
+  intervals = intervals.sort_by { |start, _| start }
+  ends = Heap.new                  # min-heap of room end-times (helper above)
+  intervals.each do |start, finish|
+    # If the soonest-freeing room is done by the time this starts, reuse it.
+    ends.pop if !ends.empty? &amp;&amp; ends.peek &lt;= start
+    ends.push(finish)              # occupy a room until `finish`
+  end
+  ends.size                         # rooms in use simultaneously at the peak
+end
+
+p min_meeting_rooms([[0,30],[5,10],[15,20]])   # =&gt; 2</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  [[0,30],[5,10],[15,20]]   Output: 2
+
+import heapq
+
+def min_meeting_rooms(intervals):
+    if not intervals:
+        return 0
+    intervals.sort(key=lambda iv: iv[0])     # by start
+    ends = []                                # min-heap of end times
+    for start, finish in intervals:
+        if ends and ends[0] &lt;= start:        # earliest room is free -> reuse
+            heapq.heappop(ends)
+        heapq.heappush(ends, finish)
+    return len(ends)                         # peak simultaneous rooms
+
+print(min_meeting_rooms([[0,30],[5,10],[15,20]]))   # -> 2
+
+# --- Sweep-line alternative (heap-free) -------------------------
+# starts = sorted(s for s, _ in intervals)
+# ends   = sorted(e for _, e in intervals)
+# i = j = used = peak = 0
+# while i &lt; len(starts):
+#     if starts[i] &lt; ends[j]: used += 1; i += 1; peak = max(peak, used)
+#     else:                   used -= 1; j += 1
+# return peak</code></pre></div>
+
+    <h3 class="section" id="median-stream">Find Median from Data Stream <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Support <code class="inline">add_num(x)</code> and <code class="inline">find_median()</code> over a growing stream. <span style="color:var(--muted)">(LC 295 · hard)</span></div>
+    <p><strong>Strategy:</strong> The classic <strong>two-heap balance</strong>. A <strong>max-heap</strong> holds the smaller half, a <strong>min-heap</strong> the larger half. Keep their sizes within 1. The median is the max-heap's top (odd total) or the average of both tops (even). Add then rebalance so every element in <code class="inline">lo</code> ≤ every element in <code class="inline">hi</code>.</p>
+    <p><strong>Complexity:</strong> add O(log n) · median O(1) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class MedianFinder
+  def initialize
+    @lo = Heap.new { |a, b| b &lt;=&gt; a }   # MAX-heap: smaller half
+    @hi = Heap.new                       # MIN-heap: larger half
+  end
+
+  def add_num(num)
+    @lo.push(num)                  # always push to lo first...
+    @hi.push(@lo.pop)              # ...then move lo's max over to hi
+    # Rebalance so lo is never more than one element bigger than hi.
+    @lo.push(@hi.pop) if @hi.size &gt; @lo.size
+  end
+
+  def find_median
+    if @lo.size &gt; @hi.size
+      @lo.peek.to_f                # odd count: middle lives in lo
+    else
+      (@lo.peek + @hi.peek) / 2.0  # even count: average the two middles
+    end
+  end
+end
+
+mf = MedianFinder.new
+mf.add_num(1); mf.add_num(2)
+p mf.find_median                   # =&gt; 1.5
+mf.add_num(3)
+p mf.find_median                   # =&gt; 2.0</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">import heapq
+
+class MedianFinder:
+    def __init__(self):
+        self.lo = []   # MAX-heap (store negatives): smaller half
+        self.hi = []   # MIN-heap: larger half
+
+    def add_num(self, num):
+        heapq.heappush(self.lo, -num)               # push to lo first
+        heapq.heappush(self.hi, -heapq.heappop(self.lo))  # move max to hi
+        if len(self.hi) &gt; len(self.lo):             # rebalance
+            heapq.heappush(self.lo, -heapq.heappop(self.hi))
+
+    def find_median(self):
+        if len(self.lo) &gt; len(self.hi):
+            return float(-self.lo[0])               # odd: middle in lo
+        return (-self.lo[0] + self.hi[0]) / 2.0     # even: average
+
+mf = MedianFinder()
+mf.add_num(1); mf.add_num(2)
+print(mf.find_median())   # -> 1.5
+mf.add_num(3)
+print(mf.find_median())   # -> 2.0</code></pre></div>
+  </section>
+
+  <!-- ============ GRAPHS ============ -->
+  <section class="tab" id="tab-graphs" data-collapsible="true" data-toc='[
+    ["@group","Grid traversal"],
+    ["Number of Islands (DFS)","gr-islands"],
+    ["Rotting Oranges (multi-BFS)","gr-oranges"],
+    ["@group","General graphs"],
+    ["Clone Graph","gr-clone"],
+    ["@group","Topological sort"],
+    ["Course Schedule","gr-course"],
+    ["@group","Union-Find"],
+    ["Connected Components","gr-union"]
+  ]'>
+    <h2>Graphs <span class="sub">★ gap-filler — BFS, DFS, topo sort, union-find</span></h2>
+    <div class="card warn">
+      <p style="margin:0"><strong>Pick the tool:</strong> <strong>BFS</strong> = shortest path in <em>unweighted</em> graphs &amp; level/time spreading (queue). <strong>DFS</strong> = reachability, connectivity, cycle detection (recursion/stack). <strong>Topological sort</strong> = ordering with prerequisites (Kahn's BFS on in-degree, or DFS). <strong>Union-Find</strong> = "are these connected / how many groups" with incremental merges. Always track a <code class="inline">visited</code> set/grid — forgetting it is the #1 bug (infinite loops).</p>
+    </div>
+
+    <h3 class="section" id="gr-islands">Number of Islands <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Count islands ('1' = land, '0' = water) in a grid; cells connect 4-directionally. <span style="color:var(--muted)">(LC 200)</span></div>
+    <p><strong>Strategy:</strong> Scan the grid. Each time you hit unvisited land, that's a new island — DFS/BFS to flood-fill the whole landmass, marking cells visited (sinking them to '0' in place is the cleanest). Count one per flood.</p>
+    <p><strong>Complexity:</strong> Time O(rows·cols) · Space O(rows·cols) worst-case recursion.</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  [["1","1","0"],["1","0","0"],["0","0","1"]]   Output: 2
+
+def num_islands(grid)
+  return 0 if grid.empty?
+  rows, cols = grid.length, grid[0].length
+
+  sink = lambda do |r, c|
+    # Stop at the border or on water/visited cells.
+    return if r &lt; 0 || c &lt; 0 || r &gt;= rows || c &gt;= cols || grid[r][c] != "1"
+    grid[r][c] = "0"               # mark visited by sinking the land
+    sink.call(r + 1, c); sink.call(r - 1, c)   # flood all 4 neighbours
+    sink.call(r, c + 1); sink.call(r, c - 1)
+  end
+
+  count = 0
+  rows.times do |r|
+    cols.times do |c|
+      if grid[r][c] == "1"
+        count += 1                 # new landmass discovered
+        sink.call(r, c)            # erase it so we don't recount
+      end
+    end
+  end
+  count
+end
+
+p num_islands([["1","1","0"],["1","0","0"],["0","0","1"]])   # =&gt; 2</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  [["1","1","0"],["1","0","0"],["0","0","1"]]   Output: 2
+
+def num_islands(grid):
+    if not grid:
+        return 0
+    rows, cols = len(grid), len(grid[0])
+
+    def sink(r, c):
+        if r &lt; 0 or c &lt; 0 or r &gt;= rows or c &gt;= cols or grid[r][c] != "1":
+            return
+        grid[r][c] = "0"            # mark visited
+        sink(r+1, c); sink(r-1, c)  # flood 4 neighbours
+        sink(r, c+1); sink(r, c-1)
+
+    count = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == "1":
+                count += 1          # new island
+                sink(r, c)
+    return count
+
+print(num_islands([["1","1","0"],["1","0","0"],["0","0","1"]]))   # -> 2</code></pre></div>
+
+    <h3 class="section" id="gr-oranges">Rotting Oranges (multi-source BFS) <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Grid of 0 (empty), 1 (fresh), 2 (rotten). Each minute, rotten oranges rot 4-adjacent fresh ones. Return minutes until none are fresh, or -1 if impossible. <span style="color:var(--muted)">(LC 994)</span></div>
+    <p><strong>Strategy:</strong> <strong>Multi-source BFS</strong>: seed the queue with <em>all</em> rotten oranges at once, then expand level by level — each BFS level is one minute. Track fresh count; if any remain when the queue empties, return -1. This "start from all sources simultaneously" trick is worth internalizing.</p>
+    <p><strong>Complexity:</strong> Time O(rows·cols) · Space O(rows·cols).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  [[2,1,1],[1,1,0],[0,1,1]]   Output: 4
+
+def oranges_rotting(grid)
+  rows, cols = grid.length, grid[0].length
+  queue = []                       # all currently-rotten cells (BFS sources)
+  fresh = 0
+  rows.times do |r|
+    cols.times do |c|
+      queue &lt;&lt; [r, c] if grid[r][c] == 2
+      fresh += 1 if grid[r][c] == 1
+    end
+  end
+
+  minutes = 0
+  dirs = [[1,0],[-1,0],[0,1],[0,-1]]
+  read = 0                          # index-based queue read (avoid O(n) shift)
+  while read &lt; queue.length &amp;&amp; fresh &gt; 0
+    minutes += 1
+    level_end = queue.length        # snapshot this minute's rotten cells
+    while read &lt; level_end
+      r, c = queue[read]; read += 1
+      dirs.each do |dr, dc|
+        nr, nc = r + dr, c + dc
+        next if nr &lt; 0 || nc &lt; 0 || nr &gt;= rows || nc &gt;= cols || grid[nr][nc] != 1
+        grid[nr][nc] = 2            # this fresh orange rots now
+        fresh -= 1
+        queue &lt;&lt; [nr, nc]           # it spreads next minute
+      end
+    end
+  end
+
+  fresh == 0 ? minutes : -1         # leftover fresh =&gt; unreachable
+end
+
+p oranges_rotting([[2,1,1],[1,1,0],[0,1,1]])   # =&gt; 4</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  [[2,1,1],[1,1,0],[0,1,1]]   Output: 4
+
+from collections import deque
+
+def oranges_rotting(grid):
+    rows, cols = len(grid), len(grid[0])
+    queue = deque()                   # all rotten cells = BFS sources
+    fresh = 0
+    for r in range(rows):
+        for c in range(cols):
+            if grid[r][c] == 2:
+                queue.append((r, c))
+            elif grid[r][c] == 1:
+                fresh += 1
+
+    minutes = 0
+    dirs = [(1,0),(-1,0),(0,1),(0,-1)]
+    while queue and fresh &gt; 0:
+        minutes += 1
+        for _ in range(len(queue)):   # one whole level == one minute
+            r, c = queue.popleft()
+            for dr, dc in dirs:
+                nr, nc = r + dr, c + dc
+                if 0 &lt;= nr &lt; rows and 0 &lt;= nc &lt; cols and grid[nr][nc] == 1:
+                    grid[nr][nc] = 2  # rot it now
+                    fresh -= 1
+                    queue.append((nr, nc))
+    return minutes if fresh == 0 else -1
+
+print(oranges_rotting([[2,1,1],[1,1,0],[0,1,1]]))   # -> 4</code></pre></div>
+
+    <h3 class="section" id="gr-clone">Clone Graph <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Deep-copy a connected undirected graph given a node (each node has a value and a neighbor list). <span style="color:var(--muted)">(LC 133)</span></div>
+    <p><strong>Strategy:</strong> DFS/BFS with a hash <code class="inline">original_node =&gt; clone</code>. The map does double duty: it's your "visited" set <em>and</em> it ensures each node is cloned exactly once (so shared/cyclic neighbors point at the same clone). Create the clone, register it, then recurse to wire up neighbors.</p>
+    <p><strong>Complexity:</strong> Time O(V + E) · Space O(V).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class Node
+  attr_accessor :val, :neighbors
+  def initialize(val = 0, neighbors = [])
+    @val = val; @neighbors = neighbors
+  end
+end
+
+def clone_graph(node)
+  return nil if node.nil?
+  clones = {}                      # original =&gt; its clone (also "visited")
+
+  dfs = lambda do |orig|
+    return clones[orig] if clones.key?(orig)   # already cloned -&gt; reuse
+    copy = Node.new(orig.val)
+    clones[orig] = copy            # register BEFORE recursing (handles cycles)
+    orig.neighbors.each { |nb| copy.neighbors &lt;&lt; dfs.call(nb) }
+    copy
+  end
+
+  dfs.call(node)
+end</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">class Node:
+    def __init__(self, val=0, neighbors=None):
+        self.val = val
+        self.neighbors = neighbors or []
+
+def clone_graph(node):
+    if node is None:
+        return None
+    clones = {}                       # original -> clone (doubles as visited)
+
+    def dfs(orig):
+        if orig in clones:            # already cloned -> reuse
+            return clones[orig]
+        copy = Node(orig.val)
+        clones[orig] = copy           # register BEFORE recursing (cycles!)
+        for nb in orig.neighbors:
+            copy.neighbors.append(dfs(nb))
+        return copy
+
+    return dfs(node)</code></pre></div>
+
+    <h3 class="section" id="gr-course">Course Schedule (topological sort) <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> <code class="inline">numCourses</code> courses, prerequisites <code class="inline">[a, b]</code> meaning b before a. Can you finish all? (Equivalent: is the dependency graph acyclic?) <span style="color:var(--muted)">(LC 207)</span></div>
+    <p><strong>Strategy — Kahn's algorithm (BFS):</strong> compute each course's <strong>in-degree</strong> (number of prereqs). Queue all zero-in-degree courses; repeatedly take one, "finish" it, and decrement its dependents' in-degrees, enqueuing any that hit zero. If you process all courses, no cycle; if some never reach zero, there's a cycle → impossible.</p>
+    <p><strong>Complexity:</strong> Time O(V + E) · Space O(V + E).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  num=2, prereqs=[[1,0]]      -&gt; true
+#         num=2, prereqs=[[1,0],[0,1]] -&gt; false (cycle)
+
+def can_finish(num_courses, prerequisites)
+  graph = Array.new(num_courses) { [] }   # b -&gt; [courses that depend on b]
+  indegree = Array.new(num_courses, 0)
+  prerequisites.each do |course, prereq|
+    graph[prereq] &lt;&lt; course
+    indegree[course] += 1          # course gains one unmet prerequisite
+  end
+
+  queue = (0...num_courses).select { |c| indegree[c] == 0 }   # ready courses
+  read = 0
+  taken = 0
+  while read &lt; queue.length
+    course = queue[read]; read += 1
+    taken += 1                     # we can take this course now
+    graph[course].each do |dependent|
+      indegree[dependent] -= 1     # one prereq satisfied
+      queue &lt;&lt; dependent if indegree[dependent] == 0
+    end
+  end
+
+  taken == num_courses             # all taken =&gt; acyclic =&gt; finishable
+end
+
+p can_finish(2, [[1,0]])           # =&gt; true
+p can_finish(2, [[1,0],[0,1]])     # =&gt; false</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  num=2, prereqs=[[1,0]]       -> True
+#         num=2, prereqs=[[1,0],[0,1]] -> False (cycle)
+
+from collections import deque
+
+def can_finish(num_courses, prerequisites):
+    graph = [[] for _ in range(num_courses)]   # prereq -> [dependents]
+    indegree = [0] * num_courses
+    for course, prereq in prerequisites:
+        graph[prereq].append(course)
+        indegree[course] += 1
+
+    queue = deque(c for c in range(num_courses) if indegree[c] == 0)
+    taken = 0
+    while queue:
+        course = queue.popleft()
+        taken += 1
+        for dependent in graph[course]:
+            indegree[dependent] -= 1
+            if indegree[dependent] == 0:
+                queue.append(dependent)
+
+    return taken == num_courses     # all taken -> no cycle
+
+print(can_finish(2, [[1,0]]))        # -> True
+print(can_finish(2, [[1,0],[0,1]]))  # -> False</code></pre></div>
+
+    <h3 class="section" id="gr-union">Number of Connected Components (Union-Find) <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> <code class="inline">n</code> nodes labeled 0..n-1 and a list of undirected edges. How many connected components? <span style="color:var(--muted)">(LC 323)</span></div>
+    <p><strong>Strategy:</strong> <strong>Union-Find (DSU).</strong> Start with n components. For each edge, <code class="inline">union</code> the two endpoints; if they were in different sets, merge and decrement the count. <code class="inline">find</code> uses <strong>path compression</strong> and union uses <strong>union by rank</strong> for near-O(1) amortized ops. This is the go-to for dynamic connectivity.</p>
+    <p><strong>Complexity:</strong> Time O((V + E)·α(V)) ≈ O(V + E) · Space O(V).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 5, edges = [[0,1],[1,2],[3,4]]   Output: 2
+
+class UnionFind
+  def initialize(n)
+    @parent = (0...n).to_a         # each node starts as its own root
+    @rank   = Array.new(n, 0)      # tree height heuristic
+    @count  = n                    # number of components
+  end
+  attr_reader :count
+
+  def find(x)
+    # Path compression: point x straight at the root on the way back.
+    @parent[x] = find(@parent[x]) if @parent[x] != x
+    @parent[x]
+  end
+
+  def union(a, b)
+    ra, rb = find(a), find(b)
+    return if ra == rb             # already connected; no merge
+    # Union by rank: attach the shorter tree under the taller.
+    ra, rb = rb, ra if @rank[ra] &lt; @rank[rb]
+    @parent[rb] = ra
+    @rank[ra] += 1 if @rank[ra] == @rank[rb]
+    @count -= 1                    # two components became one
+  end
+end
+
+def count_components(n, edges)
+  uf = UnionFind.new(n)
+  edges.each { |a, b| uf.union(a, b) }
+  uf.count
+end
+
+p count_components(5, [[0,1],[1,2],[3,4]])   # =&gt; 2</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  n = 5, edges = [[0,1],[1,2],[3,4]]   Output: 2
+
+class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))   # each node is its own root
+        self.rank = [0] * n
+        self.count = n                 # number of components
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # path compression
+        return self.parent[x]
+
+    def union(self, a, b):
+        ra, rb = self.find(a), self.find(b)
+        if ra == rb:                   # already connected
+            return
+        if self.rank[ra] &lt; self.rank[rb]:   # union by rank
+            ra, rb = rb, ra
+        self.parent[rb] = ra
+        if self.rank[ra] == self.rank[rb]:
+            self.rank[ra] += 1
+        self.count -= 1                # merged two -> one
+
+def count_components(n, edges):
+    uf = UnionFind(n)
+    for a, b in edges:
+        uf.union(a, b)
+    return uf.count
+
+print(count_components(5, [[0,1],[1,2],[3,4]]))   # -> 2</code></pre></div>
+  </section>
+
+  <!-- ============ BACKTRACKING ============ -->
+  <section class="tab" id="tab-backtrack" data-collapsible="true" data-toc='[
+    ["@group","The template"],
+    ["Backtracking skeleton","bt-template"],
+    ["@group","Enumeration"],
+    ["Subsets","bt-subsets"],
+    ["Permutations","bt-perms"],
+    ["Combination Sum","bt-combsum"],
+    ["@group","Constraint search"],
+    ["Generate Parentheses","bt-parens"],
+    ["Word Search (grid)","bt-wordsearch"]
+  ]'>
+    <h2>Backtracking <span class="sub">★ gap-filler — build a candidate, recurse, undo, repeat</span></h2>
+    <div class="card warn">
+      <p style="margin:0"><strong>Signals:</strong> "find/return <em>all</em>" combinations, permutations, subsets, partitions, or placements; constraint satisfaction (N-Queens, Sudoku). The shape is always the same: <strong>choose → explore (recurse) → un-choose</strong>. Prune dead branches early. Complexity is exponential by nature — that's expected; show you can prune and that you stop at the answer.</p>
+    </div>
+
+    <h3 class="section" id="bt-template">The universal backtracking skeleton</h3>
+    <div class="card brand">
+      <pre style="font-size:12px;background:var(--panel-2);padding:10px;border-radius:6px;line-height:1.4">def backtrack(state, choices):
+    if is_complete(state):          # reached a full candidate
+        record(state); return
+    for choice in valid_choices(choices, state):
+        make(choice, state)         # CHOOSE
+        backtrack(state, ...)       # EXPLORE deeper
+        undo(choice, state)         # UN-CHOOSE (the "backtrack")</pre>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Every problem below is this skeleton with different <code class="inline">is_complete</code>, <code class="inline">valid_choices</code>, and pruning. Master the shape once; vary the fill-ins.</p>
+    </div>
+
+    <h3 class="section" id="bt-subsets">Subsets (power set) <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return all subsets of a distinct-integer array. <span style="color:var(--muted)">(LC 78)</span></div>
+    <p><strong>Strategy:</strong> At index <code class="inline">i</code>, every element is either in or out. Recurse with a <code class="inline">start</code> index so we only ever look forward (no duplicate subsets / no reordering). Record the current path at every node — each path <em>is</em> a valid subset.</p>
+    <p><strong>Complexity:</strong> Time O(n·2ⁿ) · Space O(n) recursion (output is 2ⁿ).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  [1, 2, 3]
+# Output: [[], [1], [1,2], [1,2,3], [1,3], [2], [2,3], [3]]
+
+def subsets(nums)
+  result = []
+  path = []
+  backtrack = lambda do |start|
+    result &lt;&lt; path.dup             # every prefix-path is a subset (copy it!)
+    (start...nums.length).each do |i|
+      path &lt;&lt; nums[i]              # CHOOSE nums[i]
+      backtrack.call(i + 1)        # EXPLORE only later elements
+      path.pop                     # UN-CHOOSE
+    end
+  end
+  backtrack.call(0)
+  result
+end
+
+p subsets([1, 2, 3])</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  [1, 2, 3]
+# Output: [[], [1], [1,2], [1,2,3], [1,3], [2], [2,3], [3]]
+
+def subsets(nums):
+    result = []
+    path = []
+    def backtrack(start):
+        result.append(path[:])     # copy the current path (it's a subset)
+        for i in range(start, len(nums)):
+            path.append(nums[i])   # CHOOSE
+            backtrack(i + 1)       # EXPLORE forward only
+            path.pop()             # UN-CHOOSE
+    backtrack(0)
+    return result
+
+print(subsets([1, 2, 3]))</code></pre></div>
+
+    <h3 class="section" id="bt-perms">Permutations <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Return all orderings of a distinct-integer array. <span style="color:var(--muted)">(LC 46)</span></div>
+    <p><strong>Strategy:</strong> Unlike subsets, order matters and each element is used exactly once, so we don't carry a <code class="inline">start</code> — instead track which elements are <code class="inline">used</code>. When the path length hits <code class="inline">n</code>, it's a complete permutation.</p>
+    <p><strong>Complexity:</strong> Time O(n·n!) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  [1, 2, 3]
+# Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+def permutations(nums)
+  result = []
+  path = []
+  used = Array.new(nums.length, false)
+  backtrack = lambda do
+    if path.length == nums.length
+      result &lt;&lt; path.dup           # full-length path = one permutation
+      return
+    end
+    nums.each_with_index do |num, i|
+      next if used[i]              # skip elements already in the path
+      used[i] = true; path &lt;&lt; num  # CHOOSE
+      backtrack.call               # EXPLORE
+      path.pop; used[i] = false    # UN-CHOOSE
+    end
+  end
+  backtrack.call
+  result
+end
+
+p permutations([1, 2, 3])</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  [1, 2, 3]
+# Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+def permutations(nums):
+    result = []
+    path = []
+    used = [False] * len(nums)
+    def backtrack():
+        if len(path) == len(nums):
+            result.append(path[:])    # complete permutation
+            return
+        for i, num in enumerate(nums):
+            if used[i]:
+                continue              # already placed
+            used[i] = True; path.append(num)   # CHOOSE
+            backtrack()                          # EXPLORE
+            path.pop(); used[i] = False          # UN-CHOOSE
+    backtrack()
+    return result
+
+print(permutations([1, 2, 3]))</code></pre></div>
+
+    <h3 class="section" id="bt-combsum">Combination Sum <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Given distinct candidates and a target, return all unique combinations summing to target. Each number may be reused unlimited times. <span style="color:var(--muted)">(LC 39)</span></div>
+    <p><strong>Strategy:</strong> Backtrack carrying a <code class="inline">start</code> index and the <code class="inline">remaining</code> target. Because reuse is allowed, recurse with the <em>same</em> <code class="inline">i</code> (not <code class="inline">i+1</code>). The <code class="inline">start</code> index prevents permuted duplicates. Prune when <code class="inline">remaining &lt; 0</code>; record when it hits exactly 0. (Sorting lets you <code class="inline">break</code> early.)</p>
+    <p><strong>Complexity:</strong> Exponential in target/candidates · Space O(target/min) depth.</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  candidates = [2, 3, 6, 7], target = 7
+# Output: [[2, 2, 3], [7]]
+
+def combination_sum(candidates, target)
+  candidates = candidates.sort     # enables the early break below
+  result = []
+  path = []
+  backtrack = lambda do |start, remaining|
+    if remaining == 0
+      result &lt;&lt; path.dup           # exact hit
+      return
+    end
+    (start...candidates.length).each do |i|
+      break if candidates[i] &gt; remaining   # sorted: nothing further fits
+      path &lt;&lt; candidates[i]                  # CHOOSE
+      backtrack.call(i, remaining - candidates[i])  # reuse allowed =&gt; same i
+      path.pop                              # UN-CHOOSE
+    end
+  end
+  backtrack.call(0, target)
+  result
+end
+
+p combination_sum([2, 3, 6, 7], 7)   # =&gt; [[2, 2, 3], [7]]</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  candidates = [2, 3, 6, 7], target = 7
+# Output: [[2, 2, 3], [7]]
+
+def combination_sum(candidates, target):
+    candidates.sort()                 # enables early break
+    result = []
+    path = []
+    def backtrack(start, remaining):
+        if remaining == 0:
+            result.append(path[:])    # exact hit
+            return
+        for i in range(start, len(candidates)):
+            if candidates[i] &gt; remaining:
+                break                 # sorted: rest are too big
+            path.append(candidates[i])            # CHOOSE
+            backtrack(i, remaining - candidates[i])  # same i -> reuse allowed
+            path.pop()                            # UN-CHOOSE
+    backtrack(0, target)
+    return result
+
+print(combination_sum([2, 3, 6, 7], 7))   # -> [[2, 2, 3], [7]]</code></pre></div>
+
+    <h3 class="section" id="bt-parens">Generate Parentheses <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Generate all valid combinations of <code class="inline">n</code> pairs of parentheses. <span style="color:var(--muted)">(LC 22)</span></div>
+    <p><strong>Strategy:</strong> Backtrack tracking counts of <code class="inline">open</code> and <code class="inline">close</code> used. <strong>Prune with two rules:</strong> add <code class="inline">(</code> only while <code class="inline">open &lt; n</code>; add <code class="inline">)</code> only while <code class="inline">close &lt; open</code> (never close more than you've opened). That keeps every partial string valid, so you only ever build legal results.</p>
+    <p><strong>Complexity:</strong> O(4ⁿ/√n) (Catalan number) results.</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 3
+# Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+def generate_parenthesis(n)
+  result = []
+  build = lambda do |current, open_count, close_count|
+    if current.length == 2 * n
+      result &lt;&lt; current             # used all n pairs
+      return
+    end
+    # Open a new pair only if we have pairs left.
+    build.call(current + "(", open_count + 1, close_count) if open_count &lt; n
+    # Close only if there's an unmatched "(" to close.
+    build.call(current + ")", open_count, close_count + 1) if close_count &lt; open_count
+  end
+  build.call("", 0, 0)
+  result
+end
+
+p generate_parenthesis(3)</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  n = 3
+# Output: ["((()))","(()())","(())()","()(())","()()()"]
+
+def generate_parenthesis(n):
+    result = []
+    def build(current, open_count, close_count):
+        if len(current) == 2 * n:
+            result.append(current)    # used all n pairs
+            return
+        if open_count &lt; n:            # can open another
+            build(current + "(", open_count + 1, close_count)
+        if close_count &lt; open_count:  # can close an open one
+            build(current + ")", open_count, close_count + 1)
+    build("", 0, 0)
+    return result
+
+print(generate_parenthesis(3))</code></pre></div>
+
+    <h3 class="section" id="bt-wordsearch">Word Search (grid backtracking) <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Does <code class="inline">word</code> exist in the grid via 4-adjacent moves, each cell used once? <span style="color:var(--muted)">(LC 79)</span></div>
+    <p><strong>Strategy:</strong> DFS from every cell matching the first letter. The backtracking twist is the <strong>used-cell handling</strong>: temporarily mark the current cell (overwrite or visited-set), recurse to the 4 neighbors for the next letter, then <strong>restore it</strong> so other paths can use it. Return on the first success.</p>
+    <p><strong>Complexity:</strong> Time O(rows·cols·4^len) worst case · Space O(len) recursion.</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+#         word  = "ABCCED"   Output: true
+
+def exist(board, word)
+  rows, cols = board.length, board[0].length
+
+  dfs = lambda do |r, c, idx|
+    return true if idx == word.length          # matched every letter
+    return false if r &lt; 0 || c &lt; 0 || r &gt;= rows || c &gt;= cols
+    return false if board[r][c] != word[idx]   # letter mismatch
+
+    saved = board[r][c]
+    board[r][c] = "#"              # mark used so this path can't revisit it
+    found = dfs.call(r+1, c, idx+1) || dfs.call(r-1, c, idx+1) ||
+            dfs.call(r, c+1, idx+1) || dfs.call(r, c-1, idx+1)
+    board[r][c] = saved            # RESTORE for other paths (the backtrack)
+    found
+  end
+
+  rows.times do |r|
+    cols.times do |c|
+      return true if dfs.call(r, c, 0)
+    end
+  end
+  false
+end
+
+board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+p exist(board, "ABCCED")           # =&gt; true</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+#         word  = "ABCCED"   Output: True
+
+def exist(board, word):
+    rows, cols = len(board), len(board[0])
+
+    def dfs(r, c, idx):
+        if idx == len(word):                   # matched all letters
+            return True
+        if r &lt; 0 or c &lt; 0 or r &gt;= rows or c &gt;= cols:
+            return False
+        if board[r][c] != word[idx]:           # mismatch
+            return False
+
+        saved = board[r][c]
+        board[r][c] = "#"          # mark used
+        found = (dfs(r+1, c, idx+1) or dfs(r-1, c, idx+1) or
+                 dfs(r, c+1, idx+1) or dfs(r, c-1, idx+1))
+        board[r][c] = saved        # RESTORE (backtrack)
+        return found
+
+    for r in range(rows):
+        for c in range(cols):
+            if dfs(r, c, 0):
+                return True
+    return False
+
+board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+print(exist(board, "ABCCED"))      # -> True</code></pre></div>
+  </section>
+
+  <!-- ============ DYNAMIC PROGRAMMING ============ -->
+  <section class="tab" id="tab-dp" data-collapsible="true" data-toc='[
+    ["@group","How to derive DP"],
+    ["DP playbook","dp-playbook"],
+    ["@group","1-D DP"],
+    ["Climbing Stairs","dp-stairs"],
+    ["House Robber","dp-rob"],
+    ["Coin Change","dp-coin"],
+    ["Word Break","dp-wordbreak"],
+    ["@group","2-D DP"],
+    ["Longest Common Subsequence","dp-lcs"]
+  ]'>
+    <h2>Dynamic Programming <span class="sub">overlapping subproblems + optimal substructure</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>Signals:</strong> "number of ways," "min/max cost," "can you reach," "longest/shortest …" where a greedy choice isn't obviously safe and brute force recomputes the same subproblems. The score-maker is <strong>deriving the recurrence out loud</strong>, then choosing memoization (top-down) or tabulation (bottom-up).</p>
+    </div>
+
+    <h3 class="section" id="dp-playbook">DP playbook (say these 4 things)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Define the state:</strong> what does <code class="inline">dp[i]</code> (or <code class="inline">dp[i][j]</code>) <em>mean</em>? Be precise — half of DP is naming the state well.</li>
+        <li><strong>Recurrence:</strong> how does a state depend on smaller ones? ("To rob house i, I either skip it (<code class="inline">dp[i-1]</code>) or take it (<code class="inline">nums[i] + dp[i-2]</code>).")</li>
+        <li><strong>Base cases:</strong> smallest states you can fill directly.</li>
+        <li><strong>Order &amp; answer:</strong> fill from base toward the target; say which cell holds the answer. Then mention the space optimization (often only the last 1–2 rows matter).</li>
+      </ol>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Tip: write the <strong>top-down memo</strong> first (it mirrors the recurrence directly), then convert to bottom-up if asked. Both score; clarity wins.</p>
+    </div>
+
+    <h3 class="section" id="dp-stairs">Climbing Stairs <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> You can climb 1 or 2 steps at a time. How many distinct ways to reach step <code class="inline">n</code>? <span style="color:var(--muted)">(LC 70)</span></div>
+    <p><strong>Strategy:</strong> The "hello world" of DP. <code class="inline">ways(n) = ways(n-1) + ways(n-2)</code> — it's Fibonacci. Only the last two values matter, so keep two rolling variables → O(1) space.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  n = 5   Output: 8
+
+def climb_stairs(n)
+  return n if n &lt; 2
+  one_back, two_back = 1, 1         # ways to reach steps (i-1) and (i-2)
+  (2..n).each do
+    one_back, two_back = one_back + two_back, one_back   # roll forward
+  end
+  one_back
+end
+
+p climb_stairs(5)                  # =&gt; 8</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  n = 5   Output: 8
+
+def climb_stairs(n):
+    if n &lt; 2:
+        return n
+    one_back, two_back = 1, 1         # ways to reach (i-1) and (i-2)
+    for _ in range(2, n + 1):
+        one_back, two_back = one_back + two_back, one_back
+    return one_back
+
+print(climb_stairs(5))               # -> 8</code></pre></div>
+
+    <h3 class="section" id="dp-rob">House Robber <span class="pill brand">New</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Maximize the loot from houses in a row; you can't rob two adjacent houses. <span style="color:var(--muted)">(LC 198)</span></div>
+    <p><strong>Strategy:</strong> State <code class="inline">dp[i]</code> = best loot considering houses <code class="inline">0..i</code>. At house i you either <strong>skip</strong> it (<code class="inline">dp[i-1]</code>) or <strong>take</strong> it (<code class="inline">nums[i] + dp[i-2]</code>). Take the max. Only two previous values needed → O(1) space.</p>
+    <p><strong>Complexity:</strong> Time O(n) · Space O(1).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  nums = [2, 7, 9, 3, 1]   Output: 12  (2 + 9 + 1)
+
+def rob(nums)
+  prev2 = 0                        # best loot up to house i-2
+  prev1 = 0                        # best loot up to house i-1
+  nums.each do |amount|
+    # Take this house (amount + prev2) or skip it (prev1).
+    take = amount + prev2
+    prev2 = prev1
+    prev1 = [prev1, take].max
+  end
+  prev1
+end
+
+p rob([2, 7, 9, 3, 1])             # =&gt; 12</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  nums = [2, 7, 9, 3, 1]   Output: 12  (2 + 9 + 1)
+
+def rob(nums):
+    prev2 = 0                        # best up to house i-2
+    prev1 = 0                        # best up to house i-1
+    for amount in nums:
+        take = amount + prev2        # rob this house
+        prev2 = prev1
+        prev1 = max(prev1, take)     # better of skip vs take
+    return prev1
+
+print(rob([2, 7, 9, 3, 1]))          # -> 12</code></pre></div>
+
+    <h3 class="section" id="dp-coin">Coin Change <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Fewest coins to make <code class="inline">amount</code> from given denominations, or -1 if impossible. <span style="color:var(--muted)">(LC 322)</span></div>
+    <p><strong>Strategy:</strong> Bottom-up. <code class="inline">dp[a]</code> = fewest coins to make amount <code class="inline">a</code>. Initialize to "infinity," <code class="inline">dp[0] = 0</code>. For each amount, try every coin: <code class="inline">dp[a] = min(dp[a], dp[a - coin] + 1)</code>. (Greedy fails for arbitrary denominations — say why: e.g. coins [1,3,4], amount 6.)</p>
+    <p><strong>Complexity:</strong> Time O(amount · coins) · Space O(amount).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  coins = [1, 2, 5], amount = 11   Output: 3  (5 + 5 + 1)
+
+def coin_change(coins, amount)
+  big = amount + 1                 # sentinel "infinity" (can't exceed amount coins)
+  dp = Array.new(amount + 1, big)
+  dp[0] = 0                        # zero coins make amount 0
+  (1..amount).each do |a|
+    coins.each do |coin|
+      # If this coin fits, maybe it improves the count for amount a.
+      dp[a] = [dp[a], dp[a - coin] + 1].min if coin &lt;= a
+    end
+  end
+  dp[amount] == big ? -1 : dp[amount]
+end
+
+p coin_change([1, 2, 5], 11)       # =&gt; 3
+p coin_change([2], 3)              # =&gt; -1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  coins = [1, 2, 5], amount = 11   Output: 3  (5 + 5 + 1)
+
+def coin_change(coins, amount):
+    big = amount + 1                 # "infinity" sentinel
+    dp = [big] * (amount + 1)
+    dp[0] = 0                        # 0 coins make amount 0
+    for a in range(1, amount + 1):
+        for coin in coins:
+            if coin &lt;= a:
+                dp[a] = min(dp[a], dp[a - coin] + 1)
+    return -1 if dp[amount] == big else dp[amount]
+
+print(coin_change([1, 2, 5], 11))    # -> 3
+print(coin_change([2], 3))           # -> -1</code></pre></div>
+
+    <h3 class="section" id="dp-wordbreak">Word Break <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Can <code class="inline">s</code> be segmented into a space-separated sequence of dictionary words? <span style="color:var(--muted)">(LC 139)</span></div>
+    <p><strong>Strategy:</strong> <code class="inline">dp[i]</code> = "can the prefix <code class="inline">s[0...i]</code> be fully segmented?" <code class="inline">dp[0] = true</code> (empty). For each end <code class="inline">i</code>, look for a split <code class="inline">j</code> where <code class="inline">dp[j]</code> is true and <code class="inline">s[j...i]</code> is a dictionary word. This is the polynomial existence base case behind T9 / Word Break II.</p>
+    <p><strong>Complexity:</strong> Time O(n²·k) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  s = "leetcode", words = ["leet","code"]   Output: true
+
+require 'set'
+def word_break(s, word_dict)
+  words = word_dict.to_set
+  n = s.length
+  dp = Array.new(n + 1, false)
+  dp[0] = true                     # empty prefix is trivially segmentable
+  (1..n).each do |i|
+    (0...i).each do |j|
+      # If s[0...j] is segmentable AND s[j...i] is a word, so is s[0...i].
+      if dp[j] &amp;&amp; words.include?(s[j...i])
+        dp[i] = true
+        break                      # one valid split is enough
+      end
+    end
+  end
+  dp[n]
+end
+
+p word_break("leetcode", ["leet", "code"])   # =&gt; true
+p word_break("catsand", ["cats", "dog"])      # =&gt; false</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  s = "leetcode", words = ["leet","code"]   Output: True
+
+def word_break(s, word_dict):
+    words = set(word_dict)
+    n = len(s)
+    dp = [False] * (n + 1)
+    dp[0] = True                     # empty prefix
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in words:
+                dp[i] = True
+                break                # one split suffices
+    return dp[n]
+
+print(word_break("leetcode", ["leet", "code"]))   # -> True
+print(word_break("catsand", ["cats", "dog"]))      # -> False</code></pre></div>
+
+    <h3 class="section" id="dp-lcs">Longest Common Subsequence <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Length of the longest subsequence common to both strings (chars in order, not necessarily contiguous). <span style="color:var(--muted)">(LC 1143)</span></div>
+    <p><strong>Strategy:</strong> The canonical <strong>2-D DP</strong>. <code class="inline">dp[i][j]</code> = LCS length of <code class="inline">a[0...i]</code> and <code class="inline">b[0...j]</code>. If the last chars match, <code class="inline">dp[i][j] = dp[i-1][j-1] + 1</code>; else <code class="inline">max(dp[i-1][j], dp[i][j-1])</code>. Row/column 0 are zero (empty string). This grid pattern underlies edit distance, too.</p>
+    <p><strong>Complexity:</strong> Time O(m·n) · Space O(m·n) (reducible to O(min) with two rows).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Input:  a = "abcde", b = "ace"   Output: 3  ("ace")
+
+def longest_common_subsequence(a, b)
+  m, n = a.length, b.length
+  # dp[i][j] = LCS of a[0...i] and b[0...j]; extra row/col of zeros for empties.
+  dp = Array.new(m + 1) { Array.new(n + 1, 0) }
+  (1..m).each do |i|
+    (1..n).each do |j|
+      if a[i - 1] == b[j - 1]
+        dp[i][j] = dp[i - 1][j - 1] + 1        # chars match: extend diagonal
+      else
+        dp[i][j] = [dp[i - 1][j], dp[i][j - 1]].max  # drop one char, take best
+      end
+    end
+  end
+  dp[m][n]
+end
+
+p longest_common_subsequence("abcde", "ace")   # =&gt; 3</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python"># Input:  a = "abcde", b = "ace"   Output: 3  ("ace")
+
+def longest_common_subsequence(a, b):
+    m, n = len(a), len(b)
+    # dp[i][j] = LCS of a[:i] and b[:j]; row/col 0 are zeros (empty string).
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if a[i - 1] == b[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1          # match: diagonal + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])  # best of dropping one
+    return dp[m][n]
+
+print(longest_common_subsequence("abcde", "ace"))   # -> 3</code></pre></div>
+  </section>
+
+  <!-- ============ DESIGN / OOD ============ -->
+  <section class="tab" id="tab-design" data-collapsible="true" data-toc='[
+    ["@group","Approach"],
+    ["OOD interview approach","ood-approach"],
+    ["@group","Classics"],
+    ["LRU Cache","ood-lru"],
+    ["Logger Rate Limiter","ood-logger"],
+    ["Browser History","ood-browser"],
+    ["Time-Based Key-Value Store","ood-timekv"]
+  ]'>
+    <h2>Design / OOD <span class="sub">"design a class that supports these operations"</span></h2>
+    <div class="card brand">
+      <p style="margin:0"><strong>The whole game:</strong> pick the data structure(s) that make <em>each required operation</em> hit its target complexity, then keep them in sync. Most "design X" problems are really "combine a hash map with one other structure (list / heap / doubly-linked list / sorted array)."</p>
+    </div>
+
+    <h3 class="section" id="ood-approach">OOD interview approach</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>List the operations</strong> and the target complexity for each ("get and put should both be O(1)").</li>
+        <li><strong>Clarify:</strong> capacity/eviction policy? thread-safe? duplicate keys? what to return on miss?</li>
+        <li><strong>Pick structures per op,</strong> then state the invariant that keeps them consistent.</li>
+        <li><strong>Code the skeleton</strong> (constructor + each method), then walk a small sequence of calls.</li>
+        <li><strong>Mention extensions:</strong> concurrency (locks), persistence, memory bounds — shows seniority.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="ood-lru">LRU Cache <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Fixed-capacity cache with O(1) <code class="inline">get</code> and <code class="inline">put</code>; evict the least-recently-used key when full. <span style="color:var(--muted)">(LC 146)</span></div>
+    <p><strong>Strategy:</strong> Need O(1) lookup <em>and</em> O(1) "move to most-recent" / "evict oldest." Canonical answer: <strong>hash map + doubly-linked list</strong>. But both languages give you an <strong>insertion-ordered hash</strong> (Ruby <code class="inline">Hash</code>, Python <code class="inline">OrderedDict</code>), so deleting and re-inserting a key makes it "most recent" in O(1) — much cleaner to code under pressure. Mention the DLL version exists.</p>
+    <p><strong>Complexity:</strong> get/put O(1) · Space O(capacity).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby"># Ruby Hash preserves insertion order, so the FIRST key is the oldest.
+
+class LRUCache
+  def initialize(capacity)
+    @capacity = capacity
+    @store = {}                    # key =&gt; value, ordered by recency (oldest first)
+  end
+
+  def get(key)
+    return -1 unless @store.key?(key)
+    value = @store.delete(key)     # remove...
+    @store[key] = value            # ...and re-insert =&gt; now most-recent
+    value
+  end
+
+  def put(key, value)
+    @store.delete(key) if @store.key?(key)   # refresh position if present
+    @store[key] = value
+    if @store.size &gt; @capacity
+      @store.delete(@store.keys.first)        # evict the oldest (front)
+    end
+  end
+end
+
+c = LRUCache.new(2)
+c.put(1, 1); c.put(2, 2)
+p c.get(1)        # =&gt; 1   (1 is now most-recent)
+c.put(3, 3)       # evicts key 2 (least recently used)
+p c.get(2)        # =&gt; -1</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.store = OrderedDict()     # ordered by recency (oldest first)
+
+    def get(self, key):
+        if key not in self.store:
+            return -1
+        self.store.move_to_end(key)    # mark most-recent in O(1)
+        return self.store[key]
+
+    def put(self, key, value):
+        if key in self.store:
+            self.store.move_to_end(key)
+        self.store[key] = value
+        if len(self.store) &gt; self.capacity:
+            self.store.popitem(last=False)   # evict oldest (front)
+
+c = LRUCache(2)
+c.put(1, 1); c.put(2, 2)
+print(c.get(1))   # -> 1
+c.put(3, 3)       # evicts key 2
+print(c.get(2))   # -> -1</code></pre></div>
+
+    <h3 class="section" id="ood-logger">Logger Rate Limiter <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> <code class="inline">should_print(timestamp, message)</code> returns true only if that message hasn't printed in the last 10 seconds. <span style="color:var(--muted)">(LC 359)</span></div>
+    <p><strong>Strategy:</strong> Hash of <code class="inline">message =&gt; next_allowed_timestamp</code>. Print iff <code class="inline">timestamp &gt;= next_allowed[message]</code>; when you print, set the next-allowed to <code class="inline">timestamp + 10</code>. O(1) per call. (If memory must be bounded, sweep expired entries or use a queue + set — mention it.)</p>
+    <p><strong>Complexity:</strong> O(1) per call · Space O(distinct messages).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class Logger
+  def initialize
+    @next_allowed = {}             # message =&gt; earliest timestamp it may print
+  end
+
+  def should_print(timestamp, message)
+    if !@next_allowed.key?(message) || timestamp &gt;= @next_allowed[message]
+      @next_allowed[message] = timestamp + 10
+      true
+    else
+      false
+    end
+  end
+end
+
+log = Logger.new
+p log.should_print(1, "foo")    # =&gt; true
+p log.should_print(2, "foo")    # =&gt; false (within 10s)
+p log.should_print(11, "foo")   # =&gt; true</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">class Logger:
+    def __init__(self):
+        self.next_allowed = {}        # message -> earliest allowed timestamp
+
+    def should_print(self, timestamp, message):
+        if message not in self.next_allowed or timestamp &gt;= self.next_allowed[message]:
+            self.next_allowed[message] = timestamp + 10
+            return True
+        return False
+
+log = Logger()
+print(log.should_print(1, "foo"))    # -> True
+print(log.should_print(2, "foo"))    # -> False
+print(log.should_print(11, "foo"))   # -> True</code></pre></div>
+
+    <h3 class="section" id="ood-browser">Browser History <span class="pill good">✓ Reviewed</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> Support <code class="inline">visit(url)</code>, <code class="inline">back(steps)</code>, <code class="inline">forward(steps)</code>. Visiting clears all forward history. <span style="color:var(--muted)">(LC 1472)</span></div>
+    <p><strong>Strategy:</strong> An array as the history plus a <code class="inline">current</code> index is the cleanest model. <code class="inline">visit</code> truncates everything after <code class="inline">current</code> then appends. <code class="inline">back</code>/<code class="inline">forward</code> just clamp the index by <code class="inline">steps</code> within <code class="inline">[0, size-1]</code>. (Two stacks also works; the index version is less error-prone.)</p>
+    <p><strong>Complexity:</strong> visit O(1) amortized · back/forward O(1) · Space O(n).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class BrowserHistory
+  def initialize(homepage)
+    @history = [homepage]
+    @current = 0                   # index of the page we're on
+  end
+
+  def visit(url)
+    @history = @history[0..@current]   # drop forward history
+    @history &lt;&lt; url
+    @current = @history.length - 1
+  end
+
+  def back(steps)
+    @current = [@current - steps, 0].max         # clamp at the start
+    @history[@current]
+  end
+
+  def forward(steps)
+    @current = [@current + steps, @history.length - 1].min  # clamp at the end
+    @history[@current]
+  end
+end
+
+b = BrowserHistory.new("a.com")
+b.visit("b.com"); b.visit("c.com")
+p b.back(1)       # =&gt; "b.com"
+p b.forward(1)    # =&gt; "c.com"
+b.visit("d.com")  # clears forward
+p b.forward(1)    # =&gt; "d.com" (nowhere forward to go)</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">class BrowserHistory:
+    def __init__(self, homepage):
+        self.history = [homepage]
+        self.current = 0              # index of current page
+
+    def visit(self, url):
+        del self.history[self.current + 1:]   # drop forward history
+        self.history.append(url)
+        self.current = len(self.history) - 1
+
+    def back(self, steps):
+        self.current = max(self.current - steps, 0)
+        return self.history[self.current]
+
+    def forward(self, steps):
+        self.current = min(self.current + steps, len(self.history) - 1)
+        return self.history[self.current]
+
+b = BrowserHistory("a.com")
+b.visit("b.com"); b.visit("c.com")
+print(b.back(1))      # -> "b.com"
+print(b.forward(1))   # -> "c.com"
+b.visit("d.com")
+print(b.forward(1))   # -> "d.com"</code></pre></div>
+
+    <h3 class="section" id="ood-timekv">Time-Based Key-Value Store <span class="pill warn">New skill</span></h3>
+    <div class="card accent"><strong>Prompt:</strong> <code class="inline">set(key, value, timestamp)</code> and <code class="inline">get(key, timestamp)</code> returning the value with the <em>largest</em> stored timestamp ≤ the query (or "" if none). Timestamps for a key are strictly increasing. <span style="color:var(--muted)">(LC 981)</span></div>
+    <p><strong>Strategy:</strong> Great cross-pattern problem: hash of <code class="inline">key =&gt; list of [timestamp, value]</code> (already sorted because sets arrive increasing), then a <strong>binary search</strong> (upper-bound) on <code class="inline">get</code> to find the rightmost entry with timestamp ≤ query. Ties together hashing + binary search.</p>
+    <p><strong>Complexity:</strong> set O(1) · get O(log n) · Space O(total entries).</p>
+    <p class="lang-label ruby">Ruby</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-ruby">class TimeMap
+  def initialize
+    # key =&gt; array of [timestamp, value], appended in increasing timestamp order
+    @store = Hash.new { |h, k| h[k] = [] }
+  end
+
+  def set(key, value, timestamp)
+    @store[key] &lt;&lt; [timestamp, value]
+  end
+
+  def get(key, timestamp)
+    entries = @store[key]
+    return "" if entries.empty?
+    # Binary search for the rightmost entry with ts &lt;= timestamp.
+    lo, hi = 0, entries.length - 1
+    result = ""
+    while lo &lt;= hi
+      mid = lo + (hi - lo) / 2
+      if entries[mid][0] &lt;= timestamp
+        result = entries[mid][1]   # candidate; look for a later valid one
+        lo = mid + 1
+      else
+        hi = mid - 1               # too new; search earlier
+      end
+    end
+    result
+  end
+end
+
+tm = TimeMap.new
+tm.set("foo", "bar", 1)
+p tm.get("foo", 1)     # =&gt; "bar"
+p tm.get("foo", 3)     # =&gt; "bar"  (latest &lt;= 3)
+tm.set("foo", "baz", 4)
+p tm.get("foo", 4)     # =&gt; "baz"
+p tm.get("foo", 0)     # =&gt; ""    (nothing &lt;= 0)</code></pre></div>
+    <p class="lang-label python">Python</p>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-python">from collections import defaultdict
+import bisect
+
+class TimeMap:
+    def __init__(self):
+        self.store = defaultdict(list)   # key -> [(timestamp, value), ...]
+
+    def set(self, key, value, timestamp):
+        self.store[key].append((timestamp, value))   # increasing order
+
+    def get(self, key, timestamp):
+        entries = self.store[key]
+        # Find insertion point of (timestamp, "~"): everything left is &lt;= timestamp.
+        i = bisect.bisect_right(entries, (timestamp, chr(127)))
+        return entries[i - 1][1] if i &gt; 0 else ""
+
+tm = TimeMap()
+tm.set("foo", "bar", 1)
+print(tm.get("foo", 1))    # -> "bar"
+print(tm.get("foo", 3))    # -> "bar"
+tm.set("foo", "baz", 4)
+print(tm.get("foo", 4))    # -> "baz"
+print(tm.get("foo", 0))    # -> ""</code></pre></div>
+  </section>
+
+  <!-- TABS-END -->
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+  const tocControls = document.getElementById("toc-controls");
+  const tocFilter = document.getElementById("toc-filter");
+  const expandAllBtn = document.getElementById("expand-all");
+  const collapseAllBtn = document.getElementById("collapse-all");
+
+  function wrapInCollapsibles(section) {
+    const headings = Array.from(section.querySelectorAll("h3.section"));
+    headings.forEach((h3) => {
+      if (h3.closest("details.problem")) return;
+      const elements = [];
+      let next = h3.nextElementSibling;
+      while (next && !(next.tagName === "H3" && next.classList.contains("section"))) {
+        elements.push(next);
+        next = next.nextElementSibling;
+      }
+      const details = document.createElement("details");
+      details.className = "problem";
+      if (h3.id) { details.id = h3.id; h3.removeAttribute("id"); }
+      const summary = document.createElement("summary");
+      summary.innerHTML = h3.innerHTML;
+      details.appendChild(summary);
+      h3.parentNode.insertBefore(details, h3);
+      h3.remove();
+      elements.forEach((el) => details.appendChild(el));
+    });
+  }
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      if (label === "@group") {
+        const groupLi = document.createElement("li");
+        groupLi.className = "toc-group";
+        groupLi.textContent = id;
+        toc.appendChild(groupLi);
+        return;
+      }
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.innerHTML = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) {
+          if (target.tagName === "DETAILS") target.open = true;
+          const parentDetails = target.closest("details");
+          if (parentDetails) parentDetails.open = true;
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll("aside li a").forEach((x) => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach((s) => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) {
+      const collapsible = section.dataset.collapsible === "true";
+      if (collapsible) wrapInCollapsibles(section);
+      buildTOC(section);
+      if (collapsible) {
+        tocControls.style.display = "flex";
+        tocFilter.style.display = "block";
+        tocFilter.value = "";
+        filterTOC("");
+      } else {
+        tocControls.style.display = "none";
+        tocFilter.style.display = "none";
+      }
+    }
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("study-tab", tabId); } catch (e) {}
+  }
+
+  function setAllOpen(open) {
+    const activeSection = document.querySelector("section.tab.active");
+    if (!activeSection) return;
+    activeSection.querySelectorAll("details.problem").forEach((d) => { d.open = open; });
+  }
+  expandAllBtn.addEventListener("click", () => setAllOpen(true));
+  collapseAllBtn.addEventListener("click", () => setAllOpen(false));
+
+  function filterTOC(query) {
+    const q = query.trim().toLowerCase();
+    const lis = Array.from(toc.querySelectorAll("li"));
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) return;
+      const text = li.textContent.toLowerCase();
+      const hidden = q !== "" && !text.includes(q);
+      li.classList.toggle("toc-hidden", hidden);
+    });
+    let currentGroup = null;
+    let currentGroupHasVisible = false;
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) {
+        if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+        currentGroup = li;
+        currentGroupHasVisible = false;
+      } else if (!li.classList.contains("toc-hidden")) {
+        currentGroupHasVisible = true;
+      }
+    });
+    if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+  }
+  tocFilter.addEventListener("input", (e) => filterTOC(e.target.value));
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "strategy";
+  try {
+    const saved = localStorage.getItem("study-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1200);
+      } catch (e) { btn.textContent = "Failed"; }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"strategy","2":"arrays","3":"twoptr","4":"binsearch","5":"stack","6":"linked","7":"trees","8":"heaps","9":"graphs","0":"backtrack","-":"dp","=":"design" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+
+  // Re-run Prism after dynamic wrapping (collapsibles don't move code, but safe)
+  if (window.Prism) Prism.highlightAll();
+</script>
+
+</body>
+</html>

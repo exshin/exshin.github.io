@@ -203,9 +203,53 @@
     aside { position: static; max-height: none; }
     .grid-2, .grid-3, .grid-4, .dual { grid-template-columns: 1fr; }
   }
+  /* === password gate (soft, client-side — matches /system_design) === */
+  #gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  #gate.unlocked { display: none; }
+  .gate-box { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 28px 26px; width: 100%; max-width: 340px; text-align: center; }
+  .gate-box h1 { margin: 0 0 4px; font-size: 16px; color: var(--accent); }
+  .gate-box p { margin: 0 0 16px; font-size: 13px; color: var(--muted); }
+  .gate-box input { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); margin-bottom: 10px; font-family: inherit; }
+  .gate-box input:focus { outline: none; border-color: var(--accent); }
+  .gate-box button { width: 100%; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; border-radius: 6px; background: var(--accent); color: #fff; font-family: inherit; }
+  .gate-box button:hover { background: var(--scribe-dark); }
+  .gate-error { color: var(--bad) !important; margin: 10px 0 0 !important; min-height: 16px; }
 </style>
 </head>
 <body>
+
+<div id="gate">
+  <form class="gate-box" id="gate-form">
+    <h1>Scribe · Interview Prep</h1>
+    <p>Enter password to continue.</p>
+    <input type="password" id="gate-input" placeholder="Password" autocomplete="off" autofocus>
+    <button type="submit">View</button>
+    <p class="gate-error" id="gate-error"></p>
+  </form>
+</div>
+<script>
+  (function () {
+    var PASSWORD = '9999';            // same as /system_design — change here to rotate
+    var KEY = 'scribe-prep-unlocked';
+    var gate = document.getElementById('gate');
+    var form = document.getElementById('gate-form');
+    var input = document.getElementById('gate-input');
+    var err = document.getElementById('gate-error');
+    function unlock() { gate.classList.add('unlocked'); }
+    try { if (localStorage.getItem(KEY) === '1') unlock(); } catch (e) {}
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (input.value === PASSWORD) {
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+        unlock();
+      } else {
+        err.textContent = 'Incorrect password.';
+        input.value = '';
+        input.focus();
+      }
+    });
+  })();
+</script>
 
 <header>
   <h1>Scribe · Backend Eng <span class="badge">System Design · Billing</span></h1>
@@ -1722,6 +1766,7 @@ end
     ["Secondary: Zuora advocacy","pr-zuora"],
     ["Reusable lines","pr-lines"],
     ["Likely questions","pr-qs"],
+    ["★ Scripted answers","pr-answers"],
     ["Product sense: Scribe billing","pr-sense"],
     ["Questions to ask the PM","pr-ask"]
   ]'>
@@ -1777,6 +1822,81 @@ end
       <tr><td>How do you balance velocity vs quality / tech debt</td><td>"Reversible steps + observability; money raises the bar on quality"</td></tr>
       <tr><td>What would you improve about Scribe?</td><td>See product-sense below — be humble, ask before asserting</td></tr>
     </table>
+
+    <h3 class="section" id="pr-answers">★ Scripted answers to common questions</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px">Full answers drawn from your real stories. Each is ~60–90 seconds out loud — don't memorize word-for-word, internalize the <strong>shape</strong> and the <strong>one-line signal</strong>. Click a question to expand. The <span style="color:var(--muted)">→ tag</span> shows which story it draws on.</p></div>
+
+    <details>
+      <summary><strong>"Tell me about a time you worked closely with a PM / cross-functionally."</strong> <span style="color:var(--muted);font-size:12px">→ SF–Billing–Zuora</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"The clearest example is the integration I owned connecting Salesforce, our Billing app, and Zuora — the quote-to-cash backbone. It ran bidirectionally: closed Salesforce deals provisioned subscriptions in Zuora, invoice and payment status flowed back to Salesforce, and amendments and renewals moved through it too. What made it a real collaboration rather than ticket-taking is that the spec was always just the happy path. I worked with the PM to define the actual rules — what happens when Salesforce and Zuora disagree on a record, how we map Salesforce's product catalog onto Zuora's rate plans, how retries behave when a sync fails halfway. I treated my job as surfacing those cases before they became customer-facing billing errors. We ended up with a partnership where the PM trusted me to flag billing risk early, and we caught issues in design instead of in someone's invoice."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> cross-functional ownership, co-defining requirements, surfacing edge cases, earning a PM's trust.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"Tell me about a time you disagreed with product or pushed back on scope/priority."</strong> <span style="color:var(--muted);font-size:12px">→ SF integration (speed vs integrity)</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"On that same integration, there was pressure to ship the sync fast — Sales wanted it live to unblock deals. I pushed back on the sequencing. I argued we had to land the integrity pieces first: idempotency so a retry couldn't double-provision or double-charge, and clear conflict resolution for when the two systems disagreed — before the nice-to-haves. My case wasn't 'this is hard'; I made it in each stakeholder's currency: a fast-but-wrong billing sync creates silent revenue and invoice errors that are far more expensive to unwind — in manual Finance corrections and customer trust — than launching a little later. We sequenced integrity-first, and once that was the plan I committed to it fully."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> push back with data/impact not ego, speak in stakeholder currency, disagree-and-commit.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"How do you handle ambiguous or changing requirements?"</strong> <span style="color:var(--muted);font-size:12px">→ principle + SF integration</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"Billing taught me to assume the spec is the happy path and that my real job is the other 80% — proration, failures, refunds, currency, what happens when two systems disagree. So when a requirement is fuzzy, I don't wait for a perfect spec — I make the ambiguity concrete by walking the edge cases out loud with the PM, usually with specific examples. On the Salesforce–Zuora work that meant asking, early, things like 'when a deal is amended mid-term, which system is the source of truth, and how do we prorate?' — in planning, where it's cheap to answer, instead of in production. I'd rather ask the annoying edge-case question now than ship a billing error."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> owns ambiguity, drives clarity proactively, the "happy path is 20%" instinct.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"Tell me about a time you advocated for the customer."</strong> <span style="color:var(--muted);font-size:12px">→ Zuora silent-200 bug</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"I found a bug on our Talk payments that was silently double-charging customers — Zuora would occasionally return a success response while actually failing to store, then its own retry would succeed, so we'd record two charges. It wasn't on anyone's roadmap; engineers were just manually cleaning up the data a few times a week. I built the case to prioritize it using the support tickets and the eng-hours of manual cleanup, got it scheduled, and fixed the whole class — guardrails against that exact condition plus logging so anything similar would surface fast — instead of patching the one instance. The tickets for it stopped. The technical fix was the easy part; the advocacy part was translating a quiet bug into trust-and-cost terms a stakeholder would act on."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> customer obsession, influence without authority, fix-the-class-not-the-instance.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"How do you balance shipping fast vs doing it right?"</strong> <span style="color:var(--muted);font-size:12px">→ Wordblok + SF integration</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"It's situational, and I try to be explicit about which mode I'm in. When the cost of being wrong is low, I bias hard to shipping — I built and launched a game to the App Store in a week by using the deadline itself as the design tool, cutting everything non-essential. But when money or trust is on the line, the bar moves. On the billing integration I argued to slow down and get integrity right first, because a silent billing error is the expensive kind of mistake — you don't see it until it's in a customer's invoice. So: ship fast by default, but name the cases where correctness has to win, and make that tradeoff out loud with the team instead of deciding it silently."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> judgment both directions, calibrates to risk, makes tradeoffs explicit.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"Tell me about managing competing stakeholders."</strong> <span style="color:var(--muted);font-size:12px">→ SF integration (Sales / Finance / Product)</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"The integration sat between three groups who genuinely wanted different things: Sales and RevOps wanted speed and flexible deals, Finance wanted invoice and revenue correctness, and the PM owned the process and timeline. All three were legitimate. My approach was to translate between them — to argue each decision in the currency of whoever I was talking to: deal velocity for Sales, revenue correctness for Finance, risk and timeline for the PM. The hardest call was the speed-versus-integrity one: Sales wanted it live fast, Finance needed it correct. I sold the integrity-first sequence to Sales by showing what a silent billing error actually costs — so it stopped being 'engineering wants more time' and became 'this protects the deals you're closing.' The win was all three teams trusting the same pipeline."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> stakeholder empathy, translates across functions, builds shared trust.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"How do you communicate technical tradeoffs to non-technical stakeholders?"</strong> <span style="color:var(--muted);font-size:12px">→ principle + Zuora bug</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"I translate into their outcomes, not my mechanics. With Finance I don't talk about idempotency keys; I say 'a retry won't create a duplicate invoice.' With Sales I talk about what unblocks a close. With a PM I frame it as risk and timeline — same underlying decision, three translations. Concretely, when I pushed to fix the duplicate-charge bug, I didn't lead with the Zuora response behavior — I led with 'customers are being charged twice and we're losing hours a week cleaning it up.' That's the version that gets a yes."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> audience-aware communication, outcome-framing over jargon.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"Tell me about a mistake, or a time you were wrong / would do it differently."</strong> <span style="color:var(--muted);font-size:12px">→ DDD pushback</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"I pushed back on my architecture group's mandate to use Domain-Driven Design on a small payments project I owned — I thought it was overkill for the scope and would make onboarding harder for the next engineer. I made my case, the org-consistency argument won, so I committed, and I mitigated my concern by writing heavy docs and READMEs so the next person wouldn't have to reverse-engineer it. In retrospect I was both right and wrong: right that the ceremony added cost at that scale, but wrong about the bigger picture — the shared vocabulary genuinely paid off when other teams' payments work touched my service. What I carry forward is that I steelman the network-effects of consistency much harder before pushing back now, and when I lose a call I focus on the mitigation that makes the chosen path work — those docs outlived several engineer transitions."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> self-awareness, intellectual honesty (rare "both right and wrong" frame), disagree-and-commit.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary><strong>"How do you like to work with PMs — what makes a good eng-PM relationship?"</strong> <span style="color:var(--muted);font-size:12px">→ philosophy</span></summary>
+      <div class="card" style="margin-top:8px">
+        <p style="margin:0 0 8px;font-size:13px">"Trust built on me surfacing problems early, not at the end. The best version is the PM trusting me to flag risk while it's still cheap — like the billing edge cases on the Salesforce integration — and me trusting the PM to make the call once I've laid the tradeoffs out honestly. I want to be pulled in early, when requirements are still fuzzy, because that's when an engineer can change the shape of the thing cheaply rather than just implementing a fixed spec. And I commit hard once a decision's made, even one I argued against."</p>
+        <p style="margin:0;font-size:12px;color:var(--muted)"><strong>Signals:</strong> wants early involvement, surfaces risk proactively, disagree-and-commit.</p>
+      </div>
+    </details>
 
     <h3 class="section" id="pr-sense">Product sense: how you'd think about Scribe billing</h3>
     <p style="font-size:13px">Scribe stacks <strong>three pricing models</strong>: seat-based subscriptions with live proration, per-org usage pricing on Optimize, and enterprise contracts. That's exactly where billing gets interesting. Frame your answer as <em>"how I'd get my bearings,"</em> not "here's what's wrong":</p>

@@ -40,8 +40,8 @@ jobs:
           cp src/client/public/bundle.js _site/public/
           cp -r src/client/css/. _site/css/
           cp -r src/client/img/. _site/img/
-          mkdir -p _site/scribe
-          cp interviewing_2026/scribe/index.html _site/scribe/
+          # Standalone static pages served verbatim at the site root (e.g. /scribe)
+          if [ -d static ]; then cp -r static/. _site/; fi
 
       - uses: actions/configure-pages@v4
 

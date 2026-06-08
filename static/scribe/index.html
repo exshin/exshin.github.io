@@ -1938,7 +1938,16 @@ end
     ["Why Scribe (3 pillars)","ex-why"],
     ["Next ~6 years","ex-six"],
     ["Other likely questions","ex-qs"],
-    ["Questions to ask Gautam","ex-ask"]
+    ["@group","QUESTIONS TO ASK THE VP"],
+    ["Top picks &amp; how to use","ex-ask"],
+    ["Eng strategy &amp; billing","ex-ask-strategy"],
+    ["The role &amp; team","ex-ask-role"],
+    ["Scaling post-Series C","ex-ask-scale"],
+    ["Culture &amp; decisions","ex-ask-culture"],
+    ["Growth &amp; seniority","ex-ask-growth"],
+    ["Business &amp; the AI bet","ex-ask-biz"],
+    ["About Gautam","ex-ask-vp"],
+    ["For Rishabh (HM)","ex-ask-hm"]
   ]'>
     <h2>Executive <span class="sub">★ 45 min with Gautam, VP Engineering</span></h2>
 
@@ -1969,13 +1978,80 @@ end
       <tr><td>What does "raising the bar" mean to you?</td><td>Fixing the class not the instance; observability so silent failures surface.</td></tr>
     </table>
 
-    <h3 class="section" id="ex-ask">Questions to ask Gautam (VP Eng) — and Rishabh (HM)</h3>
+    <h3 class="section" id="ex-ask">Questions to ask the VP (Gautam) <span class="sub">a bank to pull from</span></h3>
+    <div class="card accent"><p style="margin:0;font-size:13px">Pick <strong>3–4</strong> based on how the conversation flows — don't interrogate. Asking sharp, strategic questions <em>is itself a signal</em>: it shows you think at the VP's altitude and that you're evaluating Scribe back, which strong candidates always do. For a VP, lead with <strong>strategy / billing-platform</strong> questions over logistics.</p></div>
+    <div class="card good"><p style="margin:0 0 4px;font-size:13px;font-weight:600">★ If you only ask three:</p>
+    <ul class="tight" style="margin:0">
+      <li>"Given the three pricing models — seat-based with proration, usage on Optimize, enterprise contracts — how do you see the billing platform evolving over the next 1–2 years?"</li>
+      <li>"You just raised $75M and revenue more than doubled — what breaks first at the next 10× if you don't get ahead of it?"</li>
+      <li>"What separates a good senior engineer from a great one on your team?"</li>
+    </ul></div>
+
+    <h4 id="ex-ask-strategy">Engineering strategy &amp; the billing platform</h4>
     <ul class="tight">
-      <li>"How do you think about billing as a system over the next 1–2 years, given the three pricing models converging?"</li>
-      <li>"What's the biggest engineering scaling challenge post-Series C as the team doubles?"</li>
-      <li>"What separates a good senior engineer from a great one on this team?"</li>
-      <li>"What does raising the bar look like on the billing team specifically?"</li>
-      <li><strong>For Rishabh (HM):</strong> "What would success in this role look like at 6 and 12 months?" · "What's the team's biggest priority right now?"</li>
+      <li>"Given the three pricing models — seat-based with live proration, per-org usage on Optimize, and enterprise contracts — how do you see the billing platform evolving over the next 1–2 years?"</li>
+      <li>"Where does billing live in the architecture today — a service, a domain inside the Django monolith, heading toward its own platform?"</li>
+      <li>"What's the split between your internal billing/ledger and Stripe — how much logic lives where, and is that balance shifting?"</li>
+      <li>"Where's the most technical risk or debt in billing right now that you'd want this hire helping with?"</li>
+      <li>"As Optimize pushes toward consumption pricing, how big a lift is usage-based billing on the roadmap?"</li>
+    </ul>
+
+    <h4 id="ex-ask-role">The role, team &amp; impact</h4>
+    <ul class="tight">
+      <li>"What does the billing team own end-to-end, and where are the seams with other teams?"</li>
+      <li>"What's the most important problem you'd want this person driving in the first six months?"</li>
+      <li>"Is this role more greenfield build-out, or hardening and scaling what already exists?"</li>
+      <li>"A year from now, what would make you thrilled you made this hire?"</li>
+      <li>"How big is the billing team today, and how do you see it growing as headcount doubles?"</li>
+    </ul>
+
+    <h4 id="ex-ask-scale">Scaling post-Series C</h4>
+    <ul class="tight">
+      <li>"You just raised $75M and revenue more than doubled — what breaks first at the next 10× if you don't get ahead of it?"</li>
+      <li>"What's the biggest scaling challenge as the eng org roughly doubles — systems, process, or people?"</li>
+      <li>"How do you preserve velocity and code quality past the size where everyone knows the whole system?"</li>
+      <li>"What's your philosophy on tech debt vs feature velocity at this stage?"</li>
+    </ul>
+
+    <h4 id="ex-ask-culture">Engineering culture &amp; how decisions get made</h4>
+    <ul class="tight">
+      <li>"How do engineering and product partner here — how early is eng pulled into product decisions?"</li>
+      <li>"How are technical decisions made — owner-driven, RFCs, consensus, an architecture group?"</li>
+      <li>"How much autonomy does a senior engineer have over the 'how' once the 'what' is set?"</li>
+      <li>"What does 'raise the bar' actually look like day-to-day on this team?"</li>
+      <li>"What behaviors get someone promoted here versus just kept around?"</li>
+    </ul>
+
+    <h4 id="ex-ask-growth">Growth &amp; what "great" looks like</h4>
+    <ul class="tight">
+      <li>"What separates a good senior engineer from a great one in your eyes?"</li>
+      <li>"What's the path from senior to staff or tech-lead here, and what does that arc look like in practice?"</li>
+      <li>"How do you personally develop the senior engineers on your team?"</li>
+      <li>"Your strongest engineers — what did they have in common when they joined?"</li>
+    </ul>
+
+    <h4 id="ex-ask-biz">Business, the AI bet &amp; strategy</h4>
+    <ul class="tight">
+      <li>"Optimize is a big AI bet — how does that change what engineering needs to be great at over the next couple of years?"</li>
+      <li>"What's the business reason billing is a priority hire right now — what does getting it right unlock?"</li>
+      <li>"How do you think about build vs buy for billing infrastructure as you scale?"</li>
+      <li>"What keeps you up at night about the engineering org as Scribe grows?"</li>
+    </ul>
+
+    <h4 id="ex-ask-vp">About Gautam / his leadership</h4>
+    <ul class="tight">
+      <li>"What drew you to Scribe, and what's kept you here?"</li>
+      <li>"What are you personally most focused on building in engineering over the next year?"</li>
+      <li>"How would your engineers describe your leadership style?"</li>
+      <li>"What's something about engineering here that surprised you — good or bad?"</li>
+    </ul>
+
+    <h4 id="ex-ask-hm">For Rishabh (HM, 15-min sync)</h4>
+    <ul class="tight">
+      <li>"What would success in this role look like at 6 and 12 months?"</li>
+      <li>"What's the team's single biggest priority right now?"</li>
+      <li>"How does the team work day-to-day — planning, on-call, code review?"</li>
+      <li>"What's the hardest part of this role that most people underestimate?"</li>
     </ul>
   </section>
 

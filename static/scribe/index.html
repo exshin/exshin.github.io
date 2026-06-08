@@ -1762,6 +1762,7 @@ end
   <section class="tab" id="tab-product" data-toc='[
     ["Format &amp; what to expect","pr-fmt"],
     ["Scoring: what PMs want","pr-score"],
+    ["Working with PMs: best practices","pr-bp"],
     ["★ Headline: SF–Billing–Zuora story","pr-headline"],
     ["Secondary: Zuora advocacy","pr-zuora"],
     ["Disagreement: DDD pushback","pr-ddd"],
@@ -1784,6 +1785,49 @@ end
       <li><strong>You own ambiguity</strong> instead of waiting for a perfect spec.</li>
     </ul>
     <div class="card"><p style="margin:0;font-size:13px">Billing is the ideal domain to show all four, because billing requirements are <em>always</em> under-specified. Lean into that.</p></div>
+
+    <h3 class="section" id="pr-bp">Working with PMs: best practices &amp; signals</h3>
+    <div class="card accent"><p style="margin:0;font-size:13px">The PM round is partly a <strong>live test</strong> of these behaviors, not just a conversation about them. Mental model: the <strong>PM owns the <em>what</em>, <em>why</em>, and priority; you own the <em>how</em>, feasibility, and risk.</strong> You don't grab their steering wheel — you strongly inform it. The senior-vs-mid difference is that you operate on the <em>problem</em>, not just the ticket.</p></div>
+
+    <h4>10 best practices <span style="font-weight:400;font-size:12px;color:var(--muted)">(each maps to a story you already have)</span></h4>
+    <ol class="tight">
+      <li><strong>Get in early.</strong> Influence requirements while they're still fuzzy — that's when eng input changes the <em>shape</em> cheaply. Juniors implement specs; seniors help write them. <span style="color:var(--muted)">(SF: hardened a vague ask, shadowed reps.)</span></li>
+      <li><strong>Offer options, not blockers.</strong> Replace "that's hard / can't be done" with "here are three approaches and their costs — which tradeoff do you want?" You supply informed choices; the PM decides.</li>
+      <li><strong>Speak the PM's currency.</strong> Translate tech into customer impact, revenue, risk, timeline — never jargon. <span style="color:var(--muted)">("a retry won't make a duplicate invoice," not "idempotency keys.")</span></li>
+      <li><strong>Surface edge cases in planning, not production.</strong> The spec is the happy path; your value is the other 80% (failures, proration, conflicts) while it's cheap to decide.</li>
+      <li><strong>No surprises.</strong> Flag slippage and risk <em>early</em>, with a recommendation attached. Discovering a problem at the deadline is the cardinal sin.</li>
+      <li><strong>Disagree-and-commit.</strong> Argue with data, then commit fully once decided — no relitigating, no quiet sandbagging. <span style="color:var(--muted)">(DDD story is this exactly.)</span></li>
+      <li><strong>Be a partner in scope.</strong> Break work into shippable increments, propose the MVP, name what to cut. <span style="color:var(--muted)">(SF tight-window scope tradeoffs.)</span></li>
+      <li><strong>Advocate for the user and tech health — in their language.</strong> Frame reliability/debt as <em>risk and cost</em>, not "engineers want nice things." <span style="color:var(--muted)">(Zuora: "customers are double-charged.")</span></li>
+      <li><strong>Understand the "why" and the success metric.</strong> Then you can make good micro-decisions autonomously and propose better solutions than what was asked.</li>
+      <li><strong>Go to the source.</strong> Talk to users / support / sales directly when you can, not only secondhand. <span style="color:var(--muted)">(Shadowing reps — most engineers never do this.)</span></li>
+      <li><strong>Build trust through reliability.</strong> Deliver predictably and communicate proactively; trust is the currency that earns you the early-involvement in #1.</li>
+    </ol>
+
+    <h4>What the PM interviewer is screening for</h4>
+    <p style="font-size:13px">They're answering one question — <em>"would I want to build with this person?"</em> — across these signals:</p>
+    <table class="rubric">
+      <tr><th>Signal</th><th>What it sounds like</th></tr>
+      <tr><td><strong>Collaboration / low ego</strong></td><td>Treats the PM as a partner; listens, builds on ideas; can push back <em>and</em> commit</td></tr>
+      <tr><td><strong>Communication</strong></td><td>Explains technical things clearly and concisely to a non-engineer</td></tr>
+      <tr><td><strong>Ownership of ambiguity</strong></td><td>Comfortable with fuzzy asks; drives clarity instead of waiting to be told</td></tr>
+      <tr><td><strong>Pragmatism / judgment</strong></td><td>Ships; balances speed vs quality; makes tradeoffs explicit; doesn't gold-plate</td></tr>
+      <tr><td><strong>User / product sense</strong></td><td>Thinks about the customer and the "why," curious about the product</td></tr>
+      <tr><td><strong>Influence without authority</strong></td><td>Gets things prioritized through persuasion and data</td></tr>
+      <tr><td><strong>Reliability</strong></td><td>Sounds like someone who delivers predictably and flags risk early</td></tr>
+    </table>
+
+    <h4>Anti-signals that quietly sink candidates</h4>
+    <ul class="tight">
+      <li><strong>Pure order-taker</strong> ("just give me the spec") — <em>or the opposite,</em> steamrolling product decisions ("engineer knows best").</li>
+      <li><strong>Jargon-dumping</strong> / can't translate to business terms.</li>
+      <li><strong>Blaming stakeholders</strong> — "they kept changing the requirements," said with resentment (vs "ambiguity is normal; here's how I drive clarity").</li>
+      <li><strong>Rigidity</strong> — "not possible" with no alternatives; or over-engineering.</li>
+      <li><strong>Dodging ownership</strong> — "that's a product decision, not mine" to avoid accountability for the outcome.</li>
+      <li><strong>No curiosity</strong> about users or the Scribe product.</li>
+    </ul>
+
+    <div class="card warn"><p style="margin:0;font-size:13px">⚠️ <strong>The meta-point:</strong> the round itself is a behavior sample. <strong>Demonstrate the signals live</strong> — ask clarifying questions, think out loud, be concise, frame things in user/business terms, show genuine curiosity about Scribe's product and the billing team's problems, and collaborate <em>with</em> the interviewer. How you talk to <em>them</em> is the strongest evidence of how you'd talk to their PMs.</p></div>
 
     <h3 class="section" id="pr-headline">★ Headline story — Salesforce ↔ Billing ↔ Zuora integration (quote-to-cash)</h3>
     <div class="story">

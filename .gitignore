@@ -3,3 +3,7 @@ bundle.js
 src/client/public/bundle.js
 .DS_Store
 .superpowers/
+
+# Private interview prep — not for the public site
+interviewing_2026/
+prep/interview-prep-handoff.md

@@ -14,6 +14,7 @@ So a file at `static/<name>/index.html` is served at `https://exshin.github.io/<
 | Path in repo                | Live URL                          |
 | --------------------------- | --------------------------------- |
 | `static/scribe/index.html`  | `https://exshin.github.io/scribe/` |
+| `static/ripple/index.html`  | `https://exshin.github.io/ripple/` |
 
 To add a new static page, drop it in here under its own folder — no workflow
 changes needed. The React SPA is built and assembled separately in the same

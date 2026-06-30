@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ripple · SWE · Interview Prep</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #f5f8fc;
+    --panel: #ffffff;
+    --panel-2: #eaf1fa;
+    --border: #d6e0ee;
+    --text: #0a1628;
+    --muted: #5b6b80;
+    --accent: #0a6cff;       /* Ripple blue */
+    --accent-2: #1e88ff;
+    --ink: #0b1f3a;          /* Ripple navy */
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --ripple: #0a6cff;
+    --ripple-dark: #0b1f3a;
+    --shadow: 0 1px 2px rgba(11, 31, 58, 0.06), 0 1px 1px rgba(11, 31, 58, 0.04);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--ripple-dark); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--ink); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.ripple { border-left: 3px solid var(--ripple); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #f3f8ff !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.ripple { color: #fff; background: var(--ripple-dark); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  .story { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .story .title { color: var(--accent); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .story .tags { margin-bottom: 8px; }
+  .story .row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .story .row .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  .round-banner {
+    background: linear-gradient(135deg, var(--ripple) 0%, var(--ripple-dark) 100%);
+    color: #fff; padding: 12px 18px; border-radius: 8px; margin: 0 0 16px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .round-banner .lbl { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.08em; }
+  .round-banner .time { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; }
+  details.problem { margin: 12px 0; border-top: 1px solid var(--border); padding-top: 4px; }
+  details.problem:first-of-type { border-top: none; padding-top: 0; }
+  details.problem > summary {
+    font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer;
+    padding: 10px 8px; list-style: none; border-radius: 4px; user-select: none;
+  }
+  details.problem > summary:hover { background: var(--panel-2); }
+  details.problem > summary::-webkit-details-marker { display: none; }
+  details.problem > summary::marker { content: ""; }
+  details.problem > summary::before {
+    content: "▸"; display: inline-block; margin-right: 10px; color: var(--muted);
+    transition: transform 0.12s ease; font-size: 11px; width: 8px;
+  }
+  details.problem[open] > summary::before { transform: rotate(90deg); }
+  details.problem[open] > summary { border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  aside li.toc-group {
+    color: var(--ink); font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em;
+    font-weight: 700; padding: 14px 10px 4px 0; margin-top: 6px; border-top: 1px solid var(--border); list-style: none;
+  }
+  aside li.toc-group:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  aside .toc-controls { display: flex; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  aside .toc-controls button { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: inherit; }
+  aside .toc-controls button:hover { color: var(--accent); background: var(--panel-2); border-color: var(--accent); }
+  aside .toc-filter { width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-bottom: 10px; font-family: inherit; }
+  aside .toc-filter:focus { outline: none; border-color: var(--accent); }
+  aside li.toc-hidden { display: none; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+  /* === password gate (soft, client-side — matches /scribe) === */
+  #gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  #gate.unlocked { display: none; }
+  .gate-box { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 28px 26px; width: 100%; max-width: 340px; text-align: center; }
+  .gate-box h1 { margin: 0 0 4px; font-size: 16px; color: var(--accent); }
+  .gate-box p { margin: 0 0 16px; font-size: 13px; color: var(--muted); }
+  .gate-box input { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); margin-bottom: 10px; font-family: inherit; }
+  .gate-box input:focus { outline: none; border-color: var(--accent); }
+  .gate-box button { width: 100%; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; border-radius: 6px; background: var(--accent); color: #fff; font-family: inherit; }
+  .gate-box button:hover { background: var(--ripple-dark); }
+  .gate-error { color: var(--bad) !important; margin: 10px 0 0 !important; min-height: 16px; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <form class="gate-box" id="gate-form">
+    <h1>Ripple · Interview Prep</h1>
+    <p>Enter password to continue.</p>
+    <input type="password" id="gate-input" placeholder="Password" autocomplete="off" autofocus>
+    <button type="submit">View</button>
+    <p class="gate-error" id="gate-error"></p>
+  </form>
+</div>
+<script>
+  (function () {
+    var PASSWORD = '9999';            // same as /scribe — change here to rotate
+    var KEY = 'ripple-prep-unlocked';
+    var gate = document.getElementById('gate');
+    var form = document.getElementById('gate-form');
+    var input = document.getElementById('gate-input');
+    var err = document.getElementById('gate-error');
+    function unlock() { gate.classList.add('unlocked'); }
+    try { if (localStorage.getItem(KEY) === '1') unlock(); } catch (e) {}
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (input.value === PASSWORD) {
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+        unlock();
+      } else {
+        err.textContent = 'Incorrect password.';
+        input.value = '';
+        input.focus();
+      }
+    });
+  })();
+</script>
+
+<header>
+  <h1>Ripple · SWE <span class="badge">Interview Prep</span></h1>
+  <nav class="tabs">
+    <button data-tab="values" class="active">★ Values · LEGGOS</button>
+    <button data-tab="design">System Design</button>
+    <button data-tab="tech">Coding</button>
+    <button data-tab="hm">Behavioral / HM</button>
+    <button data-tab="cheat">Cheat Sheet</button>
+    <button data-tab="stories">Stories</button>
+    <button data-tab="company">Company &amp; Mission</button>
+    <button data-tab="questions">Q's to Ask</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <div class="toc-controls" id="toc-controls" style="display:none">
+      <button id="expand-all" title="Expand every section">Expand all</button>
+      <button id="collapse-all" title="Collapse every section">Collapse all</button>
+    </div>
+    <input type="text" id="toc-filter" class="toc-filter" placeholder="Filter sections..." style="display:none" />
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ VALUES · LEGGOS ============ -->
+  <section class="tab active" id="tab-values" data-toc='[
+    ["@group","Start here"],
+    ["Read this first (interview ~30 min)","v-now"],
+    ["Tomorrow at a glance","v-sched"],
+    ["LEGGOS on one screen","v-leggos"],
+    ["How to answer a short values round","v-how"],
+    ["@group","The 6 values + their real questions"],
+    ["L · Live It","v-live"],
+    ["E · Enjoy It","v-enjoy"],
+    ["G · Go for It","v-go"],
+    ["G · Get It Done","v-get"],
+    ["O · Own It","v-own"],
+    ["S · Say It","v-say"],
+    ["@group","Close strong"],
+    ["Story → value cheat map","v-map"],
+    ["Questions to ask Guru","v-ask"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Tomorrow · Round 2 · 11:30–12:00 PDT · Guruprasad Partha Sarathy (Sr SWE)</div><div style="font-size:16px;font-weight:600">Collaboration &amp; Values · LEGGOS fit</div></div>
+      <div class="time">⏱ 30 min</div>
+    </div>
+
+    <div class="card ripple" style="border-left-width:4px;margin-bottom:18px">
+      <p style="margin:0 0 6px 0;font-weight:600;color:var(--accent)">★ Read this first</p>
+      <p style="margin:0 0 6px 0;font-size:13px">This is a <strong>30-minute culture &amp; collaboration screen</strong> against Ripple's values, which spell <strong>LEGGOS</strong>: <strong>L</strong>ive It · <strong>E</strong>njoy It · <strong>G</strong>o for It · <strong>G</strong>et It Done · <strong>O</strong>wn It · <strong>S</strong>ay It. Guru is a peer engineer — he's scoring <strong>how you work with people and whether you'd be a values fit</strong>, not your technical depth. Expect a warm conversation, not a grilling.</p>
+      <p style="margin:0 0 6px 0;font-size:13px">The questions below are pulled from <strong>Ripple's own candidate guide</strong> (the value→question mapping is exact). They won't be word-for-word, but the <em>themes</em> are real — prep these and you've prepped the round.</p>
+      <p style="margin:0;font-size:13px"><strong>30 minutes = ~3–4 stories.</strong> Don't try to cover all six values. Load <strong>4 flexible stories</strong> you can bend to whatever he asks: <strong>SF/Zuora integration</strong>, <strong>Zuora silent-200 bug</strong>, <strong>DDD disagreement</strong>, <strong>Wordblok solo ship</strong>. Lead with <strong>"I"</strong>, name the people you worked with, land the <strong>result</strong>.</p>
+    </div>
+
+    <h3 class="section" id="v-now">The 4 things to have loaded cold</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Collaboration is the headline.</strong> This round leans on <em>Say It</em> (communication) and <em>Own It</em> (accountability). Every story should show you working <em>with</em> someone — PM, support, an architecture group, VPs.</li>
+        <li><strong>Disagree &amp; commit.</strong> The DDD story is your proof you can argue hard, then commit cleanly and reflect honestly. Values interviewers love this.</li>
+        <li><strong>Mirror their language.</strong> Naturally drop "I owned it," "we got it done," "I wanted to make the call but with limited info" — it echoes LEGGOS without being a suck-up.</li>
+        <li><strong>Have 2 questions for Guru</strong> — peer-to-peer ones about how the team actually works (below).</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="v-sched">Tomorrow at a glance</h3>
+    <table class="rubric">
+      <tr><th>Time (PDT)</th><th>Interviewer</th><th>Focus</th><th>Prep tab</th></tr>
+      <tr><td>10:30–11:30</td><td>Ovidiu Todoran · Sr Staff</td><td>System design &amp; architecture</td><td>Tech / Coding</td></tr>
+      <tr><td><strong>11:30–12:00</strong></td><td><strong>Guruprasad Partha Sarathy · Sr SWE</strong></td><td><strong>Collaboration &amp; values</strong></td><td><strong>★ this tab</strong></td></tr>
+      <tr><td>12:15–1:15</td><td>Jing Dong · Staff</td><td>Coding</td><td>Tech / Coding</td></tr>
+    </table>
+    <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Design and coding rounds book-end the values round. Keep this tab's stories warm — they'll also surface as "tell me about a project" moments in the other two.</p>
+
+    <h3 class="section" id="v-leggos">LEGGOS on one screen</h3>
+    <table class="rubric">
+      <tr><th>L</th><th>Value</th><th>What it means at Ripple</th><th>They're checking</th></tr>
+      <tr><td><span class="pill ripple">L</span></td><td><strong>Live It</strong></td><td>Adaptability, resilience, self-awareness — thrive in a fast-changing world.</td><td>How well do you handle change &amp; uncertainty?</td></tr>
+      <tr><td><span class="pill ripple">E</span></td><td><strong>Enjoy It</strong></td><td>Creativity and managing stress — work should be productive <em>and</em> fulfilling.</td><td>How do you approach ideas &amp; solutions?</td></tr>
+      <tr><td><span class="pill ripple">G</span></td><td><strong>Go for It</strong></td><td>Bold decisions, ambitious goals, calculated risks to drive innovation.</td><td>Are you resourceful &amp; innovative under challenge?</td></tr>
+      <tr><td><span class="pill ripple">G</span></td><td><strong>Get It Done</strong></td><td>Focus and determination — tackle challenges head-on, deliver real results.</td><td>Do you follow through and ship?</td></tr>
+      <tr><td><span class="pill ripple">O</span></td><td><strong>Own It</strong></td><td>Accountability, pride in the work, attention to detail, lead with integrity.</td><td>Do you take ownership and guide others?</td></tr>
+      <tr><td><span class="pill ripple">S</span></td><td><strong>Say It</strong></td><td>Communication at the heart of everything — clarity, honesty, purpose.</td><td>Can you collaborate effectively with others?</td></tr>
+    </table>
+
+    <h3 class="section" id="v-how">How to answer a short values round</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Pick fast, keep it ~2 min.</strong> "Let me think of the best example" (5s) beats a 5-minute ramble. He may only get through 3–4 questions — make each count.</li>
+        <li><strong>STAR, but land the Result.</strong> Situation (1 line) → your role → the hard decision → outcome + what you learned.</li>
+        <li><strong>Name the humans.</strong> "I pulled in the PM and support early," "two VPs in different orgs," "the architecture group." Collaboration is invisible unless you name who you collaborated <em>with</em>.</li>
+        <li><strong>One value, one or two stories.</strong> The same story can answer several prompts — bend the framing to the question instead of inventing new material.</li>
+        <li><strong>Be honestly self-aware on failure.</strong> Own your part, no blaming, state the concrete change since. That <em>is</em> the answer.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="v-live">L · Live It <span class="sub">adapt · resilient · self-aware</span></h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>They're checking:</strong> how you handle change and uncertainty, and whether you reflect honestly. <span style="color:var(--muted)">"Are your actions aligned with your values?"</span></p>
+      <p style="margin:0 0 2px 0;font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">They may ask</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li>"Tell me about a time your team or company was undergoing change. How did it impact you, and how did you adapt?"</li>
+        <li>"A time you had to think on your feet to get out of a difficult situation."</li>
+        <li>"Describe a time you failed. How did you deal with it?"</li>
+      </ul>
+      <p style="margin:0 0 4px 0"><strong>Reach for:</strong> <em>DDD mandate</em> (a top-down change you adapted to — disagree &amp; commit) · <em>Zuora silent-200</em> (thinking on your feet during a live money bug) · <em>DDD call</em> as the honest "failure."</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)"><strong>Your angle:</strong> adaptable without being a pushover — you voice the tradeoff first, then commit fully and own the outcome.</p>
+    </div>
+
+    <h3 class="section" id="v-enjoy">E · Enjoy It <span class="sub">creativity · manage stress</span></h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>They're checking:</strong> how you approach ideas and solutions, and whether you stay creative and level-headed under pressure.</p>
+      <p style="margin:0 0 2px 0;font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">They may ask</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li>"A problem you solved in a unique or creative way — what was the outcome?"</li>
+        <li>"A time you had to balance competing priorities under pressure. How did you manage it?"</li>
+        <li>"When was the last time you thought outside the box? What inspired you?"</li>
+      </ul>
+      <p style="margin:0 0 4px 0"><strong>Reach for:</strong> <em>Wordblok</em> (creative ruthless scoping to ship a game in a week) · <em>SF integration</em> (balancing two VPs, a deadline, and integrity at once) · <em>silent-200</em> (the creative leap that a 200 was masking a no-op).</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)"><strong>Your angle:</strong> under pressure you get <em>simpler</em>, not frantic — cut to the core loop, protect what can't break, defer the rest.</p>
+    </div>
+
+    <h3 class="section" id="v-go">G · Go for It <span class="sub">bold calls · ambitious goals · calculated risk</span></h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>They're checking:</strong> are you resourceful and innovative — willing to make a bold, calculated call to move things forward?</p>
+      <p style="margin:0 0 2px 0;font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">They may ask</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li>"A time you made a bold decision with limited information. How did you approach it, and what was the outcome?"</li>
+        <li>"A time you set an ambitious goal for yourself or your team. How did you achieve it?"</li>
+        <li>"A situation where you saw an opportunity to innovate or improve something. What steps did you take?"</li>
+      </ul>
+      <p style="margin:0 0 4px 0"><strong>Reach for:</strong> <em>SF integration</em> (bold call to cut scope but draw a hard line around integrity-critical pieces) · <em>Wordblok</em> (ambitious 1-week ship) · <em>silent-200</em> (saw the chance to add systemic alerting, not just patch it).</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)"><strong>Your angle:</strong> "bold" is paired with "calculated" — you took the risk on speed/scope while refusing to risk correctness in money movement.</p>
+    </div>
+
+    <h3 class="section" id="v-get">G · Get It Done <span class="sub">focus · determination · deliver</span></h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>They're checking:</strong> do you follow through and actually ship meaningful results under real constraints?</p>
+      <p style="margin:0 0 2px 0;font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">They may ask</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li>"A time you had to manage multiple projects and tight deadlines. How did you handle it, and what was the result?"</li>
+        <li>"A situation where you had to analyze information and make a recommendation. What was your thought process and the outcome?"</li>
+        <li>"A challenging task you were given — how did you approach it, and what was the result?"</li>
+      </ul>
+      <p style="margin:0 0 4px 0"><strong>Reach for:</strong> <em>SF integration</em> (shipped a cross-org quote-to-cash pipeline on a tight 2–3 month window) · <em>silent-200</em> (analyze → root-cause → recommend the systemic fix) · <em>Wordblok</em> (shipped end-to-end, solo).</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)"><strong>Your angle:</strong> "done" means done <em>correctly</em> — you finish, and you close the systemic gap so it stays finished.</p>
+    </div>
+
+    <h3 class="section" id="v-own">O · Own It <span class="sub">accountability · detail · integrity</span></h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>They're checking:</strong> do you take responsibility, sweat the details, and lead with integrity — including when it's a mistake?</p>
+      <p style="margin:0 0 2px 0;font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">They may ask</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li>"A situation where you took responsibility for a mistake or challenge. How did you resolve it, and what did you learn?"</li>
+        <li>"A time you led a project and had to ensure every detail was completed correctly. What was your approach?"</li>
+        <li>"A time you took the lead in resolving a difficult situation."</li>
+      </ul>
+      <p style="margin:0 0 4px 0"><strong>Reach for:</strong> <em>silent-200</em> ("I owned the payments path, so the bug and the fix were mine") · <em>SF integration</em> (owned end-to-end, every integrity case the happy-path spec missed) · <em>DDD call</em> (honest ownership — both sides were partly right).</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)"><strong>Your angle:</strong> ownership = you found the cases nobody specced (idempotency, source-of-truth conflicts) because in payments the detail <em>is</em> the job.</p>
+    </div>
+
+    <h3 class="section" id="v-say">S · Say It <span class="sub">communication · clarity · collaboration</span></h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>They're checking:</strong> can you collaborate effectively — communicate with clarity, honesty, and purpose? <span style="color:var(--muted)">This is the round's center of gravity.</span></p>
+      <p style="margin:0 0 2px 0;font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">They may ask</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li>"A time you explained something complex to someone unfamiliar with the topic. How did you ensure clarity?"</li>
+        <li>"A time you successfully persuaded someone to see things your way at work."</li>
+        <li>"A situation where effective communication made a significant difference in achieving a goal."</li>
+      </ul>
+      <p style="margin:0 0 4px 0"><strong>Reach for:</strong> <em>SF integration</em> (turned a vague cross-org VP ask into hardened, agreed billing requirements through a PM) · <em>DDD disagreement</em> (made your case to the architecture group) · <em>Cross-functional w/ PM &amp; support</em> (pulling the right people in to find the <em>real</em> requirement).</p>
+      <p style="margin:0;font-size:13px;color:var(--muted)"><strong>Your angle:</strong> good communication is upstream — you align on the real requirement <em>before</em> coding, so the disagreement happens in design, not in a customer's invoice.</p>
+    </div>
+
+    <h3 class="section" id="v-map">Story → value cheat map</h3>
+    <table class="rubric">
+      <tr><th>Story</th><th>Best for these values</th></tr>
+      <tr><td><strong>SF / Zuora quote-to-cash integration</strong></td><td>Say It · Own It · Get It Done · Go for It · Enjoy It <span style="color:var(--muted)">(your Swiss-army story)</span></td></tr>
+      <tr><td><strong>Zuora silent-200 bug</strong></td><td>Own It · Get It Done · Live It (think on your feet)</td></tr>
+      <tr><td><strong>DDD disagreement</strong></td><td>Say It (persuade) · Live It (adapt / failure) · Own It (honest reflection)</td></tr>
+      <tr><td><strong>Wordblok solo ship</strong></td><td>Go for It (ambitious goal) · Enjoy It (creative scoping) · Get It Done</td></tr>
+      <tr><td><strong>Cross-functional w/ PM &amp; support</strong></td><td>Say It · collaboration backbone for any prompt</td></tr>
+    </table>
+    <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)">Full STAR write-ups live in the <strong>Stories</strong> tab — this map just tells you which one to grab.</p>
+
+    <h3 class="section" id="v-ask">Questions to ask Guru (peer engineer)</h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0;font-size:13px">He's a fellow SWE, so ask about <strong>how the team actually works</strong>, not strategy:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"How does the team handle disagreements on technical direction — what happens when two engineers see it differently?"</li>
+        <li>"What does code review and collaboration look like day-to-day here?"</li>
+        <li>"What's something a new engineer usually underestimates about working on payments infra at Ripple?"</li>
+        <li>"Which of the LEGGOS values do you feel shows up most in how this team actually operates?"</li>
+        <li>"What's made someone a great teammate on your team — and where do people struggle at first?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SYSTEM DESIGN ============ -->
+  <section class="tab" id="tab-design" data-collapsible="true" data-toc='[
+    ["@group","Start here"],
+    ["Drive a 60-min design round","d-drive"],
+    ["Clarify before you draw","d-clarify"],
+    ["@group","Payments building blocks"],
+    ["Idempotency &amp; exactly-once","d-idem"],
+    ["Double-entry ledger","d-ledger"],
+    ["Consistency, transactions &amp; locking","d-consistency"],
+    ["Saga vs 2-phase commit","d-saga"],
+    ["Reconciliation","d-recon"],
+    ["Outbox &amp; event-driven","d-outbox"],
+    ["@group","Likely prompts — worked"],
+    ["★ Idempotent money-transfer API","d-transfer"],
+    ["Double-entry ledger service","d-ledgersvc"],
+    ["Cross-border payment / settlement","d-crossborder"],
+    ["Digital wallet / balance service","d-wallet"],
+    ["Reconciliation pipeline","d-reconpipe"],
+    ["Rate limiter (classic)","d-ratelimit"],
+    ["Webhook / notification delivery","d-webhook"],
+    ["@group","Close strong"],
+    ["Tradeoffs a Staff interviewer probes","d-tradeoffs"],
+    ["Ripple domain hooks to drop","d-hooks"],
+    ["Red flags &amp; tips","d-red"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Tomorrow · Round 1 · 10:30–11:30 PDT · Ovidiu Todoran (Sr Staff SWE)</div><div style="font-size:16px;font-weight:600">System Design &amp; Architecture</div></div>
+      <div class="time">⏱ 60 min</div>
+    </div>
+
+    <div class="card ripple" style="border-left-width:4px;margin-bottom:14px">
+      <p style="margin:0 0 6px 0;font-weight:600;color:var(--accent)">★ Read this first</p>
+      <p style="margin:0 0 6px 0;font-size:13px">A <strong>Sr Staff</strong> design round is about <strong>judgment under ambiguity</strong>, not a memorized diagram. Ovidiu wants to see you <strong>drive</strong>: scope the problem, choose a data model, reason about failure modes, and name tradeoffs out loud. He'll push on the parts you gloss over — that probing <em>is</em> the interview, so leave threads to pull.</p>
+      <p style="margin:0 0 6px 0;font-size:13px">This is <strong>your home turf.</strong> Ripple is payments infra and you build money-moving systems daily. Expect a <strong>payments / ledger / settlement</strong> prompt. The single most likely core is some flavor of <strong>"design a system that moves money between accounts correctly."</strong> Master the idempotent-transfer + double-entry-ledger pattern below and you can derive 80% of what they'll ask.</p>
+      <p style="margin:0;font-size:13px"><strong>The one-liner to anchor everything:</strong> in money movement, <em>correctness &gt; latency &gt; throughput</em> — you never trade away "exactly-once and the books always balance" for speed. Say that early; it signals you've actually done this.</p>
+    </div>
+
+    <p style="margin:0 0 12px 0;font-size:12px;color:var(--muted)">↓ Sections are collapsible — use the TOC or <strong>Expand all</strong>. Start with <em>Drive a 60-min round</em>, then the <em>★ Idempotent money-transfer API</em> worked example.</p>
+
+    <h3 class="section" id="d-drive">Drive a 60-min design round (the spine)</h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0">Spend the time roughly like this. Narrate which phase you're in.</p>
+      <table class="rubric">
+        <tr><th>Phase</th><th>~min</th><th>What you do</th></tr>
+        <tr><td>1. Requirements</td><td>8</td><td>Functional + non-functional. Pin scale numbers. State what's <em>out</em> of scope.</td></tr>
+        <tr><td>2. API + data model</td><td>10</td><td>A few endpoints, then the tables/entities. The schema is where payments rounds are won.</td></tr>
+        <tr><td>3. High-level architecture</td><td>10</td><td>Boxes &amp; arrows: clients → API → services → stores → queues. Happy path first.</td></tr>
+        <tr><td>4. Deep dive (1–2)</td><td>20</td><td>Where the meat is — idempotency, concurrency on balances, consistency, the write path. Let them steer.</td></tr>
+        <tr><td>5. Failure &amp; scale</td><td>8</td><td>What breaks: retries, partial failure, hot accounts, partitioning, dedup. Bottlenecks &amp; fixes.</td></tr>
+        <tr><td>6. Wrap</td><td>4</td><td>Recap the 2–3 key tradeoffs you made and what you'd revisit with more time.</td></tr>
+      </table>
+      <p style="margin:8px 0 0 0;font-size:13px">Golden rule: <strong>don't draw until you've agreed on requirements.</strong> Jumping to a diagram is the #1 thing that reads as junior.</p>
+    </div>
+
+    <h3 class="section" id="d-clarify">Clarify before you draw</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0"><strong>Functional:</strong> who/what are the actors? What's the core operation (transfer? charge? settle?)? Single-currency or FX? Do funds need to be held/authorized then captured, or one-shot? Refunds/reversals?</p>
+      <p style="margin:0 0 6px 0"><strong>Non-functional:</strong> scale (transfers/sec, accounts, read:write ratio)? Latency budget? Consistency requirement (almost always <strong>strong</strong> for balances)? Availability target? Audit/regulatory needs (immutable history)?</p>
+      <p style="margin:0 0 6px 0"><strong>Payments-specific things to surface (this is the signal):</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Idempotency:</strong> "Clients will retry — do we get an idempotency key, or do I design one?"</li>
+        <li><strong>Double-spend / overdraft:</strong> "Can a balance go negative? How do we prevent two concurrent transfers from over-drawing?"</li>
+        <li><strong>Source of truth &amp; auditability:</strong> "Is the ledger the system of record? I'll make it append-only and immutable."</li>
+        <li><strong>Money never lost:</strong> "Every cent debited lands somewhere — I'll model this double-entry so the books always balance."</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Asking these 4 unprompted is the fastest way to show a Staff interviewer you've built real payment systems.</p>
+    </div>
+
+    <h3 class="section" id="d-idem">Idempotency &amp; exactly-once</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Networks retry. Without dedup, a retried "transfer $100" charges twice. <strong>Exactly-once = at-least-once delivery + idempotent processing.</strong> You can't guarantee exactly-once delivery, so you make the <em>operation</em> idempotent.</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li><strong>Idempotency key:</strong> client sends a unique key per intent (e.g. UUID). Server stores <code class="inline">(key → result)</code> in a table with a <strong>unique constraint</strong>. First request does the work + records the result; retries return the stored result without re-doing it.</li>
+        <li><strong>Atomicity:</strong> insert the idempotency record <em>in the same transaction</em> as the ledger write, so you can't record "done" without doing it (or vice-versa).</li>
+        <li><strong>Race:</strong> two concurrent requests with the same key — the unique constraint makes one win; the loser waits/retries and reads the result.</li>
+        <li><strong>Scope &amp; TTL:</strong> key is unique per endpoint/account; keep records long enough to cover client retry windows (often 24h+).</li>
+      </ul>
+      <p style="margin:0;font-size:13px"><strong>Say it Ripple-style:</strong> "A 200 must mean it actually happened exactly once — not 'we received your request.' I've shipped exactly this; I had a prod bug where a success masked a no-op." <span style="color:var(--muted)">(your silent-200 story)</span></p>
+    </div>
+
+    <h3 class="section" id="d-ledger">Double-entry ledger (the heart of it)</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">A double-entry ledger is <strong>append-only</strong>: you never mutate a balance in place — you write immutable entries, and every transaction's debits equal its credits. Balance = sum of entries for an account. This makes the system auditable and makes "lost money" structurally impossible.</p>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-sql">-- Accounts (one row per money bucket: user wallet, fee account, etc.)
+accounts(
+  id            BIGINT PK,
+  currency      CHAR(3),
+  -- optional cached balance for fast reads, derived from entries
+  balance_minor BIGINT NOT NULL DEFAULT 0
+)
+
+-- A transfer = a logical money movement (the "intent")
+transfers(
+  id              BIGINT PK,
+  idempotency_key TEXT UNIQUE NOT NULL,
+  status          TEXT,        -- pending | posted | failed
+  created_at      TIMESTAMPTZ
+)
+
+-- Ledger entries: immutable, append-only. 2+ rows per transfer.
+-- Sum of amount_minor for a given transfer_id must equal 0.
+ledger_entries(
+  id          BIGINT PK,
+  transfer_id BIGINT REFERENCES transfers(id),
+  account_id  BIGINT REFERENCES accounts(id),
+  amount_minor BIGINT NOT NULL,  -- +credit / -debit, integer minor units
+  created_at  TIMESTAMPTZ,
+  UNIQUE(transfer_id, account_id)
+)</code></pre></div>
+      <ul class="tight" style="margin:8px 0 0 18px">
+        <li><strong>Money as integers</strong> (minor units / cents), never floats — floats lose pennies.</li>
+        <li><strong>Debits negative, credits positive;</strong> each transfer's entries sum to zero → the system never creates or destroys value.</li>
+        <li><strong>Balance</strong> = cached column updated in the same txn, <em>or</em> derived as <code class="inline">SUM(amount_minor)</code> (slower but verifiable). Best: cache it, and periodically reconcile cache vs sum.</li>
+        <li><strong>Immutability:</strong> corrections are <em>new reversing entries</em>, never edits/deletes. The history is the audit trail.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-consistency">Consistency, transactions &amp; locking</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Balances need <strong>strong consistency</strong> — eventual consistency lets two transfers both read an old balance and overdraw. Two standard ways to make concurrent debits safe on the same account:</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li><strong>Pessimistic (row lock):</strong> <code class="inline">SELECT ... FOR UPDATE</code> on the account row inside the txn. Simple, correct, but the locked row is a hot point for popular accounts.</li>
+        <li><strong>Optimistic (version / CAS):</strong> read balance + version, write with <code class="inline">WHERE version = $read</code>; if 0 rows updated, someone beat you → retry. Better under low contention.</li>
+      </ul>
+      <p style="margin:0 0 6px 0"><strong>Always wrap the whole money move in ONE DB transaction:</strong> insert transfer + insert ledger entries + update balances + insert idempotency record, all-or-nothing. Use a strong isolation level (e.g. <em>serializable</em> or <em>repeatable read</em>) for the balance-critical path.</p>
+      <p style="margin:0;font-size:13px"><strong>CAP framing:</strong> "For money, I choose consistency over availability — I'd rather reject a transfer than risk a double-spend. CP, not AP."</p>
+    </div>
+
+    <h3 class="section" id="d-saga">Saga vs 2-phase commit (money across services)</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">When a transfer spans services/databases (debit service A, credit service B), you can't use one DB transaction. Two patterns:</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li><strong>2-phase commit (2PC):</strong> a coordinator asks all participants to "prepare," then "commit." Strong consistency but <em>blocking</em> — if the coordinator dies mid-flight, participants are stuck holding locks. Rarely used at scale.</li>
+        <li><strong>Saga (preferred):</strong> a sequence of local transactions, each with a <strong>compensating action</strong>. Debit A (hold), credit B; if credit B fails, run the compensation (release/refund the hold on A). Eventually consistent, non-blocking, resilient. Orchestrated (central coordinator) or choreographed (events).</li>
+        <li><strong>Holds / reservations:</strong> for cross-service money, debit as a <em>pending hold</em> first, capture on success, release on failure — so funds are never double-committed.</li>
+      </ul>
+      <p style="margin:0;font-size:13px"><strong>Ripple tie-in:</strong> cross-border settlement is exactly this — you reserve liquidity, settle, and need clean compensation if a leg fails. Sagas + idempotent compensations are the daily reality of money rails.</p>
+    </div>
+
+    <h3 class="section" id="d-recon">Reconciliation</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Reconciliation = continuously proving two records of truth agree. It's how you catch the bug <em>before</em> it reaches a customer's statement.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Internal:</strong> cached balance == SUM(ledger entries)? Do all transfers' entries sum to zero? Run as a periodic job; alert on any drift.</li>
+        <li><strong>External:</strong> our ledger vs the bank/processor/on-chain record. Match by reference id; flag unmatched/mismatched into an exceptions queue for investigation.</li>
+        <li><strong>Design hook:</strong> immutable append-only entries + stable reference ids make reconciliation tractable. This is why you don't mutate balances in place.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-outbox">Outbox &amp; event-driven</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Problem: you write to the DB <em>and</em> need to publish an event (e.g. "transfer.posted") — but a crash between the two loses the event or double-publishes.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Transactional outbox:</strong> in the same DB txn as the ledger write, insert a row into an <code class="inline">outbox</code> table. A separate relay reads the outbox and publishes to the queue, marking rows sent. Atomic with the write, at-least-once to consumers.</li>
+        <li><strong>Consumers must be idempotent</strong> (event carries an id) since delivery is at-least-once.</li>
+        <li>Use for: notifications, webhooks, downstream ledger projections, analytics — anything that reacts to a money event.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-transfer">★ Worked: Idempotent money-transfer API</h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>Prompt:</strong> "Design a service that transfers money between two accounts." This is the anchor — almost everything else is a variation. Walk it in the 6-phase spine.</p>
+      <p style="margin:8px 0 4px 0"><strong>1. Requirements.</strong> Move funds A→B, same currency. Strongly consistent balances, no overdraft, no double-charge on retry, full audit trail. Scale: say 1–5k transfers/sec, read-heavy on balances. Out of scope (state it): FX, KYC, fraud.</p>
+      <p style="margin:8px 0 4px 0"><strong>2. API.</strong></p>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre><code class="language-sql">POST /transfers
+  Idempotency-Key: &lt;uuid&gt;
+  { from_account, to_account, amount_minor, currency }
+  -> 201 { transfer_id, status: "posted" }   // or replay of prior result
+
+GET /transfers/{id}        -> status + entries
+GET /accounts/{id}/balance -> current balance</code></pre></div>
+      <p style="margin:8px 0 4px 0"><strong>3. Data model.</strong> The ledger schema above: <code class="inline">accounts</code>, <code class="inline">transfers</code> (with <code class="inline">idempotency_key UNIQUE</code>), <code class="inline">ledger_entries</code> (two rows: −amount on A, +amount on B).</p>
+      <p style="margin:8px 0 4px 0"><strong>4. The write path (the deep dive).</strong> One DB transaction:</p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li>Insert into <code class="inline">transfers</code> with the idempotency key. If unique-violation → it's a retry: return the existing transfer's result. Done.</li>
+        <li>Lock both account rows in a <strong>consistent order</strong> (e.g. ascending id) to avoid deadlocks — <code class="inline">SELECT ... FOR UPDATE</code>.</li>
+        <li>Check <code class="inline">from</code> balance ≥ amount; else fail (insufficient funds).</li>
+        <li>Insert two <code class="inline">ledger_entries</code> (−amount, +amount); they sum to 0.</li>
+        <li>Update both cached balances. Mark transfer <code class="inline">posted</code>. Commit.</li>
+      </ol>
+      <p style="margin:8px 0 4px 0"><strong>5. Failure &amp; scale.</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><em>Retry mid-flight:</em> idempotency key + atomic txn → safe, no double-charge.</li>
+        <li><em>Deadlocks:</em> always lock accounts in sorted order.</li>
+        <li><em>Hot account</em> (e.g. a fee/treasury account everyone credits): the row lock serializes everything → bottleneck. Mitigate with <strong>balance sharding</strong> (N sub-balances summed) or batching.</li>
+        <li><em>Scaling reads:</em> balance read replicas / cache, but reads that gate a transfer must hit primary.</li>
+        <li><em>Partitioning:</em> shard by account id; cross-shard transfers become a saga (see above).</li>
+        <li><em>Emit</em> a <code class="inline">transfer.posted</code> event via the outbox for notifications/downstream.</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px"><strong>6. Wrap tradeoffs:</strong> "Single-DB transaction for correctness while it fits one node; row locks for simplicity, with sharded balances for hot accounts; saga only when I must cross shards — because each hop away from one transaction is a hop away from easy correctness, and in payments correctness is the product."</p>
+    </div>
+
+    <h3 class="section" id="d-ledgersvc">Double-entry ledger service</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">If asked for the <em>ledger</em> specifically (vs the transfer API on top of it): emphasize it as the <strong>immutable system of record</strong> that other services post to.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>API: <code class="inline">POST /entries</code> takes a balanced set of debits/credits (must sum to 0) atomically; reject if unbalanced.</li>
+        <li>Append-only; no updates/deletes; corrections are reversing entries.</li>
+        <li>Balances are a <em>projection</em> (cached column or materialized view) reconciled against the entry sum.</li>
+        <li>Partition entries by account; keep a stable <code class="inline">external_ref</code> for reconciliation.</li>
+        <li>Tradeoff to name: derive-balance-on-read (always correct, slow) vs cached-balance (fast, needs reconciliation) — pick cached + reconcile.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-crossborder">Cross-border payment / settlement (Ripple's actual domain)</h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0">If they go domain-specific: design moving value from a payer in country X to a payee in country Y, different currencies. This is literally Ripple Payments / ODL.</p>
+      <ul class="tight" style="margin:0 0 8px 18px">
+        <li><strong>The hard parts:</strong> two currencies (FX), two ledgers/rails that settle on different timelines, liquidity that must be available on the destination side, and a payment that must either fully complete or fully unwind.</li>
+        <li><strong>Shape:</strong> quote (lock an FX rate, with expiry) → reserve source funds + destination liquidity → execute both legs → confirm settlement finality → release. Model as a <strong>saga with compensations</strong> per leg.</li>
+        <li><strong>Bridge asset / liquidity:</strong> classic correspondent banking pre-funds nostro/vostro accounts (trapped capital). Ripple's pitch: use a bridge asset (XRP) or stablecoin (RLUSD) so you source liquidity on demand instead of pre-funding — less trapped capital, seconds not days.</li>
+        <li><strong>Settlement finality:</strong> on a blockchain leg, "done" means the ledger confirmed/validated — design around the chain's finality, not an optimistic ack.</li>
+        <li><strong>Idempotency &amp; reconciliation</strong> across both legs and external rails are the whole game.</li>
+      </ul>
+      <p style="margin:0;font-size:13px">You don't need XRPL internals — know the <em>shape</em>: quote → reserve → settle legs → confirm finality → compensate on failure, with on-demand liquidity replacing pre-funded accounts.</p>
+    </div>
+
+    <h3 class="section" id="d-wallet">Digital wallet / balance service</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Same ledger core; wallet = an account (or set of per-currency accounts) per user.</li>
+        <li>Operations: deposit (external → wallet), withdraw (wallet → external), internal transfer.</li>
+        <li>Deposits/withdrawals cross an external rail → saga + holds; internal transfers are one DB txn.</li>
+        <li>Available vs pending balance: pending holds reduce <em>available</em> without yet posting — model holds explicitly.</li>
+        <li>Strong consistency on the spend path; eventual is fine for display/history.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-reconpipe">Reconciliation pipeline</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Ingest both sides (internal ledger export + external statement / on-chain records) into a staging store.</li>
+        <li>Match by reference id + amount + date; bucket into matched / missing-on-one-side / amount-mismatch.</li>
+        <li>Exceptions → a queue/dashboard with assignment + audit; auto-resolve known patterns.</li>
+        <li>Run incrementally (windowed) for scale; idempotent so re-runs don't double-count.</li>
+        <li>Metrics: unmatched count/value, time-to-resolve, drift trend → alert on anomalies.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-ratelimit">Rate limiter (classic, non-payments)</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">A common warm-up even at payments shops (protect a money API from abuse/ret* storms).</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Algorithms: <strong>token bucket</strong> (allows bursts, most common), leaky bucket (smooths), fixed/sliding window.</li>
+        <li>Distributed: counters in <strong>Redis</strong> keyed by client + window; atomic INCR/Lua to avoid races; TTL the keys.</li>
+        <li>Tradeoffs: fixed-window has boundary bursts; sliding-window-log is accurate but memory-heavy; sliding-window-counter is the usual compromise.</li>
+        <li>Decisions: per-user vs per-IP vs per-endpoint; fail-open vs fail-closed (for a money API, lean fail-closed on critical paths).</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-webhook">Webhook / notification delivery</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Source events from the <strong>outbox</strong> (atomic with the money write) → queue.</li>
+        <li>Workers deliver with <strong>retries + exponential backoff</strong>; dead-letter after N tries.</li>
+        <li><strong>At-least-once</strong> delivery → sign payloads + include an event id so consumers dedup (idempotent receivers).</li>
+        <li>Ordering: usually per-entity ordering only; use partition keys if order matters.</li>
+        <li>Track delivery status per subscriber; expose a replay endpoint.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-tradeoffs">Tradeoffs a Staff interviewer probes</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Strong vs eventual consistency</strong> — and <em>where</em> each is acceptable (spend path strong; history/display eventual).</li>
+        <li><strong>Single DB txn vs distributed saga</strong> — the correctness cost of every hop across a boundary.</li>
+        <li><strong>Pessimistic vs optimistic locking</strong> under low vs high contention; hot-account mitigation.</li>
+        <li><strong>Cached balance vs derived</strong> — speed vs verifiability, reconciled by a job.</li>
+        <li><strong>Sync vs async</strong> — what the caller must see commit synchronously vs what can ride the outbox.</li>
+        <li><strong>Sharding key</strong> — by account id; what breaks (cross-shard transfers) and how you handle it.</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px">There's rarely one right answer — they're scoring whether you can <em>name the axis</em>, pick a point, and defend it for <em>this</em> problem.</p>
+    </div>
+
+    <h3 class="section" id="d-hooks">Ripple domain hooks to drop</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"In money movement I optimize for correctness first — exactly-once and a ledger that always balances — then latency, then throughput."</li>
+        <li>"This is the same problem I solve in billing: idempotent retries, source-of-truth conflicts, reconciliation."</li>
+        <li>"For cross-border, on-demand liquidity beats pre-funded nostro/vostro — less trapped capital, faster settlement."</li>
+        <li>"Settlement finality means I design around the ledger confirming, not an optimistic ack."</li>
+        <li>Vocab: idempotency, double-entry, settlement finality, liquidity, reconciliation, saga/compensation, append-only, exactly-once.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="d-red">Red flags &amp; tips</h3>
+    <div class="card bad">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Drawing before scoping.</strong> Always lock requirements + scale first.</li>
+        <li><strong>Floats for money.</strong> Integers in minor units, always.</li>
+        <li><strong>Mutating balances in place with no audit trail.</strong> Append-only ledger; balance is derived/reconciled.</li>
+        <li><strong>Ignoring retries / concurrency.</strong> If you don't bring up idempotency and overdraft races yourself, you've missed the point of a payments round.</li>
+        <li><strong>Hand-waving "I'll use a distributed transaction."</strong> Know 2PC's blocking failure mode and why sagas usually win.</li>
+        <li><strong>Going silent.</strong> Think out loud — the reasoning is what's scored. "Let me weigh two options here…"</li>
+        <li><strong>Over-engineering for scale you weren't asked about.</strong> Start simple (one DB, correct), scale when they push.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ HIRING MANAGER ============ -->
+  <section class="tab" id="tab-hm" data-toc='[
+    ["@group","Start here"],
+    ["Read this first (you have ~10 min)","now"],
+    ["How this round flows","flow"],
+    ["The opening 90 seconds","open"],
+    ["@group","Core question bank"],
+    ["Walk me through a project","q-project"],
+    ["Hardest technical problem","q-hard"],
+    ["Tell me about a conflict","q-conflict"],
+    ["Ambiguous requirements","q-ambig"],
+    ["A failure / mistake","q-fail"],
+    ["Cross-functional collaboration","q-xfn"],
+    ["Why leaving / why now","q-leave"],
+    ["Why Ripple","q-why"],
+    ["Why crypto / payments","q-crypto"],
+    ["What are you looking for","q-want"],
+    ["@group","Close strong"],
+    ["Questions to ask the HM","q-ask"],
+    ["The 60-second debrief","debrief"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">General behavioral prep · feeds the Values round</div><div style="font-size:16px;font-weight:600">Behavioral · conversational · STAR</div></div>
+      <div class="time">⏱ reference</div>
+    </div>
+    <div class="card accent" style="margin-bottom:14px">
+      <p style="margin:0;font-size:13px">Tomorrow's loop has no standalone HM round — your behavioral signal is read in the <strong>Values · LEGGOS</strong> round (Guru, 11:30). Use this tab as the deeper STAR reference behind that one. The <strong>★ Values · LEGGOS</strong> tab is your primary prep.</p>
+    </div>
+
+    <div class="card ripple" style="border-left-width:4px;margin-bottom:18px">
+      <p style="margin:0 0 6px 0;font-weight:600;color:var(--accent)">★ Read this first — interview in ~10 min</p>
+      <p style="margin:0;font-size:13px">This is a <strong>conversation with your potential future boss</strong>, not a coding test. They want three things: (1) <strong>can you tell the story of your work clearly</strong> — your role, the hard parts, the outcome; (2) <strong>do you collaborate well</strong> and own things; (3) <strong>do you actually want to work on money movement / crypto infrastructure</strong>. Your background is a near-perfect fit: <strong>you already build money-moving systems where correctness is everything</strong> (Zendesk Talk payments, Zuora, quote-to-cash). Lean into that. Answer in <strong>STAR</strong> but conversationally — always land the Result.</p>
+      <p style="margin:6px 0 0 0;font-size:13px"><strong>The 4 things to have loaded RIGHT NOW:</strong> ① your 90-sec intro · ② the <strong>SF/Zuora quote-to-cash</strong> story (your strongest) · ③ one genuine <strong>"why Ripple"</strong> (Internet of Value + payments rigor) · ④ <strong>2 questions</strong> to ask them.</p>
+    </div>
+
+    <div class="card good" style="margin-bottom:18px">
+      <p style="margin:0 0 4px 0;font-weight:600">⚡ The 3 lines to memorize cold:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Pitch:</strong> "Backend engineer at Zendesk — I own payments &amp; billing for Talk: money-moving systems where correctness is non-negotiable. Idempotency, retries, clean integrations, tight loops with PM and support. I want that same rigor on bigger payments rails — which is what pulled me to Ripple."</li>
+        <li><strong>Why Ripple:</strong> "The Internet of Value thesis is real to me — moving money should be as fast and cheap as moving information, and cross-border is where that's most broken. I've spent my career on correctness-critical payment paths; doing that at the scale of global settlement is exactly the problem I want."</li>
+        <li><strong>Strongest story:</strong> the SF ↔ Billing ↔ Zuora quote-to-cash integration (ownership, ambiguity, VP stakeholders, idempotency, shipped on a deadline).</li>
+      </ul>
+    </div>
+
+    <div class="card accent" style="margin-bottom:18px">
+      <p style="margin:0;font-size:13px">Treat it as <strong>two professionals figuring out fit</strong>. Be warm, be specific, lead with <strong>"I"</strong> for what you owned. Name real tradeoffs. End having asked 2 good questions. 5–10s of silence to think is fine — "let me pick the best example for that."</p>
+    </div>
+
+    <h3 class="section" id="now">If you read one thing before the call</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Pick your 3 anchor stories</strong> (Stories tab): SF/Zuora integration · Zuora silent-200 bug · DDD disagreement. Each: 1-line context → your role → hardest decision → outcome.</li>
+        <li><strong>Practice "walk me through a project you're proud of" once, out loud.</strong> ~2 min, not 6. They'll interrupt — that's good.</li>
+        <li><strong>Have a real "why Ripple."</strong> Internet of Value, cross-border payments, RLUSD stablecoin, correctness at settlement scale. Sincerity &gt; coverage.</li>
+        <li><strong>Talk in payments fluency</strong> — settlement, liquidity, idempotency, reconciliation, ledgers. This is your home turf; show it.</li>
+        <li><strong>Have 2 questions ready for THEM</strong> (Q's tab). Always.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="flow">How this round typically flows</h3>
+    <table class="rubric">
+      <tr><th>Phase</th><th>~min</th><th>What happens</th></tr>
+      <tr><td>Warm-up</td><td>5</td><td>Intros, their background, "tell me about yourself"</td></tr>
+      <tr><td>Your experience</td><td>20–25</td><td>Deep on 1–2 projects: your role, decisions, challenges, outcomes</td></tr>
+      <tr><td>Collaboration / values</td><td>8–10</td><td>Conflict, cross-functional work, how you operate</td></tr>
+      <tr><td>Motivation</td><td>3–5</td><td>Why Ripple, why crypto/payments, what you're looking for</td></tr>
+      <tr><td>Your questions</td><td>5</td><td>You ask them — don't skip this</td></tr>
+    </table>
+
+    <h3 class="section" id="open">The opening 90 seconds ("tell me about yourself")</h3>
+    <div class="card good">
+      <p style="margin:0 0 8px 0"><strong>Past → Present → Why here.</strong> Tight, forward-looking.</p>
+      <p class="quote" style="margin:0">"I'm a backend engineer at Zendesk, mostly on the Talk product, where I've owned the payments and billing side — usage-based charging, our Zuora integration, the money-moving paths. It's work where correctness is non-negotiable, so I've gotten deep on idempotency, async retries, reconciliation, and tight loops with PM and support to nail down what's actually required. I've also shipped my own products end-to-end on the side. What I'm after now is that same rigor pointed at a bigger payments problem — moving value across borders — which is exactly what pulled me toward Ripple."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">~30s. Give them threads to pull; don't recite your resume.</p>
+    </div>
+
+    <h3 class="section" id="q-project">"Walk me through a project you're proud of"</h3>
+    <p style="margin:0 0 6px 0;color:var(--muted);font-size:13px">The most likely question. They want ownership, decisions, and outcome — not a feature tour.</p>
+    <div class="card">
+      <p style="margin:0 0 4px 0"><strong>Structure (≈2 min, then invite follow-ups):</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Context (1 line):</strong> what the system was, why it mattered, who depended on it.</li>
+        <li><strong>Your role:</strong> "I owned X end-to-end" / "I led the design for Y."</li>
+        <li><strong>The hard part (the meat):</strong> the key decision, the tradeoff, what could've gone wrong.</li>
+        <li><strong>Result:</strong> shipped, what changed, a number if you have one, what you learned.</li>
+      </ul>
+      <p style="margin:10px 0 0 0;font-size:13px"><strong>Best fit:</strong> the <em>SF ↔ Billing ↔ Zuora quote-to-cash integration</em> (ownership + ambiguity + VP stakeholders + idempotency + shipped on deadline) or the <em>Zuora silent-200 bug</em> (correctness under money-moving stakes). End with: "Happy to go deeper on any part."</p>
+    </div>
+
+    <h3 class="section" id="q-hard">"What's the hardest technical problem you've solved?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Depth over breadth. Walk the <strong>investigation</strong>, not just the fix.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Frame the symptom + why it was hard (silent failure, intermittent, money involved).</li>
+        <li>Show the debugging arc: hypotheses, what you ruled out, the "aha."</li>
+        <li>Name the fix <em>and</em> the systemic follow-up (monitoring, guardrail, so it can't recur).</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px"><strong>Use:</strong> Zuora silent-200 bug. The systemic-fix ending ("added alerting so a 200-with-no-charge could never pass silently again") separates senior from mid — and it's exactly the reliability mindset payment infra wants.</p>
+    </div>
+
+    <h3 class="section" id="q-conflict">"Tell me about a disagreement / conflict"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">They score <strong>maturity</strong>, not whether you won. Disagree → reason → commit.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>State both positions <em>fairly</em> — show you understood theirs.</li>
+        <li>How you argued it: data, prototype, escalation — not volume.</li>
+        <li>The resolution + that you committed even if it wasn't your pick.</li>
+        <li><strong>Bonus:</strong> honest reflection on what each side got right.</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px"><strong>Use:</strong> the <em>DDD architecture pushback</em> — you disagreed with the mandate, made your case, deferred, and can now name where both sides were right.</p>
+    </div>
+
+    <h3 class="section" id="q-ambig">"How do you handle ambiguous / complex requirements?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Show a <strong>process</strong>, not just grit.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Talk to the people who hold context (PM, support, the partner) before coding.</li>
+        <li>Write down assumptions and get them confirmed; surface unknowns early.</li>
+        <li>Cut scope to a testable first slice; ship, measure, iterate.</li>
+        <li>Example: turning a vague cross-org VP ask into hardened billing requirements (SF/Zuora story).</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="q-fail">"Tell me about a failure / something you'd do differently"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Pick a <strong>real</strong> one with a real lesson. No humble-brags.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Own your part plainly — no blaming.</li>
+        <li>What it cost (time, a bug to prod, a strained partnership).</li>
+        <li>The concrete change in how you work since. <em>That's the point.</em></li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px"><strong>Options:</strong> the DDD call (deferred when you maybe shouldn't have — frame honestly), or a Wordblok scope/launch lesson.</p>
+    </div>
+
+    <h3 class="section" id="q-xfn">"How do you work with PM / design / other teams?"</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Frame engineering as serving an outcome, not shipping tickets.</li>
+        <li>Concrete habit: pull PM/support in early to find the <em>real</em> requirement, not the stated one.</li>
+        <li>A time you pushed back on scope <em>and</em> a time you flexed for the partner.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="q-leave">"Why are you leaving Zendesk / why now?"</h3>
+    <div class="card good">
+      <p style="margin:0">Keep it <strong>forward-looking and positive.</strong> "I've learned a ton owning payments at Zendesk — I'm grateful for the depth in correctness-critical systems. I'm looking for the next step where the payments problem is bigger and more foundational — global value movement — and where I can grow toward more ownership and design influence." <span style="color:var(--muted);font-size:12px">Never: comp gripes, manager drama, "I'm bored."</span></p>
+    </div>
+
+    <h3 class="section" id="q-why">"Why Ripple?" (the one that matters)</h3>
+    <div class="card ripple">
+      <p style="margin:0 0 8px 0">Three beats — lead with the one you most believe:</p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>The mission is the problem I already work on, scaled up.</strong> "Internet of Value — money should move like information. Cross-border payments are the most broken version of the thing I do every day. I want my correctness work to matter at global-settlement scale."</li>
+        <li><strong>It's real infrastructure with real adoption.</strong> "Ripple isn't a whitepaper — there's a live ledger (XRPL), enterprise payments customers, a regulated stablecoin (RLUSD), custody. That's serious engineering under real load, which is where I do my best work."</li>
+        <li><strong>The rigor fits how I work.</strong> "On payment rails a bug isn't a rounding error — it's someone's money. I've spent my career building idempotent, reconcilable money flows. That's exactly the discipline this domain demands."</li>
+      </ol>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Sincerity &gt; coverage. Pick the part you actually believe and go deep on it.</p>
+    </div>
+
+    <h3 class="section" id="q-crypto">"Why crypto / what's your take on the space?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">They may probe whether you're a tourist or genuinely interested. Be <strong>grounded, not hype.</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Anchor on <strong>utility, not speculation</strong>: "What interests me is crypto as payment <em>rails</em> — fast, cheap, 24/7 settlement and bridge liquidity — not the trading/price story."</li>
+        <li>Connect to your work: "It's the same problems I already solve — idempotency, reconciliation, ledger correctness — on a more open, global substrate."</li>
+        <li>Show awareness without overclaiming: blockchains as shared ledgers, the cross-border correspondent-banking pain Ripple targets, stablecoins (RLUSD) as a settlement instrument.</li>
+        <li>It's fine to be honest about your depth: "I'm earlier in the crypto-specific knowledge, but the payment-systems fundamentals transfer directly, and I'm genuinely excited to go deep."</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="q-want">"What are you looking for in your next role?"</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Ownership of meaningful surface area, not just tickets.</li>
+        <li>A correctness-critical domain where the work actually matters (payments / settlement).</li>
+        <li>Strong partners and a team I learn from; room to grow toward design/architecture influence.</li>
+        <li>Foundational infrastructure with real users and real scale.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="q-ask">Questions to ask the HM (pick 2–3)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"What does this team own, and what's the most important thing it needs to get right in the next 6 months?"</li>
+        <li>"How does the team think about the tradeoff between settlement speed and correctness/safety when they conflict?"</li>
+        <li>"With RLUSD and the custody/prime-brokerage expansion, how is that reshaping what your team is building?"</li>
+        <li>"What does success look like for someone in this role at 3 months and at a year?"</li>
+        <li>"What's the hardest part of building payment infrastructure here that surprised you?"</li>
+        <li>"How would you describe your management style — and what kind of engineer thrives on your team?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="debrief">The 60-second debrief (right after)</h3>
+    <div class="card">
+      <p style="margin:0">Jot down: what the HM cared about, the team's current priorities, any product/tech detail they dropped, and questions you struggled with. Reuse it in later rounds and your thank-you note.</p>
+    </div>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab" id="tab-cheat" data-toc='[
+    ["The 10-second pitch (you)","pitch"],
+    ["Why Ripple soundbite","why"],
+    ["Mission &amp; domain vocab","vocab"],
+    ["What the HM scores","score"],
+    ["Red flags to avoid","red"],
+    ["When stuck / buy time","stuck"]
+  ]'>
+    <h2>Cheat Sheet <span class="sub">scan this if you have a minute</span></h2>
+
+    <h3 class="section" id="pitch">The 10-second pitch (about you)</h3>
+    <div class="card ripple">
+      <p style="margin:0 0 6px 0"><strong>Template:</strong> "I'm a backend-leaning engineer at Zendesk, where I own payments and billing for Talk — money-moving systems where correctness is everything. I like high-stakes, high-trust work: idempotent flows, clean integrations, reconciliation, partnering tightly with PM and support for the real requirements. I'm looking for that same rigor on a bigger payments problem — which is why Ripple's cross-border thesis caught my attention."</p>
+      <p style="margin:0;color:var(--muted);font-size:12px">~25–30s. Then stop and let them drive.</p>
+    </div>
+
+    <h3 class="section" id="why">Why Ripple (use when they ask)</h3>
+    <div class="card good">
+      <p class="quote" style="margin:0">"Two things. First, the mission is the problem I already work on — money should move like information, and cross-border is where that's most broken; I want my correctness work to matter at settlement scale. Second, it's real infrastructure, not a whitepaper — a live ledger, enterprise payment customers, a regulated stablecoin in RLUSD, custody. Serious engineering under real load is where I do my best work, and on payment rails a bug is someone's money, not a rounding error. That mix of mission and rigor is exactly what I want."</p>
+      <p style="margin:8px 0 0 0;color:var(--muted);font-size:12px">Hits: Internet of Value, cross-border, real adoption, RLUSD, correctness stakes. Make it yours.</p>
+    </div>
+
+    <h3 class="section" id="vocab">Words &amp; phrases that land well</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0"><strong>Mission vocab:</strong> <em>Internet of Value, move value like information, cross-border payments, financial infrastructure, settlement</em></p>
+      <p style="margin:0 0 6px 0"><strong>Product vocab:</strong> <em>XRP Ledger (XRPL), XRP, Ripple Payments, On-Demand Liquidity (ODL), RLUSD (stablecoin), Ripple Custody, Ripple Prime</em></p>
+      <p style="margin:0 0 6px 0"><strong>Payments/eng vocab:</strong> <em>idempotency, reconciliation, ledger correctness, liquidity, settlement finality, FX/bridge currency, 24/7 rails, double-entry, exactly-once</em></p>
+      <p style="margin:0"><strong>Posture vocab:</strong> <em>utility over speculation, regulated/compliant, institutional-grade, reliability</em></p>
+    </div>
+
+    <h3 class="section" id="score">What the HM is really scoring</h3>
+    <div class="grid-2">
+      <div class="card"><strong>Ownership</strong><br><span style="font-size:13px;color:var(--muted)">Did you drive, or get carried? "I" for what you owned. Be specific about <em>your</em> decisions.</span></div>
+      <div class="card"><strong>Correctness mindset</strong><br><span style="font-size:13px;color:var(--muted)">In payments, reliability &amp; correctness are the whole game. Show you think in failure modes, idempotency, reconciliation.</span></div>
+      <div class="card"><strong>Judgment</strong><br><span style="font-size:13px;color:var(--muted)">Can you name a real tradeoff and defend it? Ambiguity handled with a process.</span></div>
+      <div class="card"><strong>Genuine interest</strong><br><span style="font-size:13px;color:var(--muted)">Do you care about payments/crypto specifically? Grounded utility take, not hype, not "great company."</span></div>
+    </div>
+
+    <h3 class="section" id="red">Red flags to avoid</h3>
+    <div class="card bad">
+      <ul class="tight">
+        <li><strong>Crypto-tourist / hype talk.</strong> Don't talk price or "to the moon." Talk rails, settlement, utility.</li>
+        <li><strong>Generic mission answers.</strong> "I want to work in fintech / it's a cool company" — show you know Internet of Value, XRPL, RLUSD.</li>
+        <li><strong>All "we," no "I."</strong> Own your decisions out loud.</li>
+        <li><strong>Bashing past employers / teammates.</strong> Reframe friction as a problem you helped fix.</li>
+        <li><strong>Rambling.</strong> 6-minute monologues. Aim for 2 min, invite follow-ups.</li>
+        <li><strong>No questions for them.</strong> Always have 2.</li>
+        <li><strong>Over-claiming crypto depth you don't have.</strong> Honesty + transferable fundamentals beats bluffing.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="stuck">When stuck / buy time</h3>
+    <ul class="tight">
+      <li><strong>Behavioral:</strong> "Let me think of the best example for that" — 5–10s of silence is fine.</li>
+      <li><strong>If you blank on a metric:</strong> "I don't have the exact number, but directionally it..." — honesty beats a made-up figure.</li>
+      <li><strong>If asked deep crypto you don't know:</strong> "I haven't gone deep there yet — here's how I'd reason about it from payment-systems fundamentals." Reasoning &gt; bluffing.</li>
+    </ul>
+  </section>
+
+  <!-- ============ STORIES ============ -->
+  <section class="tab" id="tab-stories" data-toc='[
+    ["How to use these","use"],
+    ["Story → question map","map"],
+    ["★ SF / quote-to-cash integration","s-integration"],
+    ["★ Zuora silent-200 billing bug","s-zuora"],
+    ["DDD architecture disagreement","s-ddd"],
+    ["Wordblok — shipped fast solo","s-wordblok"],
+    ["Cross-functional w/ PM &amp; support","s-xfn"],
+    ["Why payments / mission framing","s-mission"]
+  ]'>
+    <h2>Story Bank <span class="sub">STAR-shaped, mapped to the questions they ask</span></h2>
+
+    <h3 class="section" id="use">How to use these</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Each story works for <strong>several</strong> questions — know the theme, then bend it to the prompt.</li>
+        <li>Memorize the <strong>Result</strong> line; improvise the rest. Numbers &gt; adjectives.</li>
+        <li>Lead with <strong>"I"</strong> for what you owned.</li>
+        <li>Tie at least one story back to <strong>correctness in money movement</strong> — it's the bridge to Ripple's domain.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="map">Story → question map</h3>
+    <table class="rubric">
+      <tr><th>If they ask…</th><th>Reach for…</th></tr>
+      <tr><td>Project you're proud of / hardest project</td><td>SF integration · Zuora silent-200</td></tr>
+      <tr><td>Hardest bug / debugging</td><td>Zuora silent-200 bug</td></tr>
+      <tr><td>Disagreement / conflict / pushback</td><td>DDD architecture disagreement</td></tr>
+      <tr><td>Shipping under pressure / bias to action</td><td>Wordblok solo launch · SF integration</td></tr>
+      <tr><td>Ambiguous / complex requirements</td><td>SF integration · Cross-functional w/ support</td></tr>
+      <tr><td>Failure / do-over</td><td>DDD call · Wordblok scope lesson</td></tr>
+      <tr><td>Working cross-functionally</td><td>Cross-functional w/ PM &amp; support · SF integration</td></tr>
+      <tr><td>Why this work / mission</td><td>Why payments framing</td></tr>
+    </table>
+
+    <div class="story" id="s-integration">
+      <div class="title">★ Salesforce ↔ Billing ↔ Zuora integration (quote-to-cash)</div>
+      <div class="tags"><span class="pill">ownership</span><span class="pill">ambiguity</span><span class="pill">cross-org</span><span class="pill">stakeholders</span><span class="pill">correctness</span><span class="pill">ship</span></div>
+      <div class="row"><div class="lbl">Hook</div><div>"I owned the integration connecting Salesforce, our Billing app, and Zuora — the quote-to-cash backbone. It came down as a vague cross-org ask: two VPs in different orgs knew the outcome they wanted and a few hard requirements, the rest was up to us. The hard part wasn't the code — it was turning that ambiguity into correct, hardened billing requirements while coordinating through a PM."</div></div>
+      <div class="row"><div class="lbl">System</div><div>Salesforce = system of record for the <em>sale</em>. Billing app = orchestration layer in the middle. Zuora = system of record for <em>subscriptions, invoicing &amp; payments</em>. Bidirectional: closed deals provisioned subscriptions; invoice/payment status synced back; amendments/renewals flowed through.</div></div>
+      <div class="row"><div class="lbl">Hard part</div><div>I surfaced the integrity cases the happy-path spec missed: (1) <strong>failed/partial syncs needing idempotency</strong> — a retry must not double-provision or double-charge; (2) <strong>source-of-truth conflicts</strong> — when SF and Zuora disagreed, defining which system wins per field &amp; lifecycle stage instead of blindly overwriting; (3) <strong>catalog ↔ rate-plan mapping</strong> — SF products didn't map cleanly onto Zuora rate plans, so we worked out the canonical mapping.</div></div>
+      <div class="row"><div class="lbl">Judgment</div><div>Tight ~2–3 month window; full scope didn't fit. I worked with the PM to decide explicitly what to cut and what to protect — deferred nice-to-haves but drew a hard line around the <strong>integrity-critical</strong> pieces (idempotency, conflict resolution, reconciliation), because a fast-but-wrong billing sync creates silent revenue &amp; invoice errors that cost far more to unwind.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Shipped on time. Replaced a manual hand-off — Sales and Finance no longer hand-corrected deal data between systems — and cut the billing/sync errors that needed manual cleanup. One quote-to-cash pipeline all teams trusted, with errors caught in design instead of in customers' invoices.</div></div>
+      <div class="row"><div class="lbl">Ripple tie-in</div><div>"This is the exact muscle a payments network needs: when two systems disagree about state, you don't overwrite — you decide source-of-truth deliberately, because a wrong sync is someone's money. Idempotent retries, reconciliation, exactly-once intent — that's the daily work of money movement."</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Proud project · ambiguity · aligning VP stakeholders · cross-functional · pushing back (integrity before speed) · shipping under deadline. <strong>Your single strongest answer.</strong></div></div>
+    </div>
+
+    <div class="story" id="s-zuora">
+      <div class="title">★ Zuora silent-200 billing bug</div>
+      <div class="tags"><span class="pill">ownership</span><span class="pill">debugging</span><span class="pill">correctness</span><span class="pill">money-moving</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Zendesk Talk billing ran through a Zuora integration. Charges that depended on it were silently not landing — the API returned <code class="inline">200 OK</code> but no charge was actually created, so nothing alerted.</div></div>
+      <div class="row"><div class="lbl">Task</div><div>I owned the payments path, so root-causing and fixing it was on me — and quantifying the revenue/correctness exposure.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Traced the request/response cycle, found the success status masking a no-op on Zuora's side, reproduced it, and fixed the integration logic. Then closed the systemic gap: added alerting/validation so a "success with no charge" could never pass silently again.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Stopped the silent revenue leak and made the class of bug impossible to miss going forward. <em>(Add the $ / volume figure if you have it.)</em></div></div>
+      <div class="row"><div class="lbl">Ripple tie-in</div><div>"Silent failures in money movement are the dangerous ones — a 200 that didn't actually settle. That's why payment systems need verification at every boundary, not trust in a status code. Exactly the reliability posture settlement infra demands."</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Hardest bug · proud project · ownership · correctness-critical systems.</div></div>
+    </div>
+
+    <div class="story" id="s-ddd">
+      <div class="title">DDD architecture disagreement</div>
+      <div class="tags"><span class="pill">conflict</span><span class="pill">judgment</span><span class="pill">maturity</span><span class="pill">disagree &amp; commit</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>An architecture group mandated a Domain-Driven-Design approach for the Talk payments work. I had reservations about the cost/benefit for our specific context.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Made my case with concrete reasoning about our constraints, heard their longer-term rationale, and ultimately deferred to the mandate while flagging the tradeoffs.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Honestly mixed — and that's the point: in hindsight both sides were partly right. I can name what the DDD direction got right and where my concern held up. Shows I argue hard, commit cleanly, and reflect honestly.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Conflict/disagreement · failure/do-over · working with senior stakeholders · self-awareness.</div></div>
+    </div>
+
+    <div class="story" id="s-wordblok">
+      <div class="title">Wordblok — shipped a game solo in a week</div>
+      <div class="tags"><span class="pill">bias to action</span><span class="pill">scope</span><span class="pill">end-to-end</span><span class="pill">ship</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Wanted to ship my first iOS App Store game; gave myself ~a week.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Aggressively cut scope to the core loop, deferred everything non-essential, and shipped. Made hard "not in v1" calls to protect the deadline.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Live on the App Store in ~a week. Proof of end-to-end ownership and ruthless prioritization — the "make it happen" instinct.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Bias to action · shipping under constraint · scope discipline · self-direction · failure/lesson.</div></div>
+    </div>
+
+    <div class="story" id="s-xfn">
+      <div class="title">Cross-functional with PM &amp; support</div>
+      <div class="tags"><span class="pill">collaboration</span><span class="pill">requirements</span><span class="pill">customer-facing</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Billing/payments edge cases where the "stated" requirement and the real one differed — surfaced through support tickets and PM conversations.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Pulled support and PM in early, used real tickets to ground the edge cases, confirmed assumptions before building.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Shipped fixes that addressed the root issue customers were hitting, not the surface symptom. <em>(Add a concrete case.)</em></div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Cross-functional collaboration · ambiguous requirements · customer empathy.</div></div>
+    </div>
+
+    <div class="story" id="s-mission">
+      <div class="title">Why payments / mission framing</div>
+      <div class="tags"><span class="pill">motivation</span><span class="pill">values</span></div>
+      <div class="row"><div class="lbl">Theme</div><div>You've spent your career on systems where correctness directly affects real people's money. You want that same rigor on a bigger, more foundational version of the problem — moving value across borders, where the current rails are slow, expensive, and broken.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Why Ripple · why payments/crypto · what motivates you.</div></div>
+    </div>
+  </section>
+
+  <!-- ============ COMPANY & MISSION ============ -->
+  <section class="tab" id="tab-company" data-toc='[
+    ["The one-paragraph brief","brief"],
+    ["Mission &amp; thesis","mission"],
+    ["Products you should name","products"],
+    ["Key facts &amp; context","facts"],
+    ["The SEC case (handle with care)","sec"],
+    ["How to talk about it all","talk"]
+  ]'>
+    <h2>Company &amp; Mission <span class="sub">enough to sound informed, not to lecture</span></h2>
+
+    <div class="card warn" style="margin-bottom:14px">
+      <p style="margin:0;font-size:13px"><strong>Confidence note:</strong> these are general facts about Ripple from public knowledge. Double-check anything you plan to state as a precise figure or recent event — the space moves fast. When unsure, speak directionally ("they've been expanding into custody and a stablecoin") rather than citing exact dates/numbers.</p>
+    </div>
+
+    <h3 class="section" id="brief">The one-paragraph brief</h3>
+    <div class="card ripple">
+      <p style="margin:0">Ripple is a San Francisco–based company (founded ~2012) building <strong>financial infrastructure for moving value</strong>, especially <strong>cross-border payments</strong>. It's closely associated with the <strong>XRP Ledger (XRPL)</strong> — an open, decentralized blockchain — and <strong>XRP</strong>, a digital asset used as a bridge currency for liquidity. Ripple sells enterprise products (payments, custody, and more recently a stablecoin, <strong>RLUSD</strong>) to banks, payment providers, and institutions. The pitch: make money move as fast, cheap, and reliably as information does today — the "<strong>Internet of Value</strong>."</p>
+    </div>
+
+    <h3 class="section" id="mission">Mission &amp; thesis</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Internet of Value:</strong> value should move like information — instant, global, cheap, always-on.</li>
+        <li><strong>The problem they target:</strong> cross-border payments today are slow (days), expensive, and opaque — built on aging correspondent-banking rails and pre-funded nostro/vostro accounts.</li>
+        <li><strong>The approach:</strong> use crypto rails (XRPL, XRP as a bridge asset, and stablecoins) to settle in seconds with less trapped liquidity, while staying compliant and institution-friendly.</li>
+        <li><strong>Posture:</strong> regulated, enterprise/institutional-grade, utility-first — not a retail-speculation play.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="products">Products you should be able to name</h3>
+    <table class="rubric">
+      <tr><th>Product</th><th>What it is</th></tr>
+      <tr><td><strong>XRP Ledger (XRPL)</strong></td><td>Open, decentralized public blockchain; fast, low-cost settlement; native DEX. Not controlled by Ripple, but Ripple builds on it.</td></tr>
+      <tr><td><strong>XRP</strong></td><td>The ledger's native digital asset; used as a bridge/liquidity currency between fiat pairs.</td></tr>
+      <tr><td><strong>Ripple Payments</strong></td><td>Enterprise cross-border payments product (the evolution of RippleNet / On-Demand Liquidity, "ODL").</td></tr>
+      <tr><td><strong>RLUSD</strong></td><td>Ripple's USD-backed <strong>stablecoin</strong> (launched ~late 2024) — a settlement instrument for payments.</td></tr>
+      <tr><td><strong>Ripple Custody</strong></td><td>Institutional digital-asset custody (built on the Metaco acquisition).</td></tr>
+      <tr><td><strong>Ripple Prime / brokerage</strong></td><td>Institutional prime brokerage capability (via the Hidden Road acquisition, ~2025).</td></tr>
+    </table>
+
+    <h3 class="section" id="facts">Key facts &amp; context</h3>
+    <ul class="tight">
+      <li>HQ in San Francisco; global offices; serves <strong>institutions</strong> (banks, PSPs, fintechs), not retail consumers directly.</li>
+      <li>Strategy has broadened from payments into a fuller <strong>institutional crypto stack</strong>: payments + custody + stablecoin + brokerage.</li>
+      <li>Engineering is heavy on <strong>distributed systems, ledgers, correctness, security, and compliance</strong> — your payments background maps cleanly.</li>
+      <li>Stablecoins and tokenized real-world assets are major industry tailwinds Ripple is leaning into.</li>
+    </ul>
+
+    <h3 class="section" id="sec">The SEC case (handle with care)</h3>
+    <div class="card warn">
+      <p style="margin:0 0 6px 0;font-size:13px">The SEC sued Ripple (filed Dec 2020) alleging XRP was an unregistered security. A 2023 court ruling (Judge Torres) found that <strong>programmatic XRP sales on exchanges were not securities offerings</strong>, while certain institutional sales were — a partial win widely seen as significant for the industry. The matter moved toward resolution in 2024–2025.</p>
+      <p style="margin:0;font-size:13px"><strong>How to handle it if it comes up:</strong> don't volunteer hot takes. If asked, keep it neutral and forward-looking — "I know the regulatory picture has been a big part of the story and has largely moved in their favor; what I find compelling is the actual payments utility." Don't pretend to be a securities-law expert.</p>
+    </div>
+
+    <h3 class="section" id="talk">How to talk about it all</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Lead with <strong>utility and infrastructure</strong>, not token price or speculation.</li>
+        <li>Use 2–3 product names naturally (XRPL, Ripple Payments, RLUSD) — enough to show you read up, not a recitation.</li>
+        <li>Bridge to your experience: "the correctness problems I solve in billing are the same ones at the heart of settlement."</li>
+        <li>If you don't know a detail, say so and reason from fundamentals. Curiosity reads better than bluffing.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ QUESTIONS TO ASK ============ -->
+  <section class="tab" id="tab-questions" data-toc='[
+    ["For the hiring manager","q-hm"],
+    ["About the team &amp; work","q-team"],
+    ["About the domain","q-domain"],
+    ["About growth &amp; culture","q-growth"],
+    ["Avoid asking","q-avoid"]
+  ]'>
+    <h2>Questions to Ask <span class="sub">always have 2–3 ready; pick by who's in the room</span></h2>
+
+    <h3 class="section" id="q-hm">For the hiring manager (today)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"What does this team own, and what's the most important thing it needs to get right in the next 6 months?"</li>
+        <li>"What does success look like for this role at 3 months and at a year?"</li>
+        <li>"How would you describe your management style — and what kind of engineer thrives on your team?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="q-team">About the team &amp; work</h3>
+    <ul class="tight">
+      <li>"What does the architecture look like for the part of the system this team owns?"</li>
+      <li>"How do you balance shipping speed against the correctness/safety bar that payments demands?"</li>
+      <li>"What's the on-call / reliability culture like for money-moving services?"</li>
+    </ul>
+
+    <h3 class="section" id="q-domain">About the domain</h3>
+    <ul class="tight">
+      <li>"How is RLUSD changing the way teams think about settlement internally?"</li>
+      <li>"What's the hardest part of building payment infra here that surprised you?"</li>
+      <li>"How does the team work with compliance/legal given the regulatory environment?"</li>
+    </ul>
+
+    <h3 class="section" id="q-growth">About growth &amp; culture</h3>
+    <ul class="tight">
+      <li>"How do engineers grow toward more design/architecture ownership here?"</li>
+      <li>"What's something about the culture that's true here but wouldn't be obvious from the outside?"</li>
+    </ul>
+
+    <h3 class="section" id="q-avoid">Avoid asking</h3>
+    <div class="card bad">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Anything about XRP price, your own holdings, or "will the token go up."</li>
+        <li>Comp/equity specifics with the HM (save for recruiter).</li>
+        <li>Questions answered on the careers page — shows you didn't look.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CODING ============ -->
+  <section class="tab" id="tab-tech" data-toc='[
+    ["@group","Start here"],
+    ["What the data actually says","scope"],
+    ["What to expect","expect"],
+    ["@group","What to practice"],
+    ["Patterns to drill (ranked)","patterns"],
+    ["Reported problems (caveated)","problems"],
+    ["Data-structure design — the key bucket","design-ds"],
+    ["@group","Execution"],
+    ["Communication framework","comm"],
+    ["Payments-flavored coding twists","twists"],
+    ["Full study guide","guide"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Tomorrow · Round 3 · 12:15–1:15 PDT · Jing Dong (Staff SWE)</div><div style="font-size:16px;font-weight:600">Coding</div></div>
+      <div class="time">⏱ 60 min</div>
+    </div>
+
+    <div class="card warn" style="margin-bottom:14px">
+      <p style="margin:0;font-size:13px"><strong>Honest data caveat:</strong> there's <strong>very little verified, Ripple-specific public interview data.</strong> Search results are badly polluted by <strong>"Rippling"</strong> (an unrelated HR/payroll company), and most "Ripple question" lists are aggregator-scraped LeetCode company tags, not first-hand reports. Everything below is <strong>directional</strong> — patterns to bias your practice, <em>not</em> a verified question bank. The most reliable signal is simply: <strong>LeetCode-Medium DS&amp;A + at least one data-structure-design problem.</strong></p>
+    </div>
+
+    <h3 class="section" id="scope">What the data actually says</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Format:</strong> ~60 min, <strong>your choice of language</strong> (Python/Java/C++/Ruby all reported). Clean, narrated code beats cleverness.</li>
+        <li><strong>Difficulty:</strong> mostly <strong>LeetCode Medium</strong>, with the occasional Hard. Glassdoor difficulty ~2.7–2.9/5 — moderate, conversational, not adversarial.</li>
+        <li><strong>Most consistent signal:</strong> classic mid-level patterns <em>plus</em> a <strong>"design a data structure"</strong> task (e.g. LRU Cache, a stock-price tracker). That design-flavored coding is the through-line across reports.</li>
+        <li><strong>Reliability:</strong> all of this is <span class="pill warn">anecdotal</span> — assembled from fragments (Glassdoor, Blind, scraped tag lists). No clean end-to-end first-hand Ripple onsite write-up exists publicly.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="expect">What to expect</h3>
+    <ul class="tight">
+      <li>1–2 problems in 60 min: typically one warm-up + one meatier problem, or one problem with progressive follow-ups ("now make it O(1)", "now make it concurrent").</li>
+      <li>Staff interviewer → expect <strong>follow-ups that push on complexity, edge cases, and scaling</strong>. Leave room to optimize; don't sprint to the perfect answer silently.</li>
+      <li>Possible <strong>"build it, then discuss how you'd scale"</strong> format (reported, though possibly Rippling-sourced) — your design instincts carry over.</li>
+      <li>A <strong>SQL</strong> question is plausible given the data/payments domain (one report listed a SQL problem).</li>
+    </ul>
+
+    <h3 class="section" id="patterns">Patterns to drill (ranked by signal)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Data-structure design</strong> — LRU/LFU cache, an O(1) insert/get/get-average structure, a time-series/stock-price tracker. <em>Highest-confidence bucket.</em> Practice classes with multiple methods + clean state.</li>
+        <li><strong>Arrays &amp; hashing</strong> — Group Anagrams, Product of Array Except Self, Subarray Sum Equals K, Two-Sum family.</li>
+        <li><strong>Intervals</strong> — Merge Intervals, insert/overlap. (Also: your other interviews flagged interval scheduling — shared muscle.)</li>
+        <li><strong>Stacks</strong> — Basic Calculator, Car Fleet, Remove Adjacent Duplicates, String Compression.</li>
+        <li><strong>Binary search on the answer</strong> — Koko Eating Bananas, capacity/threshold problems.</li>
+        <li><strong>Heaps / sorting</strong> — top-K, merge-K, median maintenance.</li>
+      </ol>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Spend the most time on #1 — it's the most Ripple-consistent and it overlaps the system-design round's "model clean state + methods" instinct.</p>
+    </div>
+
+    <h3 class="section" id="problems">Reported problems <span class="sub">treat as a practice list, not a prediction</span></h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0;font-size:12px;color:var(--muted)">From scraped company-tag lists &amp; a few Glassdoor mentions. <span class="pill warn">anecdotal</span> — and some may be Rippling's. Useful as a representative drill set:</p>
+      <table class="rubric">
+        <tr><th>Problem</th><th>Pattern</th><th>Diff</th></tr>
+        <tr><td>LRU Cache</td><td>DS design</td><td>Med</td></tr>
+        <tr><td>Stock Price Fluctuation</td><td>DS design + heap</td><td>Med</td></tr>
+        <tr><td>Design Excel Sum Formula</td><td>DS design + graph</td><td>Hard</td></tr>
+        <tr><td>Group Anagrams</td><td>Hashing</td><td>Med</td></tr>
+        <tr><td>Product of Array Except Self</td><td>Arrays</td><td>Med</td></tr>
+        <tr><td>Subarray Sum Equals K</td><td>Prefix sum + hash</td><td>Med</td></tr>
+        <tr><td>Merge Intervals</td><td>Intervals</td><td>Med</td></tr>
+        <tr><td>Basic Calculator</td><td>Stack</td><td>Hard</td></tr>
+        <tr><td>Car Fleet</td><td>Stack / sort</td><td>Med</td></tr>
+        <tr><td>Koko Eating Bananas</td><td>Binary search on answer</td><td>Med</td></tr>
+        <tr><td>String Compression</td><td>Two pointers</td><td>Med</td></tr>
+        <tr><td>Remove All Adjacent Duplicates</td><td>Stack</td><td>Easy</td></tr>
+        <tr><td>Median of Two Sorted Arrays</td><td>Binary search</td><td>Hard</td></tr>
+        <tr><td>Product Sales Analysis I</td><td>SQL join</td><td>Easy</td></tr>
+      </table>
+    </div>
+
+    <h3 class="section" id="design-ds">Data-structure design — the key bucket</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0">If one problem type is worth over-practicing, it's this. Drill the muscle of: pick the right backing structures, keep every operation at target complexity, handle edge cases (empty, eviction, duplicate keys).</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>LRU Cache</strong> — hashmap + doubly-linked list, all O(1). Know it cold.</li>
+        <li><strong>O(1) insert / remove / getRandom</strong> — hashmap + array swap-to-end.</li>
+        <li><strong>insert / get / getAverage in O(1)</strong> — running sum + count (reported prompt).</li>
+        <li><strong>Stock-price tracker</strong> — current/max/min with a heap + lazy deletion or a tree map.</li>
+        <li><strong>Rate limiter / token bucket</strong> — ties straight into the design tab; a nice bridge answer.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="comm">Communication framework (coding)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Restate</strong> the problem in your own words.</li>
+        <li><strong>Clarify</strong> 2–3 things (input size, edge cases, can I mutate, sorted?).</li>
+        <li><strong>Brute force first</strong> — state it &amp; its complexity.</li>
+        <li><strong>Outline</strong> the better approach before coding; get a nod.</li>
+        <li><strong>Narrate</strong> non-obvious decisions.</li>
+        <li><strong>Trace</strong> a concrete example after coding.</li>
+        <li><strong>State complexity</strong> (time + space) unprompted, then edge cases.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="twists">Payments-flavored coding twists</h3>
+    <ul class="tight">
+      <li><strong>Money math:</strong> if amounts appear, use integers (minor units), never floats — and say why.</li>
+      <li><strong>Idempotency / dedup</strong> as a coding sub-problem: "process each event once" → a seen-set keyed by id.</li>
+      <li><strong>Concurrency follow-up:</strong> "what if two threads call this?" → mention a lock / atomic / CAS even if not coded.</li>
+      <li><strong>Interval/scheduling</strong> framings can wear a payments coat (overlapping holds, settlement windows).</li>
+    </ul>
+
+    <h3 class="section" id="guide">Full study guide</h3>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px">Your pattern-organized coding drill book lives at <code class="inline">interviewing_2026/study-guide/index.html</code> — use it for DS&amp;A reps. Prioritize the <strong>data-structure-design</strong> and <strong>arrays/hashing/intervals/stack/binary-search</strong> sections tonight.</p>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+  const tocControls = document.getElementById("toc-controls");
+  const tocFilter = document.getElementById("toc-filter");
+  const expandAllBtn = document.getElementById("expand-all");
+  const collapseAllBtn = document.getElementById("collapse-all");
+
+  function wrapInCollapsibles(section) {
+    const headings = Array.from(section.querySelectorAll("h3.section"));
+    headings.forEach((h3) => {
+      if (h3.closest("details.problem")) return;
+      const elements = [];
+      let next = h3.nextElementSibling;
+      while (next && !(next.tagName === "H3" && next.classList.contains("section"))) {
+        elements.push(next);
+        next = next.nextElementSibling;
+      }
+      const details = document.createElement("details");
+      details.className = "problem";
+      if (h3.id) { details.id = h3.id; h3.removeAttribute("id"); }
+      const summary = document.createElement("summary");
+      summary.innerHTML = h3.innerHTML;
+      details.appendChild(summary);
+      h3.parentNode.insertBefore(details, h3);
+      h3.remove();
+      elements.forEach((el) => details.appendChild(el));
+    });
+  }
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      if (label === "@group") {
+        const groupLi = document.createElement("li");
+        groupLi.className = "toc-group";
+        groupLi.textContent = id;
+        toc.appendChild(groupLi);
+        return;
+      }
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.innerHTML = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) {
+          if (target.tagName === "DETAILS") target.open = true;
+          const parentDetails = target.closest("details");
+          if (parentDetails) parentDetails.open = true;
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll("aside li a").forEach((x) => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach((s) => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) {
+      const collapsible = section.dataset.collapsible === "true";
+      if (collapsible) wrapInCollapsibles(section);
+      buildTOC(section);
+      if (collapsible) {
+        tocControls.style.display = "flex";
+        tocFilter.style.display = "block";
+        tocFilter.value = "";
+        filterTOC("");
+      } else {
+        tocControls.style.display = "none";
+        tocFilter.style.display = "none";
+      }
+    }
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("ripple-tab", tabId); } catch (e) {}
+  }
+
+  function setAllOpen(open) {
+    const activeSection = document.querySelector("section.tab.active");
+    if (!activeSection) return;
+    activeSection.querySelectorAll("details.problem").forEach((d) => { d.open = open; });
+  }
+  expandAllBtn.addEventListener("click", () => setAllOpen(true));
+  collapseAllBtn.addEventListener("click", () => setAllOpen(false));
+
+  function filterTOC(query) {
+    const q = query.trim().toLowerCase();
+    const lis = Array.from(toc.querySelectorAll("li"));
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) return;
+      const text = li.textContent.toLowerCase();
+      const hidden = q !== "" && !text.includes(q);
+      li.classList.toggle("toc-hidden", hidden);
+    });
+    let currentGroup = null;
+    let currentGroupHasVisible = false;
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) {
+        if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+        currentGroup = li;
+        currentGroupHasVisible = false;
+      } else if (!li.classList.contains("toc-hidden")) {
+        currentGroupHasVisible = true;
+      }
+    });
+    if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+  }
+  tocFilter.addEventListener("input", (e) => filterTOC(e.target.value));
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "values";
+  try {
+    const saved = localStorage.getItem("ripple-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1200);
+      } catch (e) { btn.textContent = "Failed"; }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"values","2":"design","3":"tech","4":"hm","5":"cheat","6":"stories","7":"company","8":"questions" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+</script>
+
+</body>
+</html>

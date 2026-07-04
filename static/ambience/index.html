@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambience Healthcare · Backend SWE · Interview Prep</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+  :root {
+    --bg: #faf8ff;
+    --panel: #ffffff;
+    --panel-2: #f1ecfb;
+    --border: #e5ddf5;
+    --text: #1d1830;
+    --muted: #6f6890;
+    --accent: #7c3aed;       /* Ambience violet */
+    --accent-2: #9d6bff;
+    --ink: #4c1d95;          /* deep purple */
+    --good: #15803d;
+    --warn: #b45309;
+    --bad: #b91c1c;
+    --amb: #7c5cff;
+    --amb-dark: #3b0764;
+    --shadow: 0 1px 2px rgba(28, 18, 48, 0.05), 0 1px 1px rgba(28, 18, 48, 0.03);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  header h1 .badge { background: var(--amb-dark); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; vertical-align: middle; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button {
+    background: transparent; border: 1px solid transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); background: var(--panel-2); }
+  nav.tabs button.active {
+    color: var(--accent); background: var(--panel-2); border-color: var(--border);
+  }
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px;
+    display: grid; grid-template-columns: 230px 1fr; gap: 32px;
+  }
+  aside {
+    position: sticky; top: 70px; align-self: start;
+    max-height: calc(100vh - 90px); overflow-y: auto;
+    padding-right: 8px;
+  }
+  aside h3 { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.08em; margin: 0 0 8px 0; }
+  aside ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+  aside li a {
+    display: block; padding: 4px 10px; color: var(--muted); text-decoration: none;
+    border-left: 2px solid transparent; font-size: 13px;
+  }
+  aside li a:hover { color: var(--text); }
+  aside li a.active { color: var(--accent); border-left-color: var(--accent); }
+  section.tab { display: none; }
+  section.tab.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 8px 0; color: var(--text); }
+  h2 .sub { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 12px; }
+  h3.section { font-size: 15px; margin: 32px 0 12px 0; color: var(--ink); padding-top: 8px; border-top: 1px solid var(--border); }
+  h3.section:first-of-type { border-top: none; padding-top: 0; }
+  h4 { font-size: 13px; margin: 16px 0 6px 0; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  p { margin: 8px 0 12px 0; }
+  ul.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ul.tight li { margin: 4px 0; }
+  ol.tight { margin: 8px 0 16px 18px; padding: 0; }
+  ol.tight li { margin: 4px 0; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .card.good { border-left: 3px solid var(--good); }
+  .card.warn { border-left: 3px solid var(--warn); }
+  .card.bad { border-left: 3px solid var(--bad); }
+  .card.accent { border-left: 3px solid var(--accent); }
+  .card.amb { border-left: 3px solid var(--amb); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+  kbd, code.inline {
+    background: var(--panel-2); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre[class*="language-"] {
+    border-radius: 8px !important;
+    border: 1px solid var(--border) !important;
+    background: #faf7ff !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    padding: 14px 16px !important;
+    margin: 12px 0 !important;
+    box-shadow: var(--shadow);
+  }
+  code[class*="language-"] { background: transparent !important; text-shadow: none !important; }
+  .code-wrap { position: relative; }
+  .copy-btn {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    background: var(--panel-2); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .code-wrap:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+  .copy-btn.copied { color: var(--good); }
+  .lang-tag { font-size: 11px; font-weight: 600; color: var(--muted); margin: 10px 0 -4px 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .lang-tag.rb { color: #9b1c1c; }
+  .lang-tag.py { color: #1d4ed8; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; background: var(--panel-2); color: var(--accent); margin-right: 8px; }
+  .pill.warn { color: var(--warn); }
+  .pill.good { color: var(--good); }
+  .pill.bad { color: var(--bad); }
+  .pill.amb { color: #fff; background: var(--amb-dark); }
+  .quote { font-style: italic; color: var(--muted); border-left: 2px solid var(--accent); padding-left: 12px; margin: 10px 0; }
+  .story { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin: 12px 0; box-shadow: var(--shadow); }
+  .story .title { color: var(--accent); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  .story .tags { margin-bottom: 8px; }
+  .story .row { display: grid; grid-template-columns: 90px 1fr; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .story .row .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+  table.rubric { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table.rubric th, table.rubric td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+  table.rubric th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  table.rubric tr:last-child td { border-bottom: none; }
+  details { margin: 8px 0; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 13px; padding: 4px 0; }
+  details[open] summary { color: var(--accent-2); }
+  .round-banner {
+    background: linear-gradient(135deg, var(--amb) 0%, var(--accent) 100%);
+    color: #fff; padding: 12px 18px; border-radius: 8px; margin: 0 0 16px 0;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .round-banner .lbl { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.08em; }
+  .round-banner .time { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; }
+  details.problem { margin: 12px 0; border-top: 1px solid var(--border); padding-top: 4px; }
+  details.problem:first-of-type { border-top: none; padding-top: 0; }
+  details.problem > summary {
+    font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer;
+    padding: 10px 8px; list-style: none; border-radius: 4px; user-select: none;
+  }
+  details.problem > summary:hover { background: var(--panel-2); }
+  details.problem > summary::-webkit-details-marker { display: none; }
+  details.problem > summary::marker { content: ""; }
+  details.problem > summary::before {
+    content: "▸"; display: inline-block; margin-right: 10px; color: var(--muted);
+    transition: transform 0.12s ease; font-size: 11px; width: 8px;
+  }
+  details.problem[open] > summary::before { transform: rotate(90deg); }
+  details.problem[open] > summary { border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+  aside li.toc-group {
+    color: var(--ink); font-size: 10px; text-transform: uppercase; letter-spacing: 0.09em;
+    font-weight: 700; padding: 14px 10px 4px 0; margin-top: 6px; border-top: 1px solid var(--border); list-style: none;
+  }
+  aside li.toc-group:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  aside .toc-controls { display: flex; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  aside .toc-controls button { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-family: inherit; }
+  aside .toc-controls button:hover { color: var(--accent); background: var(--panel-2); border-color: var(--accent); }
+  aside .toc-filter { width: 100%; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 5px 8px; border-radius: 4px; font-size: 12px; margin-bottom: 10px; font-family: inherit; }
+  aside .toc-filter:focus { outline: none; border-color: var(--accent); }
+  aside li.toc-hidden { display: none; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    aside { position: static; max-height: none; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+  /* === password gate (soft, client-side — matches /scribe, /ripple) === */
+  #gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  #gate.unlocked { display: none; }
+  .gate-box { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); padding: 28px 26px; width: 100%; max-width: 340px; text-align: center; }
+  .gate-box h1 { margin: 0 0 4px; font-size: 16px; color: var(--accent); }
+  .gate-box p { margin: 0 0 16px; font-size: 13px; color: var(--muted); }
+  .gate-box input { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); margin-bottom: 10px; font-family: inherit; }
+  .gate-box input:focus { outline: none; border-color: var(--accent); }
+  .gate-box button { width: 100%; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; border-radius: 6px; background: var(--accent); color: #fff; font-family: inherit; }
+  .gate-box button:hover { background: var(--amb-dark); }
+  .gate-error { color: var(--bad) !important; margin: 10px 0 0 !important; min-height: 16px; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <form class="gate-box" id="gate-form">
+    <h1>Ambience · Interview Prep</h1>
+    <p>Enter password to continue.</p>
+    <input type="password" id="gate-input" placeholder="Password" autocomplete="off" autofocus>
+    <button type="submit">View</button>
+    <p class="gate-error" id="gate-error"></p>
+  </form>
+</div>
+<script>
+  (function () {
+    var PASSWORD = '9999';            // same as /scribe, /ripple — change here to rotate
+    var KEY = 'ambience-prep-unlocked';
+    var gate = document.getElementById('gate');
+    var form = document.getElementById('gate-form');
+    var input = document.getElementById('gate-input');
+    var err = document.getElementById('gate-error');
+    function unlock() { gate.classList.add('unlocked'); }
+    try { if (localStorage.getItem(KEY) === '1') unlock(); } catch (e) {}
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (input.value === PASSWORD) {
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+        unlock();
+      } else {
+        err.textContent = 'Incorrect password.';
+        input.value = '';
+        input.focus();
+      }
+    });
+  })();
+</script>
+
+<header>
+  <h1>Ambience · Sr SWE, Platform <span class="badge">Onsite · Jul 6</span></h1>
+  <nav class="tabs">
+    <button data-tab="cheat" class="active">Cheat Sheet</button>
+    <button data-tab="behavioral">★ Behavioral</button>
+    <button data-tab="topgrading">★ Topgrading</button>
+    <button data-tab="stories">Stories</button>
+    <button data-tab="company">Company &amp; Mission</button>
+    <button data-tab="questions">Q's to Ask</button>
+    <button data-tab="coding">Coding (ref)</button>
+    <button data-tab="problems">Problems (ref)</button>
+    <button data-tab="patterns">Patterns (ref)</button>
+  </nav>
+</header>
+
+<main>
+  <aside>
+    <div class="toc-controls" id="toc-controls" style="display:none">
+      <button id="expand-all" title="Expand every section">Expand all</button>
+      <button id="collapse-all" title="Collapse every section">Collapse all</button>
+    </div>
+    <input type="text" id="toc-filter" class="toc-filter" placeholder="Filter sections..." style="display:none" />
+    <h3>On this page</h3>
+    <ul id="toc"></ul>
+  </aside>
+
+  <div>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="tab active" id="tab-cheat" data-toc='[
+    ["Read this first","now"],
+    ["Your onsite schedule (Jul 6)","sched"],
+    ["The narrative spine","spine"],
+    ["What each round scores","score"],
+    ["The 10-second pitch (you)","pitch"],
+    ["Why Ambience soundbite","why"],
+    ["Mission &amp; values vocab","vocab"],
+    ["Day-of checklist","checklist"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Onsite · Mon Jul 6 · 550 California St, Suite 710</div><div style="font-size:16px;font-weight:600">Behavioral + Topgrading · no coding</div></div>
+      <div class="time">⏱ ~2.5 hrs on-site</div>
+    </div>
+
+    <h3 class="section" id="now">Read this first</h3>
+    <div class="card amb">
+      <p style="margin:0 0 8px 0"><strong>This onsite is entirely behavioral.</strong> You already passed the coding screen — there is <strong>no coding today</strong>. Two interviews plus a team lunch. The whole day is about <strong>your story, your judgment, and whether you are mission-fit for a fast-moving, founder-led startup.</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Behavioral (Rachel Rivera, 45 min)</strong> — prioritization/tradeoffs, mistakes and growth, leadership, feedback, motivation, and your "why" transitions. → <strong>Behavioral tab.</strong></li>
+        <li><strong>Topgrading (Vinesh Kannan, 75 min)</strong> — a chronological walk through your education and every job: why you took it, wins/failures, what a boss would say, why you left. → <strong>Topgrading tab.</strong></li>
+        <li><strong>Team lunch (45 min)</strong> — informal but still evaluative; be warm, curious, low-ego. Ask people about their work.</li>
+        <li>The founders are <strong>mission-driven</strong>; every round, connect your answers back to the product and the clinician impact, and <strong>communicate genuine enthusiasm.</strong></li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="sched">Your onsite schedule (Mon Jul 6, PDT)</h3>
+    <table class="rubric">
+      <tr><th>Time</th><th>Round</th><th>Who</th><th>Prep tab</th></tr>
+      <tr><td>11:45 – 12:30</td><td>Team Lunch</td><td>Team</td><td>Cheat / Company</td></tr>
+      <tr><td>12:30 – 1:15</td><td><strong>Behavioral</strong></td><td>Rachel Rivera</td><td>★ Behavioral</td></tr>
+      <tr><td>1:15 – 2:30</td><td><strong>Topgrading</strong> (75 min)</td><td>Vinesh Kannan</td><td>★ Topgrading</td></tr>
+      <tr><td colspan="4" style="color:var(--muted)">550 California Street, Suite 710, San Francisco, CA 94104</td></tr>
+    </table>
+
+    <h3 class="section" id="spine">The narrative spine (memorize this)</h3>
+    <div class="card accent">
+      <p style="margin:0 0 6px 0">Both interviewers are listening for <strong>one coherent story</strong>. Say it the same way at lunch, in the behavioral, and in the topgrading:</p>
+      <p class="quote" style="margin:0"><strong>Riviera Partners → Zendesk → Ambience.</strong> "I started close to how software teams get built, then went deep as an engineer at Zendesk — owning a money-critical, real-world domain end to end: payments on Talk. I have proven I can own something gnarly and high-stakes. Now I want to point that ownership at a harder, higher-impact problem: AI that gives clinicians their evenings back. Ambience is the specific place doing that with the technical seriousness and the mission I want."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Make the wording true to you — but keep the through-line: <em>trajectory (slope &gt; y-intercept), ownership of hard real-world domains, and a specific pull toward Ambience's product.</em></p>
+    </div>
+
+    <h3 class="section" id="score">What each round scores</h3>
+    <table class="rubric">
+      <tr><th>Round</th><th>They are really asking</th><th>Your move</th></tr>
+      <tr><td><strong>Team lunch</strong></td><td>Would we enjoy working with you? Low ego?</td><td>Warm and curious; ask people about their work; no interview-mode stiffness.</td></tr>
+      <tr><td><strong>Behavioral</strong></td><td>Judgment, ownership, growth, motivation, mission-fit</td><td>STAR stories with real tradeoffs and honest mistakes; land the "why Ambience."</td></tr>
+      <tr><td><strong>Topgrading</strong></td><td>Is your whole career a consistent, honest, upward story?</td><td>Chronological, specific, self-aware; own weaknesses; never bad-mouth.</td></tr>
+    </table>
+
+    <h3 class="section" id="pitch">The 10-second pitch (you)</h3>
+    <div class="card amb">
+      <p class="quote" style="margin:0">"I'm a backend engineer — at Zendesk I was sole owner of the payments feature on Talk, our call-center product. I worked across payment integrations (Zuora), async job processing on SQS, and service-to-service APIs, and did a lot of production debugging straight from dashboards and support tickets. I like owning a messy real-world domain end to end — which is why an AI-for-healthcare problem space appeals to me."</p>
+    </div>
+
+    <h3 class="section" id="why">Why Ambience soundbite</h3>
+    <div class="card">
+      <p style="margin:0">"Ambience is building the AI operating system for healthcare — AutoScribe turns a clinician-patient conversation into real-time structured documentation in the EMR and saves 16+ hours of note-taking per clinician per week. I'm drawn to it because it's a hard, <strong>real-world data problem</strong> (messy audio → structured clinical facts) with <strong>immediate human impact</strong> — clinicians get their evenings back — and it's at the stage where backend ownership actually moves the product. That maps to how I worked at Zendesk: own a gnarly domain end to end."</p>
+    </div>
+
+    <h3 class="section" id="vocab">Mission &amp; values vocab (say these naturally)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;font-weight:600">Product / domain words</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li><strong>Ambient AI scribe</strong> · <strong>AutoScribe</strong> (flagship)</li>
+          <li><strong>Clinician</strong> &amp; <strong>patient</strong> (not "user")</li>
+          <li><strong>EMR / EHR</strong> — Epic, Oracle Cerner, athenahealth</li>
+          <li><strong>Clinical documentation</strong>, <strong>SOAP note</strong></li>
+          <li><strong>Medical coding</strong> — ICD-10, CPT, E/M levels, HCC</li>
+          <li><strong>Revenue integrity</strong>, <strong>administrative burden</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;font-weight:600">Values to echo (their 10)</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li><strong>Extreme Ownership</strong> — "see it, fix it, no bystanders" (your Zuora bug story)</li>
+          <li><strong>Slope &gt; Y-Intercept</strong> — hire for trajectory / growth</li>
+          <li><strong>Relentless Operators</strong> — bias to action, iterate fast, finish</li>
+          <li><strong>Seek Truth</strong> — first-principles, change mind on evidence</li>
+          <li><strong>The Floor is Lava</strong> — reinvent, no borrowed playbooks</li>
+          <li><strong>Customer Alignment</strong> — win when customers win</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="checklist">Day-of checklist</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>☐ Arrive early at <strong>550 California St, Suite 710</strong>; business-casual; bring water.</li>
+        <li>☐ Re-read your <strong>Topgrading spine</strong>: education → Riviera → Zendesk, with dates, wins, failures, and why-you-left for each.</li>
+        <li>☐ Have <strong>3 prioritization/tradeoff stories</strong> and <strong>2 honest mistake→growth stories</strong> loaded (Stories tab).</li>
+        <li>☐ Nail the three "why" transitions out loud: Riviera→Zendesk, Zendesk→Ambience, and the product-specific <strong>why Ambience.</strong></li>
+        <li>☐ Have <strong>2–3 questions per interviewer</strong> ready (Behavioral &amp; Topgrading tabs).</li>
+        <li>☐ Warm, enthusiastic, low-ego. Tie answers back to clinicians and the mission.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ BEHAVIORAL ============ -->
+  <section class="tab" id="tab-behavioral" data-collapsible="true" data-toc='[
+    ["@group","Start here"],
+    ["How this round flows","b-flow"],
+    ["Tell me about yourself","b-open"],
+    ["@group","Prepared answers"],
+    ["How you prioritize (P0s / tradeoffs)","b-prio"],
+    ["When something went wrong","b-wrong"],
+    ["What good leadership looks like","b-lead"],
+    ["How you incorporate feedback","b-feedback"],
+    ["What motivates / fulfills you","b-motiv"],
+    ["@group","The why transitions"],
+    ["Why Riviera to Zendesk","b-why1"],
+    ["Why Zendesk to Ambience","b-why2"],
+    ["Why Ambience (be specific)","b-why3"],
+    ["@group","Close strong"],
+    ["Communicating enthusiasm","b-enthu"],
+    ["Questions for Rachel","b-ask"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Onsite · 12:30–1:15 PM · Rachel Rivera</div><div style="font-size:16px;font-weight:600">Behavioral · 45 min</div></div>
+      <div class="time">⏱ 45 min</div>
+    </div>
+    <div class="card accent" style="margin-bottom:16px">
+      <p style="margin:0">A conversation about judgment and growth. Rachel is reading for: <strong>do you own outcomes, make good tradeoffs under startup pressure, learn from mistakes, take feedback well, and genuinely want THIS mission.</strong> Answer in <strong>STAR</strong> (Situation → Task → Action → Result), stay specific, land the result, and tie back to clinicians / the product where natural. Every theme below came off your recruiter call — have a story loaded for each.</p>
+    </div>
+
+    <h3 class="section" id="b-flow">How this round typically flows</h3>
+    <table class="rubric">
+      <tr><th>Phase</th><th>~min</th><th>What happens</th></tr>
+      <tr><td>Warm-up</td><td>5</td><td>Intros, "tell me about yourself"</td></tr>
+      <tr><td>Behavioral core</td><td>30</td><td>Prioritization, a mistake, leadership, feedback, motivation — via your stories</td></tr>
+      <tr><td>Motivation / fit</td><td>5</td><td>Why Ambience, what you are looking for</td></tr>
+      <tr><td>Your questions</td><td>5</td><td>You ask Rachel — do not skip</td></tr>
+    </table>
+
+    <h3 class="section" id="b-open">"Tell me about yourself"</h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0">Past → present → why here, in ~30 seconds. This is the <strong>narrative spine</strong> from the Cheat Sheet, compressed:</p>
+      <p class="quote" style="margin:0">"I actually came into engineering sideways — I think it made me a better engineer. I started as a tech recruiter at Riviera Partners, taught myself Python automating my own workflow, and earned my way onto their engineering team building the recruiting platform. From there I spent about 8.5 years at Zendesk on the Billing Platform team, growing from engineer to senior — owning revenue-critical payments and billing integrations end to end, and leading 0-to-1 projects out of vague requirements. The through-line is I like owning messy, high-stakes systems and building them right — which is exactly what pulled me to Ambience."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Give threads to pull; don't recite the résumé. End pointed at Ambience so they steer into "why us."</p>
+    </div>
+
+    <h3 class="section" id="b-prio">"How do you prioritize?" — P0s, tradeoffs, startup pragmatism</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">They want to see you make a <strong>defensible tradeoff under constraint</strong>, not a perfectionist. Show a process:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Anchor on impact + risk.</strong> What breaks the customer / the money / the clinical outcome if it's wrong? That's the P0. Everything else is negotiable.</li>
+        <li><strong>Right-size the rigor.</strong> Pragmatism about testing: exhaustive tests on the money-critical / correctness-critical path; lighter coverage on the reversible, low-blast-radius stuff. Say this explicitly — it signals startup judgment.</li>
+        <li><strong>Cut scope out loud, with the stakeholder.</strong> Name what you're deferring and why, so it's a shared decision, not a silent gap.</li>
+        <li><strong>Ship the load-bearing slice, iterate.</strong></li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px"><strong>Use:</strong> the <em>Salesforce↔Zuora integration</em> (drew a hard line around idempotency/reconciliation, deferred nice-to-haves under a 2–3 month deadline). Backup: any time you triaged a P0 incident vs. planned work. See Stories tab.</p>
+    </div>
+
+    <h3 class="section" id="b-wrong">"Tell me about a time something went wrong / a mistake"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Pick a <strong>real</strong> technical mistake with a real cost and a concrete change in how you work since. Own it plainly, state the cost, end on the durable guardrail. You have three strong, distinct ones (Stories tab) — pick by what the question is really probing:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>A production incident you owned → the idempotency key that double-charged.</strong> Strongest all-rounder: real customer impact, you drove the comms <em>and</em> the systemic fix (detection went from days to minutes). Use when they want ownership + correctness under pressure.</li>
+        <li><strong>Rigor / attention to detail → the backfill that overwrote good data.</strong> Use for "a time you were careless / what you learned about process" — lands the dry-run + per-field source-of-truth lesson. Doubles as your answer to the "slow down and be careful" feedback theme.</li>
+        <li><strong>Design judgment / self-awareness → the billing abstraction you over-engineered and ripped out.</strong> Use for "a decision you'd remake" — shows YAGNI maturity and that you optimize for the team, not cleverness.</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Each has interviewer follow-ups scripted in the Stories tab. Have <strong>two</strong> loaded so "got another one?" never catches you flat.</p>
+    </div>
+
+    <h3 class="section" id="b-lead">"What does a good leader look like to you?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">There's no single right answer — they want a <strong>considered</strong> one that matches how <em>they</em> operate (high-ownership, low-ego, truth-seeking). A strong version:</p>
+      <p class="quote" style="margin:0">"A good leader sets a clear bar and then gets out of the way — gives context and the 'why,' not step-by-step instructions, and trusts people to own the outcome. They're in the details enough to be useful but don't micromanage. And they model taking feedback themselves — the best manager I had would change course in a meeting when someone made a better argument, which made everyone else safe to speak up."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Ties cleanly to Ambience's values (Extreme Ownership, Seek Truth). If you have a concrete manager example, use it — it's more credible than abstractions.</p>
+    </div>
+
+    <h3 class="section" id="b-feedback">"How do you incorporate feedback?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Show you <strong>seek it, don't just tolerate it</strong>, and that it changed something concrete.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>How you get it early (asking for it directly, PR reviews, 1:1s) rather than waiting for review season.</li>
+        <li>A specific piece of feedback you got, how you reacted (not defensively), and what you changed.</li>
+        <li>Bonus: a time you disagreed with feedback — how you weighed it, and either adopted it or explained why not. Judgment, not blind compliance.</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:13px"><strong>Use:</strong> a code-review or design-review example, or the DDD story (you took the arch group's feedback, deferred to it, and can now name what it got right).</p>
+    </div>
+
+    <h3 class="section" id="b-motiv">"What motivates you / what fulfills you?"</h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0">Be honest and specific — canned answers read as canned. Anchor on what's actually true for you and connect it to the work:</p>
+      <p class="quote" style="margin:0">"Owning something real end to end and seeing it actually work for people. The most satisfying work I've done is the payments stuff at Zendesk — high-stakes, where correctness genuinely matters and there's no hand-waving. What fulfills me is that combination of hard technical ownership and the output mattering. That's why healthcare pulls me: same rigor, but a reliable system means a clinician gets their evening back instead of just a cleaner invoice."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">If you have a genuine personal tie to healthcare, a brief sincere version is powerful here — don't manufacture one.</p>
+    </div>
+
+    <h3 class="section" id="b-why1">"Why did you leave Riviera for Zendesk?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0"><strong>Growth-framed and grateful — you left on a high note, not out of frustration:</strong></p>
+      <p class="quote" style="margin:0">"Riviera is actually where I became an engineer — I taught myself in and got to build the recruiting platform end to end. But once we'd built what we set out to build, the work turned mostly to maintenance and my learning slowed down. I wanted to level up in a larger, more complex engineering org — a big codebase, cross-org work, higher stakes. That's what took me to Zendesk."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Never frame it as boredom or a knock on Riviera. "I'd finished what I set out to do and wanted the next level of challenge" is the honest, positive version.</p>
+    </div>
+
+    <h3 class="section" id="b-why2">"Why leave Zendesk for Ambience?" (you were laid off — be straight)</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Lead with the honest fact, briefly, then go forward-looking:</p>
+      <p class="quote" style="margin:0">"I was actually part of a layoff at Zendesk this spring, after about 8.5 years — I'd earned Senior and was working toward Staff, so it was an org call, not a performance one. Honestly, it pushed me to do something I'd been circling anyway: find a harder problem with more direct human impact. I loved owning a money-critical domain, but mainstream billing is mature; AI-for-healthcare is early, hard, and actually matters. That's the step up I want."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Say the layoff once, no bitterness, then spend your energy on the forward-looking "why Ambience." Never: blaming the org, comp gripes, dwelling.</p>
+    </div>
+
+    <h3 class="section" id="b-why3">"Why Ambience?" — make it product-specific</h3>
+    <div class="card amb">
+      <p style="margin:0 0 6px 0">This is the one that matters most. Generic "I want to help people / great company" is a red flag. Be <strong>specific about the product and the problem</strong>:</p>
+      <p class="quote" style="margin:0">"Ambience is building the AI operating system for healthcare — AutoScribe turns a clinician-patient conversation into structured documentation in the EMR in real time, and it saves clinicians something like 16 hours a week of notes. What draws me technically: it's a genuinely hard real-world data problem — messy audio and context into accurate, structured clinical facts that have to be right, that plug into Epic and Cerner, with real correctness and compliance stakes. That's the same shape as the work I love — a gnarly domain where being right matters — but with far bigger human impact. And it's founder-led and mission-driven at a stage where owning backend surface area actually moves the product."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Hits: names the product (AutoScribe), the concrete impact (hours back), the technical hardness (audio→structured facts, EMR integration, correctness), and the stage/mission. Say the beat you most believe first.</p>
+    </div>
+
+    <h3 class="section" id="b-enthu">Communicating enthusiasm (do this on purpose)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Say plainly that you're excited and <strong>why</strong> — founders read energy as signal. Don't be so measured you seem lukewarm.</li>
+        <li>Reference something specific you read/tried (AutoScribe, a blog post, the values) — enthusiasm backed by homework beats gushing.</li>
+        <li>Bring an <strong>informed opinion or question</strong> about the product — curiosity is the most credible form of enthusiasm.</li>
+        <li>Smile, lean in, match their pace. This is a startup; culture-add and energy are part of the bar.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="b-ask">Questions for Rachel (pick 2–3)</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"What separates people who thrive here from people who struggle, in the first 6 months?"</li>
+        <li>"How does the team make prioritization calls when everything feels like a P0 — who decides, and how?"</li>
+        <li>"How do engineers work with the clinical side — who defines what 'correct' documentation means?"</li>
+        <li>"What's changed most about how the team works as it's scaled?"</li>
+        <li>"What's something you wish you'd known before joining?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ TOPGRADING ============ -->
+  <section class="tab" id="tab-topgrading" data-collapsible="true" data-toc='[
+    ["@group","Understand the format"],
+    ["What topgrading is (read first)","t-what"],
+    ["How to win it (the meta)","t-meta"],
+    ["The chronological spine","t-spine"],
+    ["@group","The per-role template"],
+    ["The questions asked about every job","t-template"],
+    ["@group","Rehearse each chapter"],
+    ["Education","t-edu"],
+    ["Riviera Partners","t-riviera"],
+    ["Zendesk","t-zendesk"],
+    ["Side projects / self-driven","t-side"],
+    ["@group","The recurring questions"],
+    ["Strengths and weaknesses","t-sw"],
+    ["What would your boss say","t-boss"],
+    ["Your goals","t-goals"],
+    ["@group","Close strong"],
+    ["Landmines to avoid","t-land"],
+    ["Questions for Vinesh","t-ask"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Onsite · 1:15–2:30 PM · Vinesh Kannan</div><div style="font-size:16px;font-weight:600">Topgrading · 75 min</div></div>
+      <div class="time">⏱ 75 min</div>
+    </div>
+    <div class="card accent" style="margin-bottom:16px">
+      <p style="margin:0"><strong>Topgrading is a deep, chronological walk through your whole history</strong> — education and every job, in order. The full method runs up to ~4 hours; your slot is 75 minutes, so it will move fast and lean heavily on your <strong>recent, most-relevant roles (Zendesk especially)</strong>. For each chapter they ask the same battery: why you took it, what you did, wins and failures, what you liked/disliked, who your boss was and what they'd say about you, and why you left. They're mapping <strong>one honest, consistent, upward-trending story.</strong></p>
+    </div>
+
+    <h3 class="section" id="t-what">What topgrading is (read first)</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">A structured interview method (from the book <em>Topgrading</em>) built to get past rehearsed highlight reels. Its signature moves:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Chronological, no skipping.</strong> Education → first job → … → now. Each chapter gets the same questions, so inconsistencies surface.</li>
+        <li><strong>The "boss" questions are the teeth.</strong> "Who was your manager? What would they say about you?" — and later, the recruiter may offer to reference-check, so answer as if they will. This is the anti-BS mechanism: give the real picture.</li>
+        <li><strong>Failures and weaknesses are asked directly, every chapter.</strong> Dodging reads worse than the flaw itself.</li>
+        <li><strong>They watch the trend line.</strong> Increasing scope, ownership, and self-awareness over time is the signal (their value: <em>slope &gt; y-intercept</em>).</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="t-meta">How to win it (the meta-patterns)</h3>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-weight:600;font-size:12px">DO</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Prepare a <strong>tight 60–90s summary per role</strong>: dates, what it was, your scope, one win, one failure/lesson, why you left. Rehearse out loud.</li>
+          <li>Be <strong>specific and quantified</strong> where you can — names, numbers, systems.</li>
+          <li>Give <strong>honest, self-aware weaknesses</strong> with what you did about them.</li>
+          <li>Keep the <strong>trend consistent</strong>: each move toward more ownership / harder problems.</li>
+          <li>Answer the "boss" questions candidly — assume references get called.</li>
+        </ul>
+      </div>
+      <div class="card bad">
+        <p style="margin:0 0 4px 0;color:var(--bad);font-weight:600;font-size:12px">DON'T</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>Bad-mouth any employer, boss, or teammate — reframe friction as a problem you helped with.</li>
+          <li>Give fake weaknesses ("I work too hard," "perfectionist") — topgrading is designed to catch exactly this.</li>
+          <li>Be vague on dates or scope — gaps and hand-waving invite digging.</li>
+          <li>Let it become a monologue — it's a dialogue; pause, let them steer.</li>
+          <li>Inflate titles/impact you can't defend under follow-ups or a reference check.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="t-spine">The chronological spine</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Have this ordered and dated in your head so you can walk it smoothly on request:</p>
+      <table class="rubric">
+        <tr><th>Chapter</th><th>~Dates</th><th>One-line what + why-left</th></tr>
+        <tr><td>UC Berkeley</td><td>grad May 2011</td><td>BA Economics; headed for finance, turned toward building</td></tr>
+        <tr><td>Riviera Partners</td><td>~2011 – Jul 2017</td><td>Recruiter → data analyst → Backend SWE (Dec 2015). Self-taught in; entity-resolution service, ETL pipeline, scraper. Left when learning plateaued.</td></tr>
+        <tr><td>Zendesk · Billing Platform</td><td>Aug 2017 – Apr 2026</td><td>SWE → Sr SWE (Sep 2021), then on the Staff track. Owned revenue-critical billing integrations; led 0→1 cross-org projects. Laid off Apr 2026.</td></tr>
+        <tr><td>Side projects</td><td>ongoing</td><td>Wordblok (shipped a game solo) + others — shows self-driven building</td></tr>
+      </table>
+      <p style="margin:6px 0 0 0;font-size:12px;color:var(--warn)"><strong>Watch this:</strong> your résumé only dates the Riviera <em>engineering</em> role (Dec 2015 – Jul 2017), but topgrading walks chronologically from your 2011 graduation — so be ready to narrate the ~2011–2015 recruiter → data-analyst phase confidently. That window <em>is</em> your slope story; don't let it land as a gap. (Confirm the month you started recruiting.)</p>
+    </div>
+
+    <h3 class="section" id="t-template">The questions asked about every job</h3>
+    <div class="card amb">
+      <p style="margin:0 0 6px 0">Prepare an answer to <strong>each of these for every role</strong>. This is the exact battery (from your notes):</p>
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li>What were your aspirations at the time / after school?</li>
+        <li>Why did you take the job?</li>
+        <li>Successes and wins there?</li>
+        <li>Failures / what went badly?</li>
+        <li>What did you like and dislike?</li>
+        <li>Who was your supervisor — their strengths and weaknesses?</li>
+        <li>What would that supervisor say about you (strengths <em>and</em> development areas)?</li>
+        <li>Why did you leave?</li>
+        <li>Your strengths, weaknesses, and goals overall.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="t-edu">Chapter: Education</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>UC Berkeley, BA Economics (May 2011).</strong> Headed for finance — even joined a finance frat.</li>
+        <li><strong>The turn:</strong> once you saw the actual finance work and industry up close, you realized that kind of impact didn't interest you. That honest early course-correction is a good, human detail — it opens the whole "moving toward building" arc.</li>
+        <li><strong>Aspirations coming out:</strong> <em>[confirm — e.g. open to figuring it out, drawn to problem-solving over pure finance]</em>.</li>
+        <li>Keep it brief in a 75-min slot, but don't skip the finance→tech turn — it's the seed of your trajectory.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="t-riviera">Chapter: Riviera Partners <span style="font-weight:400;color:var(--muted);font-size:13px">— your "slope &gt; y-intercept" story</span></h3>
+    <div class="card good">
+      <p style="margin:0 0 6px 0"><strong>Your strongest topgrading chapter: you taught yourself into engineering by automating your own job.</strong> Tell it as one intentional arc — a person moving steadily toward building — not a series of accidents.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Why you took it:</strong> after turning away from finance, you fell into tech recruiting at Riviera — ~15 people when you joined. Genuinely satisfying: meeting engineers, helping them find the right roles.</li>
+        <li><strong>The pivot (the heart of it):</strong> you kept hitting repetitive manual work (data entry, etc.), so you wrote Python scripts to automate your own workflow and shared them with the team. After talking with the founders, they moved you into a <strong>data analyst</strong> role — closer to the data and the tools you were building.</li>
+        <li><strong>Building for real:</strong> you built a web scraper and an ETL data pipeline (Redis ElastiCache + third-party data providers), and started thinking about how to match candidates on signal — the kind of work they'd actually done.</li>
+        <li><strong>Earning the SWE role (Backend Software Engineer, Dec 2015 – Jul 2017):</strong> when the founders stood up a full engineering team for the recruiting CRM platform, you officially joined as an engineer — and supported the ML engineers extending the matching algorithms you'd prototyped.</li>
+        <li><strong>Concrete wins (résumé-ready):</strong> built an <strong>entity-resolution service from the ground up</strong> (Sidekiq async workers for job status); the <strong>ETL pipeline</strong>; a <strong>Chrome-extension scraper</strong> (ReactJS/NuclearJS/Ruby) pulling data into a relational DB; <strong>profiled and sped up the API 10×</strong> (~800ms → ~80ms via RubyProfiler/NewRelic); helped <strong>migrate the ETL API from monolith → service-oriented</strong>.</li>
+        <li><strong>A failure/lesson (your real one):</strong> your first versions of the scraper and entity-resolution service were slow and fragile — all synchronous, no error handling or observability — because you didn't yet know systems design. They were useful enough that recruiters relied on them, so you were firefighting daily, bolting on one-off guards. As your chops grew you re-architected them (async via Sidekiq, error handling, real guards, the 10× perf work) — that's literally where you learned reliability. Ties straight to Majed/David's "keep leveling up your fundamentals." Full STAR in the Stories tab.</li>
+        <li><strong>Liked:</strong> the autonomy, the build-it-yourself culture, growing fast from non-engineer to shipping engineer. <strong>Disliked / why you left:</strong> once you'd built what you set out to, the work shifted to maintenance and your learning slowed — no new big engineering directive. You left to level up in a larger, more complex org (gratefully, on a high note).</li>
+        <li><strong>Supervisors + what they'd say:</strong> <strong>Majed</strong> (VP Eng) and <strong>David Tam</strong> (team lead). They'd say you had <strong>strong product sense</strong> and <strong>built fast / were highly motivated</strong>, and that you <strong>needed to keep leveling up your technical fundamentals</strong> — fair, since you were early in learning coding best practices. That honest, time-appropriate development note opens your growth arc.</li>
+      </ul>
+    </div>
+    <div class="card accent">
+      <p style="margin:0;font-size:13px"><strong>Coaching:</strong> lead with the initiative — you reinvented your own role, which is Ambience's <em>Slope &gt; Y-Intercept</em> and <em>The Floor is Lava</em> in a single story. Say "fell into" at most once; after that, frame every move as a <em>deliberate</em> step toward building. If they probe the non-CS path, the arc <em>is</em> the answer: self-taught via automating real work, then a real SWE role supporting ML. Own it with confidence, not apology.</p>
+    </div>
+
+    <h3 class="section" id="t-zendesk">Chapter: Zendesk (your anchor — go deepest here)</h3>
+    <div class="card good">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Why you took it (Aug 2017):</strong> to level up in a large, complex engineering org after Riviera — a big codebase, strong-teammate skills, real cross-org work.</li>
+        <li><strong>Growth arc (SWE → Sr SWE, promoted Sep 2021):</strong> you started on the <strong>Internal Tools team</strong>, then moved to <strong>Billing</strong>, where you earned Senior (under Vishal) and were pushing toward <strong>Staff</strong> before the layoff. You <em>actively worked toward</em> promotion. Honest timeline context: a run of reorgs and manager changes (5+ managers across the two teams) meant repeatedly rebuilding your track record with someone new, which slowed the formal promotion clock even as your scope grew. As a Senior you led projects, took work 0→1, and turned vague requirements into shipped systems.</li>
+        <li><strong>Scope:</strong> revenue-critical billing integrations — usage-based charging, Zuora, async/SQS, service-to-service APIs, production debugging from dashboards and tickets.</li>
+        <li><strong>Quantified wins (résumé-ready):</strong> architected/owned a <strong>revenue-critical order-processing integration</strong> for high-MRR clients — <strong>&lt;5s order creation, 99.9% accuracy, 1,000+ orders/min</strong>; extracted a <strong>new domain service (RoR + SQS)</strong> from the billing monolith (better stability/latency, less complexity); <strong>led multi-feature integrations across 3 orgs + product + design</strong>; built/shared <strong>AI tooling (Claude skills)</strong>. The order-processing integration is the quantified version of your SF↔Zuora story.</li>
+        <li><strong>Failures / lessons:</strong> the <em>DDD disagreement</em> (when to push vs. defer); pick one real technical miss and the guardrail you added after.</li>
+        <li><strong>Liked:</strong> ownership, correctness-critical work, cross-functional problem-solving. <strong>Disliked:</strong> <em>[fill in honestly]</em> — often the seed of "why leave."</li>
+        <li><strong>Supervisors + what they'd say:</strong> a consistent strength across every manager — <strong>"gets stuff done" / strong drive</strong>; the development edge <em>evolved</em> as you grew (full manager-by-manager table below). That evolution is itself the growth story.</li>
+        <li><strong>Why you left (laid off, Apr 2026):</strong> be straight and non-defensive — you were part of a company layoff after ~8.5 years, an org call, not performance; you'd earned Senior and were on the Staff track. Then pivot forward: a chance to channel that into a harder, higher-impact problem at an earlier stage — Ambience. (See the layoff coaching card below and Behavioral → "why Zendesk to Ambience.")</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <p style="margin:0 0 6px 0;font-size:13px"><strong>Your managers &amp; what each would say</strong> (assume references get called — this consistency is your friend):</p>
+      <table class="rubric">
+        <tr><th>Team / Manager</th><th>Strength they'd name</th><th>Development area</th></tr>
+        <tr><td><strong>Riviera</strong> · Majed (VPE), David Tam (lead)</td><td>Product sense; builds fast, highly motivated</td><td>Keep leveling up technical fundamentals (early days)</td></tr>
+        <tr><td><strong>Zendesk Internal Tools</strong> · Joe Landers (mgr), Pierre Schambacher (lead)</td><td>Strong drive; ramps up fast</td><td>Slow down, be more careful — startup→big-org shift; tighten PRs to best practices</td></tr>
+        <tr><td><strong>Zendesk Billing</strong> · Kaz Raza</td><td>Gets stuff done</td><td>Document more</td></tr>
+        <tr><td><strong>Zendesk Billing</strong> · Vishal Gupta <em>(promoted to Sr here)</em></td><td>Gets stuff done</td><td>Learn to elevate the people around you</td></tr>
+        <tr><td><strong>Zendesk Billing</strong> · Wahaj</td><td>Gets stuff done</td><td>Be more proactive</td></tr>
+        <tr><td><strong>Zendesk Billing</strong> · Chad Krogstad</td><td>Gets stuff done</td><td>Over-communicate when leading projects</td></tr>
+      </table>
+      <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)"><strong>The pattern to point out:</strong> the strength is rock-steady (drive / "gets stuff done") while the development edge <em>matures</em> — technical fundamentals → carefulness &amp; best-practices → documentation → elevating others → proactivity → over-communicating as a lead. That progression <em>is</em> your growth story; narrate it that way. Résumé note: it lists this whole span as "Billing Platform," so if asked, clarify Internal Tools was your first team before you moved to Billing.</p>
+    </div>
+
+    <div class="card accent">
+      <p style="margin:0 0 6px 0;font-size:13px"><strong>Coaching — the layoff, the long tenure, and promotions (they will ask):</strong></p>
+      <ul class="tight" style="margin:0 0 0 18px;font-size:13px">
+        <li><strong>The layoff:</strong> say it plainly and move on — "I was part of a layoff in April 2026." No bitterness, no blame. Layoffs carry little stigma now; dwelling or spinning does more damage than the fact.</li>
+        <li><strong>Protect the record:</strong> make clear it was org-level, not performance — you'd earned Senior and were working toward Staff. One sentence, then pivot forward to what you want next.</li>
+        <li><strong>~8.5 years is long — own it as depth, not stagnation.</strong> You kept growing (SWE→Sr, new 0→1 scope, cross-org leadership). "Why now" = you want a step-change in challenge and impact; the layoff just accelerated a move you were already circling.</li>
+        <li><strong>The promotion timeline:</strong> if they probe why Staff hadn't landed, the honest answer is reorgs repeatedly reset your track record with a new manager — state it as neutral context, <em>not</em> a grievance, then point to the scope you owned as proof of the trajectory.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="t-side">Chapter: Side projects / self-driven work</h3>
+    <div class="card">
+      <p style="margin:0"><strong>Wordblok</strong> — you shipped an iOS App Store game solo in about a week by cutting scope hard to the core loop. It shows self-direction, end-to-end ownership, and pragmatism — exactly the "relentless operator" signal a startup wants. Mention any other building you do. Keep it short but let the initiative land.</p>
+    </div>
+
+    <h3 class="section" id="t-sw">Strengths and weaknesses (asked directly)</h3>
+    <div class="grid-2">
+      <div class="card">
+        <p style="margin:0 0 4px 0;font-weight:600;color:var(--good)">Strengths (with evidence)</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li><strong>Drive / "gets stuff done"</strong> — the one thing <em>every</em> manager you've had leads with. Execution and momentum.</li>
+          <li><strong>Extreme ownership</strong> of messy, high-stakes systems — the Zuora bug and order-processing integration prove it.</li>
+          <li><strong>Fast ramp + product sense</strong> — you self-taught into engineering and get up to speed quickly.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;font-weight:600;color:var(--warn)">Weaknesses (real, from your actual feedback)</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li><strong>Best one to use: "I move fast, and early on that meant I wasn't careful enough."</strong> Coming from a startup into a big org, my PRs drew a lot of comments — I had to deliberately slow down and internalize best practices. I did, and it stuck.</li>
+          <li><strong>Current edge (as a lead): over-communicating.</strong> Leading projects, I've had to learn to proactively broadcast status and decisions, not just execute heads-down.</li>
+          <li><strong>Elevating others</strong> — growing from personal execution to making the people around me better (Vishal's feedback; part of the Staff push).</li>
+          <li>Each pairs a real correction with evidence — that's what scores, not the flaw.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="section" id="t-boss">"What would your boss / coworkers say about you?"</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">You have real names and quotes ready (see the manager table in the Zendesk chapter). The clean answer:</p>
+      <p class="quote" style="margin:0">"Pretty consistently, that I get things done and bring a lot of drive — every manager I've had would lead with that. The growth areas they've pushed me on evolved as I grew: early on it was slowing down and tightening my engineering practices; more recently, as I've led projects, it's been over-communicating status and helping elevate the people around me. I've taken each seriously — the 'slow down and be careful' one especially changed how I work."</p>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">Balanced + specific + shows evolution = what topgrading rewards. Names ready: Majed / David (Riviera); Joe / Vishal / Chad (Zendesk).</p>
+    </div>
+
+    <h3 class="section" id="t-goals">"What are your goals?"</h3>
+    <div class="card">
+      <p style="margin:0">Tie personal growth to the role: "Grow toward owning larger, harder systems and more design/architecture influence — ideally on a problem that matters. Short term, I want to go deep on a hard real-world domain and be a force multiplier on a small team; that's a big part of Ambience's appeal." Keep it honest and aligned; avoid "I want to be a manager in 2 years" unless true.</p>
+    </div>
+
+    <h3 class="section" id="t-land">Landmines to avoid</h3>
+    <div class="card bad">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Bad-mouthing</strong> any past employer/boss — the single biggest topgrading red flag.</li>
+        <li><strong>Fake weaknesses</strong> — the method is literally designed to expose them.</li>
+        <li><strong>Timeline vagueness</strong> — know your dates; gaps invite probing.</li>
+        <li><strong>Inconsistency</strong> — your "why left" for job N should match your "why took" for job N+1.</li>
+        <li><strong>Overclaiming</strong> — everything you say could be reference-checked; keep it defensible.</li>
+        <li><strong>Rambling</strong> — 60–90s per chapter, then let Vinesh steer.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="t-ask">Questions for Vinesh (pick 2–3)</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"What does the growth trajectory look like for a strong engineer here over the first couple of years?"</li>
+        <li>"What's the hardest technical problem the platform team is facing right now?"</li>
+        <li>"How do you keep engineering quality and correctness high while moving at startup speed?"</li>
+        <li>"What have you learned about what makes someone successful here that isn't obvious from outside?"</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ STORIES ============ -->
+  <section class="tab" id="tab-stories" data-toc='[
+    ["How to use these","s-use"],
+    ["Story to question map","s-map"],
+    ["@group","Technical mistakes (★ know 2 cold)"],
+    ["★ Idempotency double-charge","s-mistake1"],
+    ["Backfill overwrote data","s-mistake2"],
+    ["Over-engineered abstraction","s-mistake3"],
+    ["Riviera: the fragile first builds","s-riviera-fail"],
+    ["@group","Ownership / impact"],
+    ["Zuora silent-200 bug","s-zuora"],
+    ["Salesforce / Zuora integration","s-integration"],
+    ["@group","Other themes"],
+    ["DDD disagreement","s-ddd"],
+    ["Prioritization / P0 triage","s-prio"],
+    ["Wordblok — shipped fast solo","s-wordblok"],
+    ["Feedback / growth","s-feedback"]
+  ]'>
+    <h2>Story Bank <span class="sub">STAR-shaped, tuned for the Ambience onsite</span></h2>
+
+    <div class="card amb" style="margin-bottom:8px">
+      <p style="margin:0;font-size:13px">Same core stories as your other prep, angled for Ambience: lead with <strong>ownership</strong> and <strong>correctness under real-world stakes</strong>, and tie back to <strong>clinician impact</strong> where it's natural. Know the <em>Result</em> line cold; improvise the rest.</p>
+    </div>
+
+    <h3 class="section" id="s-use">How to use these</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Each story serves several questions — know the theme, bend it to the prompt.</li>
+        <li>Lead with <strong>"I"</strong> for what you owned; use "we" for the team.</li>
+        <li>Numbers &gt; adjectives. Add the real figures where the <em>[placeholders]</em> are.</li>
+        <li>Have <strong>two distinct mistake stories</strong> so you're never stuck reusing one.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="s-map">Story → question map</h3>
+    <table class="rubric">
+      <tr><th>If they ask…</th><th>Reach for…</th></tr>
+      <tr><td>Proud project / hardest bug / ownership</td><td>Zuora silent-200 · SF integration</td></tr>
+      <tr><td>Prioritization / tradeoffs / P0s</td><td>SF integration · P0 triage</td></tr>
+      <tr><td>A mistake / production incident you owned</td><td>Idempotency double-charge · Backfill overwrite</td></tr>
+      <tr><td>Careless / rigor / attention to detail</td><td>Backfill overwrite</td></tr>
+      <tr><td>A design decision you'd remake</td><td>Over-engineered abstraction</td></tr>
+      <tr><td>Conflict / disagreement / feedback</td><td>DDD disagreement</td></tr>
+      <tr><td>Shipping under pressure / bias to action</td><td>Wordblok · SF integration</td></tr>
+      <tr><td>Growth / incorporating feedback</td><td>Feedback/growth · DDD</td></tr>
+    </table>
+
+    <div class="story" id="s-mistake1">
+      <div class="title">★ Technical mistake — the idempotency key that double-charged</div>
+      <div class="tags"><span class="pill">technical mistake</span><span class="pill">ownership</span><span class="pill">idempotency</span><span class="pill">correctness</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>I owned usage billing on Zendesk Talk — call-minute charges rated and pushed to Zuora. I shipped a change to how we deduped usage records before they became charges, to support a new charge type.</div></div>
+      <div class="row"><div class="lbl">Mistake</div><div>I derived the <strong>idempotency key from fields that weren't stable across retries</strong> (a batch/timestamp id), instead of the invariant that identifies the usage event. When the rating job retried after a transient failure, the retried batch hashed to a <em>different</em> key, slipped past the dedupe, and <strong>created duplicate charges</strong> for a batch of customers. It passed tests because my fixtures covered the happy path and single-submission dedupe — not the retry-after-failure path that actually triggers it.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I owned it the moment it surfaced — quantified who was affected and by how much, worked with finance to <strong>issue corrections/refunds before customers had to chase us</strong>, and wrote the postmortem myself. Then the systemic fix: keyed idempotency on the event's <strong>immutable identity</strong>, added a <strong>pre-commit reconciliation gate</strong> (billed charges vs. source usage) and a drift alert so a duplicate can't post silently, and added retry-path fixtures.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Duplicate charges stopped, affected customers made whole, and the class of bug went from "found days later via disputes" to "caught in minutes by an alert." <em>(Swap in real counts / $ if this maps to a real incident.)</em></div></div>
+      <div class="row"><div class="lbl">Ambience tie</div><div>"The instinct transfers straight to clinical AI: a system that touches real outcomes can't have <em>silent</em> wrong results. Whether it's a duplicate charge or a wrong fact written into a patient's note, you design for the retry/duplicate path first and reconcile against the source of truth — because the dangerous failure is the one that looks successful."</div></div>
+      <div class="row"><div class="lbl">Follow-ups</div><div>
+        <p style="margin:0 0 8px 0"><strong>"What was the root cause, exactly?"</strong> — "The idempotency key wasn't stable across retries. I built it from fields that changed on the retry instead of the event's invariant identity, so the second attempt looked like brand-new usage and the dedupe never fired."</p>
+        <p style="margin:0 0 8px 0"><strong>"Why didn't tests or review catch it?"</strong> — "My tests proved dedupe <em>ran</em>, not that the key was <em>stable under failure</em>. I never fixtured the same logical event arriving twice under different batch ids — the retry path is exactly the case I'd skipped. That gap is the real lesson, not the typo."</p>
+        <p style="margin:0 0 8px 0"><strong>"How did you find out — and how long did it take?"</strong> — "Too slowly, which was the deeper problem. A reconciliation job comparing billed charges to source usage flagged a count mismatch, and support saw a couple disputes. There was no real-time alert, so making it alertable became part of the fix."</p>
+        <p style="margin:0 0 8px 0"><strong>"How did you handle the customer impact?"</strong> — "Owned it without hedging — it was my key. Quantified exposure fast so finance could make people whole proactively rather than reactively, and I drove the comms, not just the code."</p>
+        <p style="margin:0"><strong>"What do you do differently now?"</strong> — "Design: the idempotency key comes from the immutable identity of the event, and duplicate/retry is my <em>first</em> test case. System: a pre-commit reconciliation gate plus a drift alert — detection in minutes, not days."</p>
+      </div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Technical mistake · a production incident you owned · correctness under pressure. <strong>Your strongest "mistake" answer.</strong></div></div>
+    </div>
+
+    <div class="story" id="s-mistake2">
+      <div class="title">Technical mistake — the backfill that overwrote good data</div>
+      <div class="tags"><span class="pill">technical mistake</span><span class="pill">rigor/process</span><span class="pill">data</span><span class="pill">source-of-truth</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>During the Salesforce↔Zuora integration I needed to backfill historical records so both systems agreed.</div></div>
+      <div class="row"><div class="lbl">Mistake</div><div>Most fields were Salesforce-authoritative, but a few (<em>negotiated price / rate-plan / billing contact</em>) were <strong>Zuora</strong>-authoritative. I applied one blanket sync direction (SF→Zuora) and ran it across the full set <strong>without a dry-run or canary</strong> — overwriting the Zuora-authoritative fields on a batch of subscriptions with stale values.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Caught within hours when finance flagged mismatched invoices. Stopped the job, restored the affected field from a pre-run export + Zuora's audit trail, corrected the records, and owned it to the PM and finance. Then made <strong>source-of-truth explicit per-field</strong> in a documented mapping (not tribal knowledge) and mandated <strong>dry-run + row-count diff + a reversible backup</strong> before any destructive data op.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Records corrected same-day; the per-field source-of-truth table I was forced to write became one of the integration's durable strengths. <em>(Swap in real record counts if real.)</em></div></div>
+      <div class="row"><div class="lbl">Ambience tie</div><div>"In healthcare you're constantly syncing data across systems — EMRs and beyond — and a destructive op on data that feeds care is exactly where you need per-field source-of-truth and a dry-run with a way back. This is the scar that made that non-negotiable for me."</div></div>
+      <div class="row"><div class="lbl">Follow-ups</div><div>
+        <p style="margin:0 0 8px 0"><strong>"Root cause?"</strong> — "I generalized one sync direction across all fields when authority was actually per-field. The fix was making that authority explicit and enforced, not implicit."</p>
+        <p style="margin:0 0 8px 0"><strong>"Why no dry-run?"</strong> — "Honestly, overconfidence — I'd validated the mapping on a handful of records and assumed it generalized. A full dry-run with a diff would have shown the overwrite. That's non-negotiable for me now on any destructive op."</p>
+        <p style="margin:0 0 8px 0"><strong>"How did you recover the data?"</strong> — "I had a pre-run export — partly luck, now policy — so I restored just the affected field from that plus Zuora's audit trail, then re-ran with the corrected per-field direction. Scoped, reversible, verified."</p>
+        <p style="margin:0"><strong>"How do you prevent it now?"</strong> — "Per-field source-of-truth documented and enforced in the mapping, and dry-run + row-count diff + reversible backup gating every bulk data change."</p>
+      </div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Technical mistake · rigor/attention to detail · a data incident · cross-functional recovery. <strong>Best answer to the "slow down and be careful" feedback theme.</strong></div></div>
+    </div>
+
+    <div class="story" id="s-mistake3">
+      <div class="title">Technical mistake — over-engineered a billing abstraction we ripped out</div>
+      <div class="tags"><span class="pill">technical mistake</span><span class="pill">design judgment</span><span class="pill">self-awareness</span><span class="pill">YAGNI</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Building the usage-rating / charge-orchestration layer, I anticipated future flexibility — multiple pricing models and providers — and built a generic, configurable rules engine.</div></div>
+      <div class="row"><div class="lbl">Mistake</div><div>I optimized for <strong>hypothetical</strong> requirements. The abstraction added indirection that <strong>slowed the team down</strong> — a simple pricing change became a multi-file affair — and the flexibility was never used the way I predicted. When a real new requirement arrived, it didn't fit my abstraction anyway.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>I acknowledged the call was wrong, proposed simplifying to the concrete design, and did the refactor <strong>incrementally</strong> so we didn't stop delivery — re-adding extension points only where real duplication had shown up.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Simpler code the team moved faster in; changes that used to touch many files became local. The lesson stuck harder than any that went smoothly. <em>(Add rough time-cost if real.)</em></div></div>
+      <div class="row"><div class="lbl">Ambience tie</div><div>"At an early-stage, fast-moving company, a simple, clear design the team can move fast in beats a clever general one. I learned to spend my complexity budget on correctness and clarity, not speculative flexibility — exactly the pragmatism this stage needs."</div></div>
+      <div class="row"><div class="lbl">Follow-ups</div><div>
+        <p style="margin:0 0 8px 0"><strong>"How did you realize it was over-engineered?"</strong> — "The team was the signal — a simple change touched many files and needed me to explain the abstraction. When teammates route around or slow down on your design, that's the tell. And the flexibility I'd built for never matched the real new requirement."</p>
+        <p style="margin:0 0 8px 0"><strong>"Why did you build it that way originally?"</strong> — "I anticipated multiple pricing models and providers and wanted to future-proof. Reasonable instinct, wrong bet — I optimized for imagined requirements over the concrete one in front of me."</p>
+        <p style="margin:0 0 8px 0"><strong>"How did you walk it back without stalling delivery?"</strong> — "Incrementally — collapsed the abstraction in stages behind the same interface, shipping the whole time, rather than a big-bang rewrite."</p>
+        <p style="margin:0"><strong>"What's your rule now?"</strong> — "Rule of three: earn an abstraction from real repetition, not speculation. I still design for change, but only at the seams the requirements actually demand."</p>
+      </div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Technical mistake · a design decision you'd remake · self-awareness · pragmatism (ties to prioritization / testing-pragmatism theme).</div></div>
+    </div>
+
+    <div class="story" id="s-riviera-fail">
+      <div class="title">Riviera failure — the fragile first builds (your systems-design lesson)</div>
+      <div class="tags"><span class="pill">technical mistake</span><span class="pill">growth</span><span class="pill">reliability</span><span class="pill">Riviera-era</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Early at Riviera, freshly self-taught into engineering, I built the first versions of the Chrome-extension scraper and the entity-resolution service.</div></div>
+      <div class="row"><div class="lbl">Mistake</div><div>I had <strong>no systems-design background yet</strong>, so they were all <strong>synchronous, with no failure handling and no observability</strong> — slow and fragile. They were useful enough that recruiters came to rely on them daily, which was the trap: I was <strong>firefighting constantly</strong>, bolting on one-off guards every time a new edge case broke, instead of fixing the design.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>As my technical chops grew I stopped patching and <strong>re-architected</strong>: moved the work <strong>asynchronous</strong> (Sidekiq workers), added real <strong>error handling, retries, and guards</strong>, and <strong>profiled and tuned performance</strong> (RubyProfiler/NewRelic — ~800ms → ~80ms, a 10× win). I also helped pull the ETL API out of the monolith toward a service-oriented design.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Systems recruiters could rely on without me firefighting — and, more importantly, this is <strong>where I actually learned reliability and systems design</strong>. It turned the exact feedback my leads gave me ("keep leveling up your fundamentals") into a concrete before/after.</div></div>
+      <div class="row"><div class="lbl">Lesson</div><div>"Making it work isn't the bar — making it robust is. Async, failure handling, and observability aren't extras; they're the difference between a tool people trust and a daily fire. That instinct became the backbone of my later billing work."</div></div>
+      <div class="row"><div class="lbl">Ambience tie</div><div>"This is the root of the reliability instinct that matters even more in healthcare — a system clinicians lean on every day can't be firefought; it has to be observable, fail gracefully, and be trustworthy by design."</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Riviera-era failure (topgrading, per-job) · growth / learning from a weakness · reliability instinct. <strong>Use this as your Riviera "failure" answer.</strong></div></div>
+    </div>
+
+    <div class="story" id="s-zuora">
+      <div class="title">Zuora silent-200 billing bug</div>
+      <div class="tags"><span class="pill">ownership</span><span class="pill">debugging</span><span class="pill">correctness</span><span class="pill">mistake→fix</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Zendesk Talk billing ran through a Zuora integration. Charges were silently not landing — the API returned <code class="inline">200 OK</code> but no charge was created, so nothing alerted.</div></div>
+      <div class="row"><div class="lbl">Task</div><div>I owned the payments path — root-causing, fixing, and quantifying the revenue/correctness exposure was on me.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Traced the request/response cycle, found the success status masking a no-op on Zuora's side, reproduced it, fixed the integration logic, then closed the systemic gap: added alerting/validation so a "success with no charge" could never pass silently again.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Stopped the silent revenue leak and made the whole class of bug impossible to miss going forward. <em>[Add the $ / volume figure.]</em></div></div>
+      <div class="row"><div class="lbl">Ambience tie</div><div>"Same reflex a clinical-AI system needs: 'the API said 200' is necessary but not sufficient — you reconcile against actual state, because a silent wrong result is the dangerous one."</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Ownership · hardest bug · a mistake and the systemic fix · correctness-critical work.</div></div>
+    </div>
+
+    <div class="story" id="s-integration">
+      <div class="title">Salesforce ↔ Billing ↔ Zuora integration (quote-to-cash)</div>
+      <div class="tags"><span class="pill">ownership</span><span class="pill">prioritization</span><span class="pill">tradeoffs</span><span class="pill">idempotency</span><span class="pill">ship</span></div>
+      <div class="row"><div class="lbl">Hook</div><div>"I owned the integration wiring Salesforce, our Billing app, and Zuora — the quote-to-cash backbone. A vague cross-org ask from two VPs: they knew the outcome and a few hard requirements; the rest was mine to define, through a PM."</div></div>
+      <div class="row"><div class="lbl">Hard part</div><div>Surfaced the integrity cases the happy-path spec missed: idempotent retries (no double-charge), source-of-truth conflicts (which system wins per field), and catalog↔rate-plan mapping.</div></div>
+      <div class="row"><div class="lbl">Prioritization</div><div>~2–3 month window; full scope didn't fit. With the PM I explicitly cut nice-to-haves but drew a hard line around the <strong>integrity-critical</strong> pieces (idempotency, conflict resolution, reconciliation) — a fast-but-wrong billing sync costs far more to unwind than a smaller correct v1.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Shipped a revenue-critical order-processing integration for high-MRR clients: <strong>&lt;5s order creation, 99.9% accuracy, 1,000+ orders/min</strong>. Replaced a manual hand-off and cut the sync errors that used to need cleanup — one quote-to-cash pipeline all teams trusted.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Prioritization/tradeoffs · ambiguous requirements · aligning senior stakeholders · shipping under deadline. <strong>Your strongest prioritization story.</strong></div></div>
+    </div>
+
+    <div class="story" id="s-ddd">
+      <div class="title">DDD architecture disagreement</div>
+      <div class="tags"><span class="pill">conflict</span><span class="pill">feedback</span><span class="pill">judgment</span><span class="pill">disagree &amp; commit</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>An architecture group mandated a Domain-Driven-Design approach for the Talk payments work; I had reservations about the cost/benefit for our context.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Made my case with concrete reasoning, genuinely heard their longer-term rationale, and deferred to the mandate while flagging the tradeoffs.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Honestly mixed — and that's the point: in hindsight both sides were partly right. I can name what DDD got right and where my concern held. Shows I argue hard, take feedback, commit cleanly, and reflect honestly.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Disagreement/conflict · incorporating feedback · a mistake/lesson (when to push vs. defer) · working with senior stakeholders.</div></div>
+    </div>
+
+    <div class="story" id="s-prio">
+      <div class="title">P0 triage under pressure <span style="font-weight:400;color:var(--muted);font-size:12px">— [pick your real incident]</span></div>
+      <div class="tags"><span class="pill">prioritization</span><span class="pill">P0</span><span class="pill">pragmatism</span></div>
+      <div class="row"><div class="lbl">Frame</div><div>A moment where a production/payments issue forced you to drop planned work and triage: what made it a P0 (customer/money impact), how you decided what to fix now vs. later, and how you communicated the tradeoff.</div></div>
+      <div class="row"><div class="lbl">Point</div><div>Anchor on impact + blast radius; right-size the fix (stop the bleeding first, harden after); keep stakeholders in the loop on what's deferred.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>How you prioritize · testing pragmatism · grace under pressure. <em>[Fill with a concrete example — even the Zuora bug works as the P0.]</em></div></div>
+    </div>
+
+    <div class="story" id="s-wordblok">
+      <div class="title">Wordblok — shipped a game solo in a week</div>
+      <div class="tags"><span class="pill">bias to action</span><span class="pill">scope</span><span class="pill">end-to-end</span><span class="pill">ship</span></div>
+      <div class="row"><div class="lbl">Situation</div><div>Wanted to ship my first iOS App Store game; gave myself ~a week.</div></div>
+      <div class="row"><div class="lbl">Action</div><div>Cut scope hard to the core loop, deferred everything non-essential, shipped. Made deliberate "not in v1" calls to protect the deadline.</div></div>
+      <div class="row"><div class="lbl">Result</div><div>Live on the App Store in ~a week — proof of end-to-end ownership and ruthless prioritization. The "relentless operator" signal a startup wants.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Bias to action · shipping under constraint · scope discipline · self-direction · what fulfills you (building end to end).</div></div>
+    </div>
+
+    <div class="story" id="s-feedback">
+      <div class="title">Feedback → growth</div>
+      <div class="tags"><span class="pill">feedback</span><span class="pill">growth</span><span class="pill">self-awareness</span></div>
+      <div class="row"><div class="lbl">Frame</div><div>A specific piece of feedback (from a manager, a code review, or the DDD arch group), how you took it without defensiveness, and the concrete change it produced in how you work.</div></div>
+      <div class="row"><div class="lbl">Point</div><div>You seek feedback early rather than wait for it; you weigh it on merit; and you can point to a durable habit that came out of it.</div></div>
+      <div class="row"><div class="lbl">Lands for</div><div>Incorporating feedback · growth mindset · what your boss would say. <em>[Fill with your best real example.]</em></div></div>
+    </div>
+  </section>
+
+  <!-- ============ CODING ROUND ============ -->
+  <section class="tab" id="tab-coding" data-collapsible="true" data-toc='[
+    ["@group","Strategy"],
+    ["★ Verified vs. reconstructed","verified"],
+    ["The shape of the problem","shape"],
+    ["Communication framework","comm"],
+    ["Handling a multi-part problem","multipart"],
+    ["Debugging like they want","debug"],
+    ["Using AI Assist correctly","aiassist"],
+    ["@group","Fluency"],
+    ["Language note — use Ruby","lang"],
+    ["Ruby → Python bridge","bridge"],
+    ["Parsing input cleanly","parse"],
+    ["@group","Reference"],
+    ["Pre-round warmup ritual","warmup"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Main event · 45 min coding</div><div style="font-size:16px;font-weight:600">CoderPad · multi-part · mission-flavored</div></div>
+      <div class="time">⏱ 45 min</div>
+    </div>
+
+    <h3 class="section" id="verified">★ What's verified vs. reconstructed (read this)</h3>
+    <div class="card warn">
+      <p style="margin:0 0 8px 0"><strong>Reality check:</strong> unlike Chime (where candidates posted exact LeetCode numbers), Ambience has <strong>no public bank of specific past coding prompts</strong>. They're young and small, so few interview reports exist. Anyone claiming a precise Ambience problem list is guessing. Here's the honest tiering:</p>
+    </div>
+    <div class="grid-2">
+      <div class="card good">
+        <p style="margin:0 0 4px 0;color:var(--good);font-weight:600;font-size:12px">🟢 VERIFIED (from their own recruiter prep doc)</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>60 min: <strong>45 coding + 15 your questions</strong>, one engineer, CoderPad.</li>
+          <li><strong>Language-agnostic</strong>; compile/run/debug; <strong>debugging is graded</strong>.</li>
+          <li><strong>One multi-part problem</strong>, "as many parts as we can together."</li>
+          <li>"<strong>Core logic behind a feature, not a full system.</strong>"</li>
+          <li>"<strong>Directly related to our mission</strong>… not LeetCode… good choices &amp; building, not hyper-optimization."</li>
+          <li>AI Assist for syntax only; screen shared.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p style="margin:0 0 4px 0;color:var(--warn);font-weight:600;font-size:12px">🟡 RECONSTRUCTED (my inference — NOT real past questions)</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>The 5 worked problems + the bank in <strong>Practice Problems</strong> are <strong>modeled from the doc + their product</strong> (ambient scribe → note → code). They are <em>plausible shapes</em>, not confirmed history.</li>
+          <li>Treat them as <strong>pattern carriers</strong>: each maps to grouping / merge-intervals / windows / string-matching / greedy-packing — which is what <em>any</em> "feature core logic" prompt reduces to.</li>
+        </ul>
+        <p style="margin:8px 0 4px 0;color:var(--bad);font-weight:600;font-size:12px">🔴 NOT AVAILABLE</p>
+        <ul class="tight" style="margin:0 0 0 18px">
+          <li>No verified Glassdoor/Blind/LeetCode list of actual Ambience coding problems. Don't over-index on any single "expected" question.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card amb">
+      <p style="margin:0;font-size:13px"><strong>So how to prep:</strong> the doc tells you the <em>shape</em> precisely — that's a stronger signal than a scraped question list. Drill the <strong>patterns</strong> until automatic, run everything you write, and rehearse the multi-part escalation. The exact scenario will differ; the moves won't.</p>
+    </div>
+    <p style="margin:6px 0 0 0;font-size:11px;color:var(--muted)">Checked: Glassdoor (Ambience), Scoutify, Blind, Reddit, LeetCode Discuss, InterviewQuery (June 2026). Verified facts are from the recruiter's own prep doc.</p>
+
+    <h3 class="section" id="shape">The shape of the problem</h3>
+    <div class="card amb">
+      <p style="margin:0 0 8px 0">Per their own description, expect <strong>"the core logic behind a feature, not a full system,"</strong> <strong>directly related to their mission</strong> (ambient scribe → structured clinical documentation), delivered in <strong>multiple escalating parts</strong>. Mentally model it as:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Input is structured-ish data</strong> — a transcript (list of speaker/timestamp/text), a stream of partial ASR results, a dictionary of medical phrases→codes, a note template, etc.</li>
+        <li><strong>Part 1:</strong> parse / transform / group it (warm-up).</li>
+        <li><strong>Part 2+:</strong> add a real-world wrinkle — overlaps, pauses, longest-match, dedup, ordering, missing data, a new rule.</li>
+        <li><strong>The skill tested:</strong> picking the right data structure, writing clean extensible code, and <em>running it to prove it works.</em></li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">The <strong>Practice Problems</strong> tab has full worked multi-part examples in exactly this shape. Drill those.</p>
+    </div>
+
+    <h3 class="section" id="comm">Communication framework (use every single time)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li><strong>Restate</strong> the problem in your own words — confirm you understood it.</li>
+        <li><strong>Clarify 2–3 things:</strong> input size? can speakers repeat? are timestamps sorted? case-sensitive? can I mutate the input? what's the output format exactly?</li>
+        <li><strong>State the approach</strong> in one sentence + name the data structure ("I'll group with a hash keyed by speaker"). Get a nod before coding.</li>
+        <li><strong>Write a tiny example + expected output</strong> at the top as a comment — your test target.</li>
+        <li><strong>Code in small functions.</strong> Narrate only non-obvious decisions.</li>
+        <li><strong>Run it</strong> on the example. When it breaks, debug out loud.</li>
+        <li><strong>State complexity</strong> (time + space) unprompted, briefly.</li>
+        <li><strong>Offer the next step:</strong> "That's part 1 — want me to handle [the overlap case / add tests / extend]?" — this sets you up for the multi-part escalation.</li>
+      </ol>
+    </div>
+
+    <h3 class="section" id="multipart">Handling a multi-part problem</h3>
+    <div class="card accent">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Don't gold-plate part 1.</strong> Solve exactly what's asked, cleanly, and move on — but leave seams. A function that returns a list of "turns" is easy to feed into part 2's "merge overlaps."</li>
+        <li><strong>Name things for the domain,</strong> not the algorithm: <code class="inline">merge_speaker_turns</code>, <code class="inline">extract_codes</code> — not <code class="inline">solve2</code>. It reads like real feature code (what they score as "structure &amp; style").</li>
+        <li><strong>When part 2 lands, restate it first,</strong> same framework. Reuse part 1's output; refactor a little if needed and say why.</li>
+        <li><strong>It's OK not to finish every part.</strong> They literally say "as many as we can together." Clean + correct + well-narrated on 2 parts beats sloppy on 4.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="debug">Debugging like they want to see</h3>
+    <div class="card warn">
+      <p style="margin:0 0 8px 0"><strong>"Demonstrating the ability to identify and fix bugs is important."</strong> This is graded. So <em>plan</em> to have a bug and handle it well — don't panic.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Run before you trust.</strong> After writing a function, immediately call it on the sample and print the result.</li>
+        <li><strong>When it's wrong, narrate the diagnosis:</strong> "I expected 3 turns, got 4 — so my merge condition is off. Let me print each turn as I build it." Add a print, re-run, isolate.</li>
+        <li><strong>Form a hypothesis, then test it</strong> — don't shotgun-edit. One change, re-run, confirm.</li>
+        <li><strong>Common bugs to pre-empt:</strong> off-by-one on window/index, mutating while iterating, <code class="inline">&lt;=</code> vs <code class="inline">&lt;</code> on a gap/threshold, forgetting the last group after a loop, shared-reference bugs (Ruby <code class="inline">dup</code> / Python copy), integer vs float on timestamps.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="aiassist">Using AI Assist correctly</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">CoderPad's AI Assist is <strong>offered and watched</strong> (screen shared). The line:</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Green:</strong> "What's the Ruby equivalent of Python's <code class="inline">defaultdict</code>?" / "signature of <code class="inline">Enumerable#chunk_while</code>?" — narrate it: "Let me confirm the exact method." Looking up syntax is <em>encouraged</em>.</li>
+        <li><strong>Red:</strong> "Solve this problem for me." Pasting the prompt in and copying the answer defeats the round and they'll see it.</li>
+        <li><strong>Posture:</strong> use it like a senior who knows what they want but double-checks an API. That's the signal.</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="lang">Language note — use Ruby (you're fastest in it)</h3>
+    <div class="card amb">
+      <p style="margin:0 0 6px 0">They're language-agnostic, so <strong>play to your strength: Ruby.</strong> Don't write worse Python to "match their stack" — clean fluent Ruby with good narration scores higher than hesitant Python. This guide shows <strong>Ruby first, Python second</strong> on every solution so you can switch if you prefer, and so you can read either if the interviewer thinks in Python.</p>
+      <p style="margin:0;font-size:12px;color:var(--muted)">Ruby idioms that shine in this domain: <code class="inline">each_with_object</code>, <code class="inline">group_by</code>, <code class="inline">chunk_while</code>/<code class="inline">slice_when</code>, <code class="inline">Hash.new(0)</code> counters, <code class="inline">tally</code>, <code class="inline">scan</code> for matches, <code class="inline">partition</code>.</p>
+    </div>
+
+    <h3 class="section" id="bridge">Ruby → Python bridge (if you switch / read theirs)</h3>
+    <div class="card">
+      <table class="rubric">
+        <tr><th>Task</th><th>Ruby</th><th>Python</th></tr>
+        <tr><td>Counter</td><td><code class="inline">h = Hash.new(0); h[k]+=1</code></td><td><code class="inline">from collections import Counter</code> / <code class="inline">defaultdict(int)</code></td></tr>
+        <tr><td>Tally a list</td><td><code class="inline">arr.tally</code></td><td><code class="inline">Counter(arr)</code></td></tr>
+        <tr><td>Group by key</td><td><code class="inline">arr.group_by { |x| x[:k] }</code></td><td><code class="inline">defaultdict(list)</code> loop / <code class="inline">itertools.groupby</code> (sorted)</td></tr>
+        <tr><td>Accumulate into hash</td><td><code class="inline">arr.each_with_object({}) {|x,h| ... }</code></td><td>plain <code class="inline">for</code> loop into dict</td></tr>
+        <tr><td>Split runs</td><td><code class="inline">arr.chunk_while {|a,b| ...}</code></td><td>manual loop / <code class="inline">groupby</code></td></tr>
+        <tr><td>Sort by key</td><td><code class="inline">arr.sort_by {|x| x[:t]}</code></td><td><code class="inline">sorted(arr, key=lambda x: x["t"])</code></td></tr>
+        <tr><td>Find all matches</td><td><code class="inline">str.scan(/re/)</code></td><td><code class="inline">re.findall(r"re", s)</code></td></tr>
+        <tr><td>Default get</td><td><code class="inline">h.fetch(k, default)</code></td><td><code class="inline">h.get(k, default)</code></td></tr>
+        <tr><td>Dedup</td><td><code class="inline">arr.uniq</code></td><td><code class="inline">list(dict.fromkeys(arr))</code></td></tr>
+        <tr><td>Heap</td><td><code class="inline">require 'algorithms'</code> (rare) — usually sort</td><td><code class="inline">import heapq</code></td></tr>
+      </table>
+      <p style="margin:6px 0 0 0;font-size:12px;color:var(--muted)"><strong>Python gotchas if you switch:</strong> mutable default args, integer division <code class="inline">//</code>, <code class="inline">range</code> excludes the end, dict insertion-ordered (3.7+), strings immutable.</p>
+    </div>
+
+    <h3 class="section" id="parse">Parsing the input cleanly (do this in part 1)</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Most of these problems hand you a list of hashes/dicts or a string to tokenize. Get this into a clean shape immediately so later parts are trivial.</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby"># transcript as array of hashes — already clean, just normalize
+transcript = [
+  { speaker: "clinician", ts: 0,  text: "What brings you in?" },
+  { speaker: "patient",   ts: 4,  text: "I've had a headache." },
+  { speaker: "patient",   ts: 7,  text: "For three days." },
+]
+
+# tokenize a raw string into words (lowercased, punctuation-stripped)
+def words(text)
+  text.downcase.scan(/[a-z0-9']+/)
+end
+words("I've had a HEADACHE, for 3 days.")
+# => ["i've", "had", "a", "headache", "for", "3", "days"]</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">import re
+transcript = [
+    {"speaker": "clinician", "ts": 0, "text": "What brings you in?"},
+    {"speaker": "patient",   "ts": 4, "text": "I've had a headache."},
+    {"speaker": "patient",   "ts": 7, "text": "For three days."},
+]
+
+def words(text):
+    return re.findall(r"[a-z0-9']+", text.lower())
+
+words("I've had a HEADACHE, for 3 days.")
+# => ["i've", "had", "a", "headache", "for", "3", "days"]</code></pre></div>
+    </div>
+
+    <h3 class="section" id="warmup">Pre-round warmup ritual (morning of)</h3>
+    <div class="card good">
+      <ol class="tight" style="margin:0 0 0 18px">
+        <li>Open CoderPad, set Ruby, run a one-liner. Confirm output shows.</li>
+        <li>Re-solve <strong>Problem 1 (Transcript → speaker turns)</strong> cold, out loud, running it as you go.</li>
+        <li>Do one <strong>Counter / group_by</strong> rep and one <strong>merge-intervals</strong> rep from the Patterns tab.</li>
+        <li>Rehearse the 8-step framework once so step 1 (restate) is automatic under nerves.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ PRACTICE PROBLEMS ============ -->
+  <section class="tab" id="tab-problems" data-collapsible="true" data-toc='[
+    ["@group","How to use these"],
+    ["About these problems","about"],
+    ["@group","Worked multi-part problems"],
+    ["1 · Transcript → speaker turns","p1"],
+    ["2 · Extract medical codes from a note","p2"],
+    ["3 · Merge streaming ASR partials","p3"],
+    ["4 · Build a SOAP note from a template","p4"],
+    ["5 · Redact PHI from a transcript","p5"],
+    ["@group","Extra reps (prompts only)"],
+    ["More mission-flavored prompts","bank"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">Drill these · Ruby + Python</div><div style="font-size:16px;font-weight:600">Multi-part, mission-flavored — the real shape</div></div>
+      <div class="time">5 worked + a bank</div>
+    </div>
+
+    <h3 class="section" id="about">About these problems</h3>
+    <div class="card amb">
+      <p style="margin:0 0 6px 0">Each is built in the exact shape Ambience described: <strong>core logic of a clinical-documentation feature, multiple escalating parts.</strong> Practice them by (1) reading only the prompt, (2) coding + running cold in CoderPad, (3) then checking the solution. <strong>Narrate out loud</strong> even when alone.</p>
+      <p style="margin:0 0 6px 0;font-size:12px;color:var(--muted)">Solutions are <strong>Ruby first</strong> (your strength), <strong>Python second</strong>. They're written for readability over cleverness — that's what's scored.</p>
+      <p style="margin:0;font-size:12px;color:var(--warn)">⚠ <strong>These are reconstructed shapes, not confirmed past questions</strong> — Ambience has no public prompt bank (see <em>Coding Round → Verified vs. reconstructed</em>). Their value is the <strong>patterns</strong>, which transfer to whatever exact scenario you get.</p>
+    </div>
+
+    <h3 class="section" id="p1">1 · Transcript → speaker turns</h3>
+    <div class="card accent">
+      <p style="margin:0 0 4px 0"><strong>Prompt.</strong> You're given a transcript as a list of tokens <code class="inline">{speaker, ts, text}</code> sorted by <code class="inline">ts</code> (seconds).</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Part A:</strong> Merge consecutive tokens from the same speaker into a single "turn" with combined text and start/end times.</li>
+        <li><strong>Part B:</strong> Even for the same speaker, start a <em>new</em> turn if the gap since their last token exceeds <code class="inline">max_gap</code> seconds (a pause = a new thought).</li>
+        <li><strong>Part C:</strong> Add a <code class="inline">keep</code> filter so we only include certain speakers (e.g. drop a third "nurse" speaker), without breaking merging.</li>
+      </ul>
+    </div>
+    <div class="lang-tag rb">Ruby — Parts A + B + C</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby"># Part C handled first by filtering, then A+B in one pass.
+def speaker_turns(tokens, max_gap: Float::INFINITY, keep: nil)
+  tokens = tokens.select { |t| keep.nil? || keep.include?(t[:speaker]) }
+  turns = []
+  tokens.each do |t|
+    last = turns.last
+    same_speaker = last && last[:speaker] == t[:speaker]
+    within_gap   = last && (t[:ts] - last[:end]) <= max_gap
+    if same_speaker && within_gap
+      last[:text] += " " + t[:text]
+      last[:end]   = t[:ts]
+    else
+      turns << { speaker: t[:speaker], text: t[:text].dup, start: t[:ts], end: t[:ts] }
+    end
+  end
+  turns
+end
+
+transcript = [
+  { speaker: "clinician", ts: 0,  text: "What brings you in?" },
+  { speaker: "patient",   ts: 4,  text: "I've had a headache." },
+  { speaker: "patient",   ts: 7,  text: "For three days." },
+  { speaker: "patient",   ts: 40, text: "Also some nausea." },   # big pause
+  { speaker: "nurse",     ts: 42, text: "BP is 120 over 80." },
+]
+
+require "pp"
+pp speaker_turns(transcript, max_gap: 10, keep: %w[clinician patient])
+# 3 turns: clinician(0), patient(4-7 merged), patient(40 — split by pause); nurse dropped</code></pre></div>
+    <div class="lang-tag py">Python — Parts A + B + C</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">import math
+
+def speaker_turns(tokens, max_gap=math.inf, keep=None):
+    tokens = [t for t in tokens if keep is None or t["speaker"] in keep]
+    turns = []
+    for t in tokens:
+        last = turns[-1] if turns else None
+        same_speaker = last and last["speaker"] == t["speaker"]
+        within_gap   = last and (t["ts"] - last["end"]) <= max_gap
+        if same_speaker and within_gap:
+            last["text"] += " " + t["text"]
+            last["end"]   = t["ts"]
+        else:
+            turns.append({"speaker": t["speaker"], "text": t["text"],
+                          "start": t["ts"], "end": t["ts"]})
+    return turns
+
+# same transcript ... speaker_turns(transcript, max_gap=10, keep={"clinician","patient"})</code></pre></div>
+    <div class="card">
+      <p style="margin:0;font-size:12px"><strong>Talk track:</strong> "One pass, O(n). I filter first so the merge logic doesn't have to know about dropped speakers. The merge condition has two parts — same speaker AND within the gap — which makes part B a one-line addition to part A. Note <code class="inline">text.dup</code> in Ruby so I'm not appending into the caller's string." <strong>Likely bug to surface:</strong> using <code class="inline">&lt;</code> vs <code class="inline">&lt;=</code> on <code class="inline">max_gap</code>, or comparing <code class="inline">t[:ts] - last[:start]</code> instead of <code class="inline">last[:end]</code>.</p>
+    </div>
+
+    <h3 class="section" id="p2">2 · Extract medical codes from a note</h3>
+    <div class="card accent">
+      <p style="margin:0 0 4px 0"><strong>Prompt.</strong> Given note <code class="inline">text</code> and a dictionary mapping a phrase → ICD-10 code (e.g. <code class="inline">"headache" => "R51"</code>, <code class="inline">"chronic headache" => "G44.1"</code>).</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Part A:</strong> Return each code that appears, case-insensitive, with a count of mentions.</li>
+        <li><strong>Part B:</strong> Match on <em>word boundaries</em> (don't match "ache" inside "headache").</li>
+        <li><strong>Part C:</strong> When phrases overlap (<code class="inline">"chronic headache"</code> vs <code class="inline">"headache"</code>), prefer the <strong>longest</strong> match and don't double-count the shorter one inside it.</li>
+      </ul>
+    </div>
+    <div class="lang-tag rb">Ruby — Part A + B (boundary, counted)</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">def extract_codes(text, dictionary)
+  counts = Hash.new(0)
+  dictionary.each do |phrase, code|
+    re = /\b#{Regexp.escape(phrase)}\b/i
+    n = text.scan(re).size
+    counts[code] += n if n > 0
+  end
+  counts
+end
+
+dict = { "headache" => "R51", "nausea" => "R11.0", "chronic headache" => "G44.1" }
+extract_codes("Patient reports a headache and nausea. Headache is severe.", dict)
+# => {"R51"=>2, "R11.0"=>1}</code></pre></div>
+    <div class="lang-tag rb">Ruby — Part C (longest, non-overlapping)</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby"># Collect all matches with positions, sort longest-first, greedily
+# claim spans so a shorter phrase inside a longer one isn't counted.
+def extract_codes_longest(text, dictionary)
+  matches = []
+  dictionary.each do |phrase, code|
+    text.to_enum(:scan, /\b#{Regexp.escape(phrase)}\b/i).each do
+      m = Regexp.last_match
+      matches << { start: m.begin(0), finish: m.end(0), code: code, len: phrase.length }
+    end
+  end
+  matches.sort_by! { |m| [-m[:len], m[:start]] }   # longest first
+  claimed = []                                       # list of [start, finish)
+  counts  = Hash.new(0)
+  matches.each do |m|
+    overlap = claimed.any? { |s, f| m[:start] < f && s < m[:finish] }
+    next if overlap
+    claimed << [m[:start], m[:finish]]
+    counts[m[:code]] += 1
+  end
+  counts
+end
+
+extract_codes_longest("Patient has a chronic headache today.", dict)
+# => {"G44.1"=>1}   # NOT also R51 for the "headache" inside it</code></pre></div>
+    <div class="lang-tag py">Python — Part A + B, then C</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">import re
+from collections import defaultdict
+
+def extract_codes(text, dictionary):
+    counts = defaultdict(int)
+    for phrase, code in dictionary.items():
+        pat = re.compile(r"\b" + re.escape(phrase) + r"\b", re.I)
+        n = len(pat.findall(text))
+        if n:
+            counts[code] += n
+    return dict(counts)
+
+def extract_codes_longest(text, dictionary):
+    matches = []
+    for phrase, code in dictionary.items():
+        for m in re.finditer(r"\b" + re.escape(phrase) + r"\b", text, re.I):
+            matches.append((m.start(), m.end(), code, len(phrase)))
+    matches.sort(key=lambda x: (-x[3], x[0]))   # longest first
+    claimed, counts = [], defaultdict(int)
+    for start, finish, code, _ in matches:
+        if any(start < f and s < finish for s, f in claimed):
+            continue
+        claimed.append((start, finish))
+        counts[code] += 1
+    return dict(counts)</code></pre></div>
+    <div class="card">
+      <p style="margin:0;font-size:12px"><strong>Talk track:</strong> "Part A/B is per-phrase regex with <code class="inline">\b</code> boundaries and case-insensitive. Part C is the interesting part: overlapping matches, so I collect spans, sort longest-first, and greedily claim non-overlapping ranges — the same idea as interval scheduling. If the dictionary were huge I'd reach for an Aho-Corasick automaton, but for this scale clarity wins." That last line nails their <em>"good choices, not hyper-optimization"</em> note.</p>
+    </div>
+
+    <h3 class="section" id="p3">3 · Merge streaming ASR partials</h3>
+    <div class="card accent">
+      <p style="margin:0 0 4px 0"><strong>Prompt.</strong> Ambient transcription emits <em>partial</em> hypotheses as audio arrives, each <code class="inline">{start, end, text}</code> (seconds). Later partials can <strong>overlap and revise</strong> earlier ones.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Part A:</strong> Given partials sorted by <code class="inline">start</code>, merge overlapping/adjacent time ranges into consolidated segments.</li>
+        <li><strong>Part B:</strong> When two partials overlap, the <em>later</em> one is the correction — its text wins for the overlapping region. Produce final text per merged segment.</li>
+        <li><strong>Part C:</strong> Partials may arrive <em>out of order</em>; handle unsorted input.</li>
+      </ul>
+    </div>
+    <div class="lang-tag rb">Ruby — Part A + C (merge ranges, sort first)</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby"># Classic merge-intervals. Part C = just sort up front.
+def merge_segments(partials)
+  sorted = partials.sort_by { |p| p[:start] }   # Part C
+  merged = []
+  sorted.each do |p|
+    last = merged.last
+    if last && p[:start] <= last[:end]          # overlap or touch
+      last[:end]  = [last[:end], p[:end]].max
+      last[:text] = p[:text]                     # Part B: later text wins
+    else
+      merged << { start: p[:start], end: p[:end], text: p[:text] }
+    end
+  end
+  merged
+end
+
+partials = [
+  { start: 0, end: 5,  text: "i have a head" },
+  { start: 3, end: 8,  text: "i have a headache" },   # revises the above
+  { start: 12, end: 15, text: "for three days" },
+]
+merge_segments(partials)
+# => [{start:0,end:8,text:"i have a headache"}, {start:12,end:15,text:"for three days"}]</code></pre></div>
+    <div class="lang-tag py">Python — Part A + B + C</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">def merge_segments(partials):
+    merged = []
+    for p in sorted(partials, key=lambda x: x["start"]):   # Part C
+        if merged and p["start"] <= merged[-1]["end"]:     # overlap/touch
+            merged[-1]["end"]  = max(merged[-1]["end"], p["end"])
+            merged[-1]["text"] = p["text"]                 # Part B: later wins
+        else:
+            merged.append({"start": p["start"], "end": p["end"], "text": p["text"]})
+    return merged</code></pre></div>
+    <div class="card">
+      <p style="margin:0;font-size:12px"><strong>Talk track:</strong> "This is merge-intervals dressed in domain clothes. Part B's 'later partial wins' is a reasonable simplification — I'd flag to the interviewer that real ASR would merge at the token level, but 'latest hypothesis for the segment' is a sane v1." Naming the simplification and its limit is exactly the <em>'articulate trade-offs'</em> signal. <strong>Likely bug:</strong> forgetting to sort (part C), or using <code class="inline">&lt;</code> instead of <code class="inline">&lt;=</code> so touching segments don't merge.</p>
+    </div>
+
+    <h3 class="section" id="p4">4 · Build a SOAP note from a template</h3>
+    <div class="card accent">
+      <p style="margin:0 0 4px 0"><strong>Prompt.</strong> Given a template string with <code class="inline">{slot}</code> placeholders and a <code class="inline">facts</code> hash of extracted values.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Part A:</strong> Fill each <code class="inline">{slot}</code> with its value from <code class="inline">facts</code>.</li>
+        <li><strong>Part B:</strong> If a slot is missing, leave a clear placeholder like <code class="inline">[chief_complaint not documented]</code> instead of crashing.</li>
+        <li><strong>Part C:</strong> Support a repeating block <code class="inline">{#medications}- {name} {dose}{/medications}</code> over a list of items.</li>
+      </ul>
+    </div>
+    <div class="lang-tag rb">Ruby — Part A + B</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">def fill_template(template, facts)
+  template.gsub(/\{(\w+)\}/) do
+    key = $1.to_sym
+    facts.key?(key) ? facts[key].to_s : "[#{$1} not documented]"
+  end
+end
+
+tpl = "S: {chief_complaint}\nO: {vitals}\nA: {assessment}"
+fill_template(tpl, chief_complaint: "headache x3 days", vitals: "BP 120/80")
+# => "S: headache x3 days\nO: BP 120/80\nA: [assessment not documented]"</code></pre></div>
+    <div class="lang-tag rb">Ruby — Part C (repeating block)</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby"># Expand repeating sections first, then fill scalar slots.
+def render(template, facts)
+  expanded = template.gsub(/\{#(\w+)\}(.*?)\{\/\1\}/m) do
+    items = facts[$1.to_sym] || []
+    inner = $2
+    items.map { |item| fill_template(inner, item) }.join
+  end
+  fill_template(expanded, facts)
+end
+
+tpl = "Meds:\n{#medications}- {name} {dose}\n{/medications}"
+render(tpl, medications: [{ name: "ibuprofen", dose: "400mg" },
+                          { name: "sumatriptan", dose: "50mg" }])
+# => "Meds:\n- ibuprofen 400mg\n- sumatriptan 50mg\n"</code></pre></div>
+    <div class="lang-tag py">Python — Part A + B + C</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">import re
+
+def fill_template(template, facts):
+    def repl(m):
+        key = m.group(1)
+        return str(facts[key]) if key in facts else f"[{key} not documented]"
+    return re.sub(r"\{(\w+)\}", repl, template)
+
+def render(template, facts):
+    def block(m):
+        name, inner = m.group(1), m.group(2)
+        return "".join(fill_template(inner, item) for item in facts.get(name, []))
+    expanded = re.sub(r"\{#(\w+)\}(.*?)\{/\1\}", block, template, flags=re.S)
+    return fill_template(expanded, facts)</code></pre></div>
+    <div class="card">
+      <p style="margin:0;font-size:12px"><strong>Talk track:</strong> "A is a regex substitution. B is the real-world bit — clinical notes must <em>not</em> silently drop a missing field, so I surface it explicitly. C I do as a pre-pass that expands repeating blocks, then reuse the scalar filler — composition keeps each function small." <strong>Watch:</strong> the <code class="inline">/m</code> (Ruby) / <code class="inline">re.S</code> (Python) flag so <code class="inline">.</code> spans newlines, and the backreference <code class="inline">\1</code> to match the closing tag.</p>
+    </div>
+
+    <h3 class="section" id="p5">5 · Redact PHI from a transcript</h3>
+    <div class="card accent">
+      <p style="margin:0 0 4px 0"><strong>Prompt.</strong> Before logging a transcript we must scrub PHI (protected health info).</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Part A:</strong> Given a list of known names, replace each occurrence (case-insensitive, whole word) with <code class="inline">[NAME]</code>.</li>
+        <li><strong>Part B:</strong> Also redact things that <em>look like</em> an MRN (6+ digits) and dates (<code class="inline">MM/DD/YYYY</code>).</li>
+        <li><strong>Part C:</strong> Return both the redacted text and a count of redactions per category (for an audit log).</li>
+      </ul>
+    </div>
+    <div class="lang-tag rb">Ruby — all parts</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">def redact(text, names)
+  counts = Hash.new(0)
+
+  names.each do |name|
+    text = text.gsub(/\b#{Regexp.escape(name)}\b/i) { counts[:name] += 1; "[NAME]" }
+  end
+  text = text.gsub(/\b\d{6,}\b/)            { counts[:mrn]  += 1; "[MRN]"  }
+  text = text.gsub(%r{\b\d{2}/\d{2}/\d{4}\b}) { counts[:date] += 1; "[DATE]" }
+
+  { text: text, counts: counts }
+end
+
+redact("Jane Doe, MRN 123456, seen on 04/12/2026.", ["Jane", "Doe"])
+# => { text: "[NAME] [NAME], MRN [MRN], seen on [DATE].",
+#      counts: {name: 2, mrn: 1, date: 1} }</code></pre></div>
+    <div class="lang-tag py">Python — all parts</div>
+    <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">import re
+from collections import defaultdict
+
+def redact(text, names):
+    counts = defaultdict(int)
+
+    def sub(pattern, label, key, flags=0):
+        nonlocal text
+        def repl(_):
+            counts[key] += 1
+            return label
+        text = re.sub(pattern, repl, text, flags=flags)
+
+    for name in names:
+        sub(r"\b" + re.escape(name) + r"\b", "[NAME]", "name", re.I)
+    sub(r"\b\d{6,}\b", "[MRN]", "mrn")
+    sub(r"\b\d{2}/\d{2}/\d{4}\b", "[DATE]", "date")
+    return {"text": text, "counts": dict(counts)}</code></pre></div>
+    <div class="card">
+      <p style="margin:0;font-size:12px"><strong>Talk track:</strong> "Order matters — I redact names before digits so a name like 'O'Brien' isn't half-eaten by another rule, and I'd flag that real PHI scrubbing is far harder (the count is for an audit trail). I'd never log unredacted PHI, which ties to their compliance reality." Mentioning the audit log + 'this is a v1, real de-identification is HIPAA-Safe-Harbor-level' shows domain judgment.</p>
+    </div>
+
+    <h3 class="section" id="bank">Extra reps — prompts only (drill cold)</h3>
+    <div class="card amb">
+      <p style="margin:0;font-size:13px">A deliberately wide bank so you're <strong>not pattern-matching on the 5 worked scenarios</strong>. Grouped by the pattern each one carries — if you can do 2–3 per group cold, you've covered the move regardless of which exact scenario they hand you. <strong>These are reconstructed shapes, not confirmed past questions.</strong> For each: restate → name the data structure → code → <strong>run it</strong> → state complexity → offer the next part.</p>
+    </div>
+
+    <h4>Grouping / counting / hashmap</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Top symptoms.</strong> From a transcript, return the N most-mentioned symptoms given a symptom vocabulary. Part 2: break ties alphabetically. (Counter + top-K.)</li>
+        <li><strong>Section router.</strong> Given utterances and a keyword→SOAP-section map, classify each into S/O/A/P; part 2: a line matching multiple keywords goes to the highest-priority section. (Hash lookup + tie-break.)</li>
+        <li><strong>Speaker talk-time.</strong> From turns with start/end, compute total speaking seconds per speaker and the % split; part 2: who dominated each 5-minute window. (Aggregation + bucketing.)</li>
+        <li><strong>Code frequency report.</strong> Given extracted ICD codes across many notes, return count per code and per category prefix (e.g. all <code class="inline">R*</code> together). (Group by key + group by derived key.)</li>
+        <li><strong>Word-cloud minus stopwords.</strong> Count content words in a note excluding a stopword set; part 2: collapse simple plurals (<code class="inline">headaches→headache</code>). (Counter + normalization.)</li>
+      </ul>
+    </div>
+
+    <h4>Intervals / merging / overlap</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Overlapping speech / crosstalk.</strong> Given each speaker's speaking intervals, find time ranges where ≥2 people talk at once. (Sweep line / merge.)</li>
+        <li><strong>Total audio coverage.</strong> Given many (possibly overlapping) transcribed segments, compute total seconds actually covered (union length); part 2: longest silent gap. (Merge intervals + gaps.)</li>
+        <li><strong>Free-slot finder.</strong> Given a clinician's booked appointment intervals in a day, return open gaps ≥ 15 min. (Sort + gap scan.)</li>
+        <li><strong>Visit sessionizer.</strong> Given timestamped events, split into distinct "visits" whenever the gap between consecutive events exceeds T. (Gap-based grouping — same engine as Problem 1B.)</li>
+      </ul>
+    </div>
+
+    <h4>String matching / regex / parsing</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Expand abbreviations.</strong> Given a map (<code class="inline">"pt"→"patient"</code>, <code class="inline">"hx"→"history"</code>), expand whole-word, case-preserving; part 2: don't expand inside an already-expanded word. (Boundary regex.)</li>
+        <li><strong>Extract structured vitals.</strong> Parse <code class="inline">"BP 120/80, HR 72, T 98.6"</code> into a hash; part 2: tolerate missing/extra spaces and units. (Regex capture groups.)</li>
+        <li><strong>Dosage parser.</strong> From "ibuprofen 400 mg twice daily," extract {drug, amount, unit, frequency}. (Tokenize + pattern.)</li>
+        <li><strong>Highlight matches.</strong> Wrap every dictionary phrase occurrence in a note with <code class="inline">**…**</code>, longest-match-wins, no nested/overlapping highlights. (Find spans + greedy claim — Problem 2C's engine, different output.)</li>
+      </ul>
+    </div>
+
+    <h4>Greedy / packing / two-pointer / sorting</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Chunk a transcript for an LLM.</strong> Split turns into chunks under a max char/token budget without splitting a turn; part 2: add K turns of overlap between chunks for context. (Greedy packing + sliding overlap.)</li>
+        <li><strong>Reconcile med lists.</strong> Given a prior and a new med list, produce added / removed / unchanged / changed-dose; part 2: match by normalized name. (Set/dict diff on a key.)</li>
+        <li><strong>Merge two ranked code suggestions.</strong> Two sorted-by-confidence lists of code suggestions → one deduped list, highest confidence kept per code. (Two-pointer merge / dict max.)</li>
+        <li><strong>Batch by token budget.</strong> Given notes with sizes, pack them into the fewest API batches each under a size cap; report batch count. (Greedy bin-fill — note it's a heuristic, not optimal.)</li>
+      </ul>
+    </div>
+
+    <h4>Lookup / validation / edge-rules</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Vitals out-of-range flag.</strong> Given readings and reference ranges per metric, return which are abnormal and by how much; part 2: age- or sex-specific ranges. (Map lookup + inclusive/exclusive edges.)</li>
+        <li><strong>Pending orders queue.</strong> Group extracted action items by priority then insertion order; part 2: cap each bucket at K and <em>report what was dropped</em>. (Bucketing + stable order + log truncation.)</li>
+        <li><strong>Required-field linter.</strong> Given a note's filled sections and a per-visit-type required-section list, return missing required sections. (Set difference by config.)</li>
+        <li><strong>Dedup near-identical note lines.</strong> Collapse consecutive lines identical after lowercase/trim; part 2: collapse if they differ only by trailing punctuation. (Normalization + run-collapse.)</li>
+      </ul>
+    </div>
+
+    <h4>State / streaming (a small step up)</h4>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Live note assembler.</strong> Process a stream of events (<code class="inline">utterance</code>, <code class="inline">correction</code>, <code class="inline">finalize_section</code>) and maintain current note state; return the note when finalized. (Reduce over events / simple state machine.)</li>
+        <li><strong>Debounce duplicate codes.</strong> A stream emits code suggestions with timestamps; suppress the same code if seen within the last W seconds; part 2: keep the highest-confidence one in the window. (Sliding window + last-seen map.)</li>
+        <li><strong>Idempotent ingestion.</strong> Transcript chunks may be delivered more than once (each has an id); process each exactly once and return the assembled transcript. (Seen-set dedup — echoes your Zuora idempotency story.)</li>
+      </ul>
+    </div>
+    <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">If you can do <strong>~2 per group cold, narrated, and run-to-green</strong>, you're ready — the real prompt will be one of these patterns wearing a different costume.</p>
+  </section>
+
+  <!-- ============ PATTERNS & DS&A ============ -->
+  <section class="tab" id="tab-patterns" data-collapsible="true" data-toc='[
+    ["@group","The high-yield few"],
+    ["Hashmap / counting / grouping","p-hash"],
+    ["Merge intervals","p-interval"],
+    ["Two pointers / sliding window","p-window"],
+    ["Greedy run / chunk grouping","p-run"],
+    ["String matching &amp; regex","p-string"],
+    ["Top-K / heap","p-heap"],
+    ["@group","Reference"],
+    ["Complexity cheat","bigo"],
+    ["Ruby idioms worth knowing","idioms"]
+  ]'>
+    <div class="round-banner">
+      <div><div class="lbl">The patterns that actually show up</div><div style="font-size:16px;font-weight:600">Grouping · intervals · windows · matching</div></div>
+      <div class="time">drill to automatic</div>
+    </div>
+    <div class="card amb">
+      <p style="margin:0">These five patterns cover essentially every mission-flavored prompt above. You don't need graphs/DP/backtracking for this round — you need to <strong>group, merge, scan, and match cleanly</strong>, and prove it runs.</p>
+    </div>
+
+    <h3 class="section" id="p-hash">Hashmap / counting / grouping</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">The workhorse. Count, group, index, dedup.</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">counts = words.tally                       # {"headache"=>2, ...}
+counts = Hash.new(0); words.each { |w| counts[w] += 1 }
+by_speaker = turns.group_by { |t| t[:speaker] }
+index = items.each_with_object({}) { |i, h| h[i[:id]] = i }</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">from collections import Counter, defaultdict
+counts = Counter(words)                     # Counter({"headache": 2, ...})
+by_speaker = defaultdict(list)
+for t in turns: by_speaker[t["speaker"]].append(t)
+index = {i["id"]: i for i in items}</code></pre></div>
+    </div>
+
+    <h3 class="section" id="p-interval">Merge intervals</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Sort by start, sweep, extend the last if it overlaps. (ASR partials, audio segments, talk-time windows.)</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">def merge(intervals)
+  intervals.sort_by!(&:first)
+  out = []
+  intervals.each do |s, e|
+    if out.any? && s <= out.last[1]
+      out.last[1] = [out.last[1], e].max
+    else
+      out << [s, e]
+    end
+  end
+  out
+end</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">def merge(intervals):
+    out = []
+    for s, e in sorted(intervals):
+        if out and s <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], e)
+        else:
+            out.append([s, e])
+    return out</code></pre></div>
+    </div>
+
+    <h3 class="section" id="p-window">Two pointers / sliding window</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Variable window for "longest/shortest span satisfying X"; two pointers for merging two sorted lists (e.g. reconciling two med lists by time).</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">left = 0; best = 0; seen = Hash.new(0)
+arr.each_with_index do |x, right|
+  seen[x] += 1
+  while bad?(seen)            # shrink until window is valid
+    seen[arr[left]] -= 1; left += 1
+  end
+  best = [best, right - left + 1].max
+end</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">left = best = 0
+seen = defaultdict(int)
+for right, x in enumerate(arr):
+    seen[x] += 1
+    while bad(seen):           # shrink until valid
+        seen[arr[left]] -= 1; left += 1
+    best = max(best, right - left + 1)</code></pre></div>
+    </div>
+
+    <h3 class="section" id="p-run">Greedy run / chunk grouping</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Split a sequence into runs by a predicate (same speaker, gap, token budget). Ruby has first-class tools; Python is a manual loop.</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby"># start a new run when the predicate between neighbors is true
+runs = tokens.slice_when { |a, b| a[:speaker] != b[:speaker] }.to_a
+# or keep adjacent while condition holds:
+groups = nums.chunk_while { |a, b| b - a <= gap }.to_a</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">runs = []
+for tok in tokens:
+    if runs and runs[-1][-1]["speaker"] == tok["speaker"]:
+        runs[-1].append(tok)
+    else:
+        runs.append([tok])</code></pre></div>
+    </div>
+
+    <h3 class="section" id="p-string">String matching &amp; regex</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">Word boundaries, case-insensitivity, find-all, escape user input.</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">text.scan(/\b#{Regexp.escape(phrase)}\b/i)          # all matches
+text.gsub(/\b\d{6,}\b/, "[MRN]")                     # replace
+text.to_enum(:scan, re).map { Regexp.last_match.begin(0) }  # positions</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">import re
+re.findall(r"\b" + re.escape(phrase) + r"\b", text, re.I)
+re.sub(r"\b\d{6,}\b", "[MRN]", text)
+[m.start() for m in re.finditer(pat, text)]          # positions</code></pre></div>
+    </div>
+
+    <h3 class="section" id="p-heap">Top-K / heap</h3>
+    <div class="card">
+      <p style="margin:0 0 6px 0">"N most-mentioned symptoms." Counter + sort is fine at this scale; mention a heap for streaming/large N.</p>
+      <div class="lang-tag rb">Ruby</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-ruby"><code class="language-ruby">top = words.tally.sort_by { |_w, c| -c }.first(n)</code></pre></div>
+      <div class="lang-tag py">Python</div>
+      <div class="code-wrap"><button class="copy-btn">Copy</button><pre class="language-python"><code class="language-python">from collections import Counter
+top = Counter(words).most_common(n)
+# large/streaming: import heapq; heapq.nlargest(n, counts.items(), key=lambda kv: kv[1])</code></pre></div>
+    </div>
+
+    <h3 class="section" id="bigo">Complexity cheat (state it unprompted)</h3>
+    <table class="rubric">
+      <tr><th>Operation</th><th>Cost</th></tr>
+      <tr><td>Hash get/set, set membership</td><td>O(1) avg</td></tr>
+      <tr><td>Sort</td><td>O(n log n)</td></tr>
+      <tr><td>Single scan / Counter / group_by</td><td>O(n)</td></tr>
+      <tr><td>Merge intervals (after sort)</td><td>O(n log n) total</td></tr>
+      <tr><td>Regex find-all over text</td><td>O(len × #patterns) here</td></tr>
+      <tr><td>Top-K via sort / heap</td><td>O(n log n) / O(n log k)</td></tr>
+    </table>
+
+    <h3 class="section" id="idioms">Ruby idioms worth knowing cold</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><code class="inline">each_with_object({}) { |x, h| ... }</code> — build a hash in one pass (returns the hash).</li>
+        <li><code class="inline">group_by</code>, <code class="inline">partition</code>, <code class="inline">tally</code>, <code class="inline">chunk_while</code>, <code class="inline">slice_when</code>, <code class="inline">each_cons(2)</code>.</li>
+        <li><code class="inline">Hash.new(0)</code> counter, <code class="inline">Hash.new { |h,k| h[k] = [] }</code> list-default.</li>
+        <li><code class="inline">sort_by { |x| [-x[:len], x[:start]] }</code> — multi-key sort.</li>
+        <li><code class="inline">str.scan</code>, <code class="inline">Regexp.escape</code>, <code class="inline">$1</code>/<code class="inline">Regexp.last_match</code> inside <code class="inline">gsub { ... }</code>.</li>
+        <li><code class="inline">.dup</code> a string/array before mutating a caller's object.</li>
+        <li>Print/debug: <code class="inline">p</code>, <code class="inline">pp</code> (require "pp"), <code class="inline">.inspect</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ COMPANY & MISSION ============ -->
+  <section class="tab" id="tab-company" data-toc='[
+    ["The 30-second company brief","brief"],
+    ["Products (the AutoSuite)","products"],
+    ["The domain: scribe → note → code","domain"],
+    ["Funding &amp; stage","funding"],
+    ["Tech stack (backend)","stack"],
+    ["The 10 core values","values"],
+    ["Later rounds — what is coming","later"]
+  ]'>
+    <h3 class="section" id="brief">The 30-second company brief</h3>
+    <div class="card amb">
+      <p style="margin:0">Ambience Healthcare is building <strong>the AI operating system for healthcare</strong> — mission: "<em>supercharge healthcare workers with AI superpowers.</em>" Its flagship, <strong>Ambience AutoScribe</strong>, is an AI medical scribe that listens to the clinician-patient conversation in real time and produces <strong>comprehensive clinical documentation directly in the EMR</strong>, saving <strong>16+ hours of note-taking per clinician per week</strong>. Series C, <strong>$343M raised</strong>, ~<strong>$1.25B valuation</strong>. Investors include a16z, OpenAI Startup Fund, Optum Ventures, Oak HC/FT. SF-based.</p>
+    </div>
+
+    <h3 class="section" id="products">Products — the "Auto" suite</h3>
+    <table class="rubric">
+      <tr><th>Product</th><th>What it does</th></tr>
+      <tr><td><strong>AutoScribe</strong> (flagship)</td><td>Real-time ambient scribe → structured note in the EMR</td></tr>
+      <tr><td><strong>AutoCDI</strong></td><td>Clinical documentation integrity — coding accuracy / revenue integrity</td></tr>
+      <tr><td><strong>AutoAVS</strong></td><td>After-visit summaries for patients</td></tr>
+      <tr><td><strong>AutoRefer</strong></td><td>Referral letters</td></tr>
+      <tr><td><strong>AutoPrep</strong></td><td>Pre-visit chart preparation</td></tr>
+      <tr><td><strong>Chart Awareness</strong></td><td>Longitudinal record synthesis across a patient's history</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin-top:4px">It suggests <strong>ICD-10 / CPT codes, E/M levels, and HCC categories</strong> in real time. Integrates with <strong>Epic, Oracle Cerner, athenahealth</strong> and other major EHRs.</p>
+
+    <h3 class="section" id="domain">The domain in one line (why the coding problems look the way they do)</h3>
+    <div class="card">
+      <p style="margin:0"><strong>Audio → transcript → structured clinical facts → coded, formatted note in the EMR.</strong> Every practice problem in this guide is a slice of that pipeline: segmenting a transcript, merging streaming ASR, extracting codes, filling a note template, scrubbing PHI. If you can speak to that pipeline, your "core logic of a feature" answers will land as <em>real</em> to the interviewer.</p>
+    </div>
+
+    <h3 class="section" id="funding">Funding &amp; stage</h3>
+    <ul class="tight">
+      <li><strong>Series C</strong> ($243M, mid-2025), co-led by Oak HC/FT and a16z. <strong>$343M total raised.</strong></li>
+      <li>Valuation ~<strong>$1.25B</strong> (unicorn). Prior $70M Series B (Feb 2024).</li>
+      <li>Deployed at large health systems (e.g., enterprise rollouts like Ardent Health). Stage signal: scaling real-time clinical workloads at big provider orgs.</li>
+    </ul>
+
+    <h3 class="section" id="stack">Tech stack (backend)</h3>
+    <div class="card">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Backend: <strong>Python, Go</strong> (and TypeScript/Node on full-stack); <strong>PostgreSQL</strong>.</li>
+        <li>Cloud: <strong>AWS &amp; GCP</strong>; <strong>Docker / Kubernetes</strong>.</li>
+        <li>Heavy real-time + LLM/AI-reasoning workloads (their own clinical reasoning models).</li>
+      </ul>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--muted)">You don't need to write in their stack for the screen (language-agnostic) — but knowing it lets you frame trade-offs and ask good questions.</p>
+    </div>
+
+    <h3 class="section" id="values">The 10 core values (and which map to your stories)</h3>
+    <table class="rubric">
+      <tr><th>Value</th><th>Your hook</th></tr>
+      <tr><td><strong>Extreme Ownership</strong> — see it, fix it</td><td>Zuora silent-200 duplicate-charge bug you root-caused &amp; fixed</td></tr>
+      <tr><td><strong>Relentless Operators</strong> — bias to action, finish</td><td>Wordblok: shipped an App Store game solo in a week via scope cuts</td></tr>
+      <tr><td><strong>Seek Truth</strong> — first-principles, change on evidence</td><td>DDD disagreement — pushed back, then updated your view honestly</td></tr>
+      <tr><td><strong>Slope &gt; Y-Intercept</strong> — trajectory</td><td>Sole owner of payments at Zendesk; grew into the domain fast</td></tr>
+      <tr><td><strong>Customer Alignment</strong></td><td>Drove the customer-impact case behind the Zuora fix</td></tr>
+      <tr><td><strong>Be Candid / Stay Positive</strong></td><td>Disagree-and-commit in the DDD discussion</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin-top:4px">Other values: Mission First · The Floor is Lava · The Dream Team. Read them once; echo 2–3 naturally — don't recite the list.</p>
+
+    <h3 class="section" id="later">Later rounds — what's coming after the screen</h3>
+    <div class="card warn">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li><strong>Take-Home Presentation (paid).</strong> Build a <em>service</em> to a product spec; present it. They explicitly grade <strong>concurrency, rate limits, scaling plan, trade-offs, and "how it works under the hood."</strong> Strong submissions include a <strong>diagram / slide deck</strong>. → Start thinking about a clean service design + a diagram now.</li>
+        <li><strong>Top-Grading (on-site).</strong> Chronological deep dive on 3–5 roles over 5–10 years — accomplishments, challenges, lessons, why each move. Prep a tight career narrative.</li>
+        <li><strong>Behavioral (on-site).</strong> Impact, setbacks, growth. Your Zuora bug, DDD disagreement, and Wordblok stories cover these.</li>
+        <li><strong>Optional Eng-Leader screen with Brendan</strong> (Head of Eng): mission alignment + stage-readiness.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Q'S TO ASK ============ -->
+  <section class="tab" id="tab-questions" data-toc='[
+    ["For the 15 min with the engineer","eng"],
+    ["About the work &amp; domain","work"],
+    ["About stage &amp; growth","growth"],
+    ["Avoid asking","avoid"]
+  ]'>
+    <h3 class="section" id="eng">For the last 15 min (with your interviewing engineer)</h3>
+    <div class="card amb">
+      <p style="margin:0 0 6px 0">You get <strong>15 minutes for your questions</strong> — it's part of the round. Have 3–4 ready; ask the engineer about <em>their</em> reality, not generic HR stuff.</p>
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>"What does a backend engineer actually own here day-to-day — are you closer to the real-time transcription pipeline, the EMR integrations, or the clinical-reasoning/LLM layer?"</li>
+        <li>"What's been the hardest backend problem your team has hit scaling real-time documentation at large health systems?"</li>
+        <li>"How do you handle the messy-data reality — bad audio, overlapping speakers, EHR quirks per health system? Where does that complexity live?"</li>
+        <li>"How do you evaluate quality of generated notes / catch regressions — what does the eval + monitoring loop look like?"</li>
+      </ul>
+    </div>
+
+    <h3 class="section" id="work">About the work &amp; domain</h3>
+    <ul class="tight">
+      <li>"How much of the stack is owned in-house vs. relying on foundation models? How do you think about that boundary?"</li>
+      <li>"What does the path from a clinician-patient conversation to a signed note in Epic actually look like end to end?"</li>
+      <li>"Where's the biggest backend bottleneck right now — latency, throughput, integration breadth, or accuracy?"</li>
+    </ul>
+
+    <h3 class="section" id="growth">About stage &amp; growth</h3>
+    <ul class="tight">
+      <li>"You're scaling fast post-Series-C — what changes about backend engineering here in the next year?"</li>
+      <li>"'Slope &gt; Y-Intercept' is one of your values — what does growth look like for an engineer who's been here 18 months?"</li>
+      <li>"What's something that surprised you about working here?"</li>
+    </ul>
+
+    <h3 class="section" id="avoid">Avoid asking</h3>
+    <div class="card bad">
+      <ul class="tight" style="margin:0 0 0 18px">
+        <li>Anything answered on the website / in the prep doc (funding amount, what AutoScribe is).</li>
+        <li>Comp / PTO / WFH in the technical screen — save for the recruiter.</li>
+        <li>"Do you use AI?" — they're an AI company. Ask <em>how</em> they evaluate and ship it instead.</li>
+      </ul>
+    </div>
+  </section>
+
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script>
+  const tabs = document.querySelectorAll("nav.tabs button");
+  const sections = document.querySelectorAll("section.tab");
+  const toc = document.getElementById("toc");
+  const tocControls = document.getElementById("toc-controls");
+  const tocFilter = document.getElementById("toc-filter");
+  const expandAllBtn = document.getElementById("expand-all");
+  const collapseAllBtn = document.getElementById("collapse-all");
+
+  function wrapInCollapsibles(section) {
+    const headings = Array.from(section.querySelectorAll("h3.section"));
+    headings.forEach((h3) => {
+      if (h3.closest("details.problem")) return;
+      const elements = [];
+      let next = h3.nextElementSibling;
+      while (next && !(next.tagName === "H3" && next.classList.contains("section"))) {
+        elements.push(next);
+        next = next.nextElementSibling;
+      }
+      const details = document.createElement("details");
+      details.className = "problem";
+      if (h3.id) { details.id = h3.id; h3.removeAttribute("id"); }
+      const summary = document.createElement("summary");
+      summary.innerHTML = h3.innerHTML;
+      details.appendChild(summary);
+      h3.parentNode.insertBefore(details, h3);
+      h3.remove();
+      elements.forEach((el) => details.appendChild(el));
+    });
+  }
+
+  function buildTOC(section) {
+    toc.innerHTML = "";
+    const items = JSON.parse(section.getAttribute("data-toc") || "[]");
+    items.forEach(([label, id]) => {
+      if (label === "@group") {
+        const groupLi = document.createElement("li");
+        groupLi.className = "toc-group";
+        groupLi.textContent = id;
+        toc.appendChild(groupLi);
+        return;
+      }
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.innerHTML = label;
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        const target = section.querySelector("#" + id);
+        if (target) {
+          if (target.tagName === "DETAILS") target.open = true;
+          const parentDetails = target.closest("details");
+          if (parentDetails) parentDetails.open = true;
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        document.querySelectorAll("aside li a").forEach((x) => x.classList.remove("active"));
+        a.classList.add("active");
+      });
+      li.appendChild(a);
+      toc.appendChild(li);
+    });
+  }
+
+  function activate(tabId) {
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === tabId));
+    sections.forEach((s) => s.classList.toggle("active", s.id === "tab-" + tabId));
+    const section = document.getElementById("tab-" + tabId);
+    if (section) {
+      const collapsible = section.dataset.collapsible === "true";
+      if (collapsible) wrapInCollapsibles(section);
+      buildTOC(section);
+      if (collapsible) {
+        tocControls.style.display = "flex";
+        tocFilter.style.display = "block";
+        tocFilter.value = "";
+        filterTOC("");
+      } else {
+        tocControls.style.display = "none";
+        tocFilter.style.display = "none";
+      }
+    }
+    window.scrollTo({ top: 0 });
+    try { localStorage.setItem("ambience-tab", tabId); } catch (e) {}
+  }
+
+  function setAllOpen(open) {
+    const activeSection = document.querySelector("section.tab.active");
+    if (!activeSection) return;
+    activeSection.querySelectorAll("details.problem").forEach((d) => { d.open = open; });
+  }
+  expandAllBtn.addEventListener("click", () => setAllOpen(true));
+  collapseAllBtn.addEventListener("click", () => setAllOpen(false));
+
+  function filterTOC(query) {
+    const q = query.trim().toLowerCase();
+    const lis = Array.from(toc.querySelectorAll("li"));
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) return;
+      const text = li.textContent.toLowerCase();
+      const hidden = q !== "" && !text.includes(q);
+      li.classList.toggle("toc-hidden", hidden);
+    });
+    let currentGroup = null;
+    let currentGroupHasVisible = false;
+    lis.forEach((li) => {
+      if (li.classList.contains("toc-group")) {
+        if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+        currentGroup = li;
+        currentGroupHasVisible = false;
+      } else if (!li.classList.contains("toc-hidden")) {
+        currentGroupHasVisible = true;
+      }
+    });
+    if (currentGroup) currentGroup.classList.toggle("toc-hidden", !currentGroupHasVisible);
+  }
+  tocFilter.addEventListener("input", (e) => filterTOC(e.target.value));
+
+  tabs.forEach(t => t.addEventListener("click", () => activate(t.dataset.tab)));
+
+  let initial = "cheat";
+  try {
+    const saved = localStorage.getItem("ambience-tab");
+    if (saved && document.querySelector('[data-tab="' + saved + '"]')) initial = saved;
+  } catch (e) {}
+  activate(initial);
+
+  document.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const code = btn.nextElementSibling.querySelector("code");
+      if (!code) return;
+      try {
+        await navigator.clipboard.writeText(code.textContent);
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1200);
+      } catch (e) { btn.textContent = "Failed"; }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const map = { "1":"cheat","2":"behavioral","3":"topgrading","4":"stories","5":"company","6":"questions","7":"coding","8":"problems","9":"patterns" };
+    if (map[e.key]) activate(map[e.key]);
+  });
+</script>
+
+</body>
+</html>

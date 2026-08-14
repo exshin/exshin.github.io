@@ -265,6 +265,8 @@ body {
 
 .content-area {
   padding-top: 32px;
+  /* breathing room under the last card so the page does not end abruptly */
+  padding-bottom: 100px;
 }
 
 .sticky-header {
@@ -316,6 +318,7 @@ html {
   }
   .content-area {
     padding-top: 20px;
+    padding-bottom: 72px;
   }
 }
 

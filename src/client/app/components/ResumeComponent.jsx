@@ -4,7 +4,7 @@ const COMPANIES = [
   {
     id: 'zendesk',
     name: 'Zendesk',
-    logo: './img/zendesk_logo2.png',
+    logo: './img/zendesk_mark.png',
     rangeLabel: 'August 2017 – Present',
     roles: [
       {
@@ -49,7 +49,7 @@ const COMPANIES = [
   {
     id: 'riviera',
     name: 'Riviera Partners',
-    logo: './img/RivieraLogo.png',
+    logo: './img/riviera_mark.png',
     rangeLabel: 'June 2010 – July 2017',
     roles: [
       {

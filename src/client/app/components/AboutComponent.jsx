@@ -99,7 +99,7 @@ const WORK = [
     peekHref: '#experience',
     external: false,
     stats: [
-      ['Years shipping', '10'],
+      ['Years shipping', '12'],
       ['At Zendesk', '9'],
       ['Specialty', 'Backend'],
     ],
@@ -211,8 +211,7 @@ class AboutComponent extends React.Component {
           <p>
             I work on the systems that move money. For the last nine years that has been
             Zendesk, across billing, payments and platform integrations. On my own time I build
-            things end to end, which is where I get to do the parts a large company splits
-            across four teams.
+            things that people use.
           </p>
         </div>
 

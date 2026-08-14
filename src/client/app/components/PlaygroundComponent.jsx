@@ -12,7 +12,8 @@ const PROJECTS = {
     title: 'Activity Finder',
     tagline: 'Natural-language search for Bay Area kids’ classes',
     description: "Activity Finder searches 20,900 classes, camps and clubs from 25 Bay Area cities. You type what you want the way you'd say it out loud, like \"swimming for my 7 year old after school under $200\", and a model turns that into filters you can see and pull off one at a time. The piece I spent the longest on is availability. You paint the hours you're free onto a grid, and a course only matches if every session fits inside them. Saving classes gives you a calendar with the total cost, the hours per week, and any collisions. Everything is crawled from the parks and rec departments that run the classes, and registration happens on their site, not mine.",
-    techTags: ['React', 'Python', 'LLM'],
+    techTags: ['Python', 'React', 'LLM'],
+    cardTech: 'Python, React',
     projectColor: '#2f6f5e',
     thumb: { type: 'image', src: './img/af_thumb.png' },
     archived: false,
@@ -75,7 +76,7 @@ const PROJECTS = {
   },
 }
 
-const PROJECT_ORDER = ['Activity Finder', 'WordBlok', 'Somnia', 'Pixel Drawer', 'TicTacFour', 'PokePuzzler']
+const PROJECT_ORDER = ['WordBlok', 'Activity Finder', 'Somnia', 'Pixel Drawer', 'TicTacFour', 'PokePuzzler']
 
 function PlaygroundHeader() {
   return (
@@ -180,7 +181,8 @@ function PlaygroundGalleryCard({ project, selected, onSelect }) {
       <div className="playground-card-body">
         <div className="playground-card-title">{project.title}</div>
         <div className="playground-card-tagline">{project.tagline}</div>
-        <div className="playground-card-tech">{project.techTags[0]}</div>
+        {/* cardTech overrides the card label when one tag doesn't tell the story */}
+        <div className="playground-card-tech">{project.cardTech || project.techTags[0]}</div>
       </div>
     </button>
   )
@@ -223,7 +225,7 @@ class PlaygroundComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      contentView: 'Activity Finder',
+      contentView: 'WordBlok',
     }
     this.switchContentView = this.switchContentView.bind(this)
   }

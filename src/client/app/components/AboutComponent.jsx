@@ -30,8 +30,8 @@ const WORK = [
     peekHref: 'https://apps.apple.com/us/app/wordbloks/id6771600251',
     external: true,
     stats: [
-      ['Type', 'Game'],
-      ['Long word bonus', '16×'],
+      ['Platform', 'iOS'],
+      ['Type', 'Word Game'],
       ['Modes', '2'],
       ['Status', 'Shipped'],
     ],
@@ -76,8 +76,8 @@ const WORK = [
     peekHref: '#playground/somnia',
     external: false,
     stats: [
-      ['Regions', '6'],
-      ['Elements', '6'],
+      ['Platform', 'iOS'],
+      ['Type', 'Match-3 RPG Game'],
       ['Status', 'Building'],
     ],
     blurb: 'A turn-based match-3 RPG. You play a Drifter who slips into a real, layered dream world every time they sleep, and travel its six regions with a team of Reveries. Battles are tile-matching puzzles that fuel each creature’s skills.',
@@ -98,9 +98,9 @@ const WORK = [
     peekHref: '#experience',
     external: false,
     stats: [
-      ['Years shipping', '16'],
+      ['Years shipping', '10'],
       ['At Zendesk', '9'],
-      ['Orders / min', '1,000+'],
+      ['Specialty', 'Backend'],
     ],
     blurb: 'Recruiter, then data analyst, then engineer. Nine years at Zendesk across billing, payments and platform integrations, and seven at Riviera Partners before that. The order path I architected creates orders in under five seconds at over a thousand a minute.',
     shots: [],

@@ -4,10 +4,10 @@ const IMG = './img/'
 
 /* Things built, then an honest self-assessment. */
 const TICKER = [
-  { text: 'Order processing integration service', badge: '0 → 1' },
-  { text: 'Async API service to integrate charge transactions' },
-  { text: 'Micro-service to destroy user data in compliance with GDPR' },
-  { text: 'ETL data pipeline ingesting candidate, company and jobs data' },
+  { text: 'Designed and built integration services', badge: '0 → 1' },
+  { text: 'Billing, Payments & Platform' },
+  { text: 'Microservices and Domains' },
+  { text: 'ETL data pipelines' },
   { text: 'Entity resolution service' },
   { text: 'Claude Code', level: 'Master', qualifier: 'aspiring' },
   { text: 'Ruby on Rails', level: 'Expert' },
@@ -30,7 +30,7 @@ const WORK = [
     peekHref: 'https://apps.apple.com/us/app/wordbloks/id6771600251',
     external: true,
     stats: [
-      ['Board', '8×8'],
+      ['Type', 'Game'],
       ['Long word bonus', '16×'],
       ['Modes', '2'],
       ['Status', 'Shipped'],

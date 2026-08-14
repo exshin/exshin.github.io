@@ -1,4 +1,5 @@
 import React from 'react'
+import ActivityFinderComponent from './ActivityFinder/ActivityFinderComponent.jsx'
 import SomniaComponent from './Somnia/SomniaComponent.jsx'
 import WordBlokComponent from './WordBlok/WordBlokComponent.jsx'
 import PixelBoardComponent from './PixelDrawings/PixelBoardComponent.jsx'
@@ -6,6 +7,17 @@ import TicTacBoardComponent from './TicTacFour/TicTacBoardComponent.jsx'
 import PokePuzzlerComponent from './PokePuzzler/PokePuzzlerComponent.jsx'
 
 const PROJECTS = {
+  'Activity Finder': {
+    key: 'Activity Finder',
+    title: 'Activity Finder',
+    tagline: 'Natural-language search for Bay Area kids’ classes',
+    description: "Activity Finder searches 20,900 classes, camps and clubs across 25 Bay Area cities the way a parent would actually ask for them — \"swimming for my 7 year old after school under $200\" becomes real filters, and every inference the model makes shows up as a chip you can take off. It's built around the constraint that actually decides whether a family can go: you paint the week you're genuinely free onto a grid, and a course only matches if every one of its sessions fits. The shortlist is a calendar rather than a bookmark folder — total cost, hours per week, and where two classes collide. It aggregates and points back: every result links to the provider's own page, and nothing here claims a spot is available.",
+    techTags: ['React', 'Python', 'LLM'],
+    projectColor: '#2f6f5e',
+    thumb: { type: 'image', src: './img/af_thumb.png' },
+    archived: false,
+    Component: ActivityFinderComponent,
+  },
   WordBlok: {
     key: 'WordBlok',
     title: 'WordBlok',
@@ -63,7 +75,7 @@ const PROJECTS = {
   },
 }
 
-const PROJECT_ORDER = ['WordBlok', 'Somnia', 'Pixel Drawer', 'TicTacFour', 'PokePuzzler']
+const PROJECT_ORDER = ['Activity Finder', 'WordBlok', 'Somnia', 'Pixel Drawer', 'TicTacFour', 'PokePuzzler']
 
 function PlaygroundHeader() {
   return (
@@ -211,7 +223,7 @@ class PlaygroundComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      contentView: 'WordBlok',
+      contentView: 'Activity Finder',
     }
     this.switchContentView = this.switchContentView.bind(this)
   }

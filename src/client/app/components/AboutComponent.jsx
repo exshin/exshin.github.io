@@ -206,6 +206,9 @@ class AboutComponent extends React.Component {
                 key={item.key}
                 style={{ '--peek': item.peekColor }}
               >
+                {/* The peek is positioned against this, not the whole wrap, so
+                    it stays put when the summary unfolds below. */}
+                <div className="poster-row-head">
                 <button
                   type="button"
                   className="poster-row"
@@ -243,6 +246,7 @@ class AboutComponent extends React.Component {
                     {item.external ? '↗' : '→'}
                   </span>
                 </a>
+                </div>
 
                 <div
                   className={'poster-panel' + (isOpen ? ' open' : '')}

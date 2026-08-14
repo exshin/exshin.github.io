@@ -2963,8 +2963,11 @@ a:hover {
 .poster-rows { display: flex; flex-direction: column; }
 
 .poster-row-wrap {
-  position: relative;
   border-bottom: 1px solid var(--poster-rule);
+}
+/* Only the row, so the peek does not follow the panel when it opens */
+.poster-row-head {
+  position: relative;
 }
 .poster-row-wrap:last-child { border-bottom: 0; }
 
@@ -2984,7 +2987,7 @@ a:hover {
   transition: background 0.18s ease, color 0.18s ease;
 }
 /* hovering the peek keeps the row inverted, since both live in the wrap */
-.poster-row-wrap:hover .poster-row,
+.poster-row-head:hover .poster-row,
 .poster-row-wrap.is-open .poster-row,
 .poster-row:focus-visible {
   background: var(--poster-ink);
@@ -2999,7 +3002,7 @@ a:hover {
   color: #9a9184;
   font-variant-numeric: tabular-nums;
 }
-.poster-row-wrap:hover .poster-row-num,
+.poster-row-head:hover .poster-row-num,
 .poster-row-wrap.is-open .poster-row-num { color: var(--vermilion); }
 
 .poster-row-title {
@@ -3017,7 +3020,7 @@ a:hover {
   color: #7a7267;
   text-align: right;
 }
-.poster-row-wrap:hover .poster-row-tag,
+.poster-row-head:hover .poster-row-tag,
 .poster-row-wrap.is-open .poster-row-tag { color: #b8ada0; }
 
 .poster-row-chevron {
@@ -3026,7 +3029,7 @@ a:hover {
   color: #9a9184;
   transition: transform 0.25s cubic-bezier(.4,0,.2,1), color 0.18s ease;
 }
-.poster-row-wrap:hover .poster-row-chevron { color: var(--paper); }
+.poster-row-head:hover .poster-row-chevron { color: var(--paper); }
 .poster-row-wrap.is-open .poster-row-chevron {
   transform: rotate(180deg);
   color: var(--vermilion);
@@ -3059,7 +3062,7 @@ a:hover {
   text-decoration: none;
   z-index: 2;
 }
-.poster-row-wrap:hover .poster-row-peek,
+.poster-row-head:hover .poster-row-peek,
 .poster-row-peek:focus-visible {
   opacity: 1;
   pointer-events: auto;
@@ -3127,7 +3130,9 @@ a:hover {
   width: 100%;
   height: 190px;
   object-fit: cover;
-  object-position: center top;
+  /* Tall phone screenshots put the interesting part around here; anchoring to
+     the top would frame the status bar instead. */
+  object-position: center 42%;
   display: block;
   border: 2px solid var(--poster-ink);
   border-radius: 3px;

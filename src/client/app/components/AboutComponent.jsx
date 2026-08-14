@@ -53,8 +53,8 @@ const WORK = [
     peekHref: 'https://activity-finder.fly.dev',
     external: true,
     stats: [
-      ['Classes', '20,900'],
-      ['Sessions', '153,726'],
+      ['Classes', '18,000+'],
+      ['Sessions', '125,000+'],
       ['Cities', '25'],
       ['Status', 'Live'],
     ],

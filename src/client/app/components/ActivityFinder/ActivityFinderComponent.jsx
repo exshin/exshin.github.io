@@ -3,9 +3,9 @@ import React from 'react'
 const IMG = './img/'
 
 const CATALOGUE = [
-  { value: '20,900', label: 'Classes, camps and clubs' },
-  { value: '153,726', label: 'Individual sessions' },
-  { value: '1,144', label: 'Venues' },
+  { value: '18,000+', label: 'Classes, camps and clubs' },
+  { value: '125,000+', label: 'Individual sessions' },
+  { value: '1,000+', label: 'Venues' },
   { value: '25', label: 'Bay Area cities' },
 ]
 

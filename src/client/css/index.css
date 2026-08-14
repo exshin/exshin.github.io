@@ -3533,7 +3533,9 @@ a:hover {
 .poster .playground-card-nav--selected .playground-card-title { color: var(--paper); }
 .poster .playground-card-nav--selected .playground-card-tagline { color: #b8ada0; }
 .poster .playground-card-nav--selected .playground-card-tech { color: var(--vermilion); }
-.poster .playground-card-nav--selected .playground-card-tech::after {
+/* the pill moved to the card's ::before; on the inverted tile it needs the
+   accent rather than near-black, which had almost no contrast */
+.poster .playground-card-nav--selected::before {
   background: var(--vermilion);
   color: #fff;
 }
@@ -3542,6 +3544,21 @@ a:hover {
   font-size: 14px;
   letter-spacing: -0.018em;
   text-transform: uppercase;
+}
+/* Archivo Black ships one weight. The base stylesheet bumps the selected
+   title to 700, which a browser can only satisfy by synthesising bold, and
+   wider glyphs push the title onto a second line. Hold the real weight. */
+.poster .playground-card-title,
+.poster .playground-card-nav--selected .playground-card-title {
+  font-weight: 400;
+}
+/* And reserve two lines regardless. "Activity Finder" clears its slot by
+   about 5px, so zoom, DPI or a different font rasteriser can wrap it on one
+   machine and not another. Grid rows stretch together, so that wrap moved
+   every tile. With the space reserved, wrapping changes nothing. */
+.poster .playground-card-title {
+  line-height: 1.25;
+  min-height: 2.5em;
 }
 .poster .playground-card-tagline { font-size: 12px; color: var(--poster-muted); }
 .poster .playground-card-tech {

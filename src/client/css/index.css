@@ -319,97 +319,7 @@ html {
   }
 }
 
-.about-hero {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px 0 40px;
-}
-.about-hero-img {
-  width: 100%;
-  max-height: 230px;
-  object-fit: cover;
-  object-position: center center;
-  border-radius: 8px;
-  margin-bottom: 22px;
-}
-@media (max-width: 767px) {
-  .about-hero-img {
-    max-height: 150px;
-  }
-}
-.about-name {
-  font-size: 36px;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #1a1a1a;
-}
-.about-role {
-  font-size: 16px;
-  color: var(--accent);
-  font-weight: 400;
-  margin-bottom: 12px;
-}
-.about-bio {
-  font-size: 15px;
-  line-height: 1.7;
-  color: #555;
-  max-width: 68ch;
-  margin-bottom: 14px;
-}
-
-/* Start here: the three fastest routes into the work */
-.about-start {
-  margin-top: 30px;
-  padding-top: 22px;
-  border-top: 1px solid #d8d8d8;
-}
-.about-start-label {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-  color: #8a8a8a;
-  margin-bottom: 12px;
-}
-.about-start-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 12px;
-}
-.about-start-card {
-  --card-accent: var(--accent);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background: #fff;
-  border: 1px solid #e4e4e4;
-  border-top: 3px solid var(--card-accent);
-  border-radius: 6px;
-  padding: 15px 16px 16px;
-  text-decoration: none;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.about-start-card:hover,
-.about-start-card:focus {
-  text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.10);
-}
-.about-start-card:focus-visible {
-  outline: 2px solid var(--card-accent);
-  outline-offset: 2px;
-}
-.about-start-card-label {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-.about-start-card-blurb {
-  font-size: 13px;
-  line-height: 1.55;
-  color: #666;
-}
+/* The About view is now the poster layout; see the poster block below. */
 
 :root {
   --accent: #4a90d9;
@@ -2935,4 +2845,406 @@ a:hover {
   .af-lightbox-img { max-height: calc(100vh - 100px); border-radius: 10px; }
   .af-lightbox-close { top: 10px; right: 10px; width: 36px; height: 36px; }
   .af-lightbox-caption { font-size: 11px; bottom: 12px; }
+}
+
+/* ==========================================================================
+   Poster — the landing page
+   Bold through scale and restraint. Three colours, hard rules, big type.
+   ========================================================================== */
+.poster {
+  --paper: #f2f0eb;
+  --poster-ink: #14120f;
+  --vermilion: #d94f04;
+  --poster-muted: #5d574d;
+  --poster-rule: #cfc9bd;
+  margin: -32px -15px 0;
+  background: var(--paper);
+  color: var(--poster-ink);
+  border: 3px solid var(--poster-ink);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* --- name block --- */
+.poster-top {
+  padding: 34px 30px 26px;
+  border-bottom: 3px solid var(--poster-ink);
+}
+.poster-name {
+  margin: 0;
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: clamp(40px, 9.5vw, 108px);
+  line-height: 0.86;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  color: var(--poster-ink);
+}
+.poster-name em {
+  font-style: normal;
+  display: block;
+  color: var(--vermilion);
+}
+.poster-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  margin-top: 22px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--poster-muted);
+}
+
+/* --- ticker of results --- */
+.poster-marquee {
+  background: var(--poster-ink);
+  color: var(--paper);
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 3px solid var(--poster-ink);
+}
+.poster-marquee-inner {
+  display: inline-block;
+  padding: 9px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  animation: poster-slide 26s linear infinite;
+}
+.poster-marquee-dupe { display: inline; }
+.poster-marquee-inner span span,
+.poster-marquee-inner > span {
+  padding: 0 19px;
+}
+.poster-marquee-inner > span::after,
+.poster-marquee-inner span span::after {
+  content: '\25C6';
+  padding-left: 19px;
+  color: var(--vermilion);
+}
+@keyframes poster-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* --- photograph as a full-bleed band --- */
+.poster-band {
+  border-bottom: 3px solid var(--poster-ink);
+  line-height: 0;
+}
+.poster-band-img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  filter: saturate(0.92) contrast(1.04);
+}
+
+/* --- prose --- */
+.poster-intro {
+  padding: 26px 30px 24px;
+  border-bottom: 3px solid var(--poster-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.poster-intro p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: #3b362f;
+  max-width: 66ch;
+}
+
+/* --- the work: hover reveals the live link, click unfolds a summary --- */
+.poster-rows { display: flex; flex-direction: column; }
+
+.poster-row-wrap {
+  position: relative;
+  border-bottom: 1px solid var(--poster-rule);
+}
+.poster-row-wrap:last-child { border-bottom: 0; }
+
+.poster-row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto 26px;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding: 19px 30px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: var(--poster-ink);
+  font-family: inherit;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+/* hovering the peek keeps the row inverted, since both live in the wrap */
+.poster-row-wrap:hover .poster-row,
+.poster-row-wrap.is-open .poster-row,
+.poster-row:focus-visible {
+  background: var(--poster-ink);
+  color: var(--paper);
+  outline: none;
+}
+.poster-row:focus-visible { box-shadow: inset 0 0 0 3px var(--vermilion); }
+
+.poster-row-num {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px;
+  color: #9a9184;
+  font-variant-numeric: tabular-nums;
+}
+.poster-row-wrap:hover .poster-row-num,
+.poster-row-wrap.is-open .poster-row-num { color: var(--vermilion); }
+
+.poster-row-title {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: clamp(19px, 3.2vw, 30px);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+.poster-row-tag {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7a7267;
+  text-align: right;
+}
+.poster-row-wrap:hover .poster-row-tag,
+.poster-row-wrap.is-open .poster-row-tag { color: #b8ada0; }
+
+.poster-row-chevron {
+  display: flex;
+  justify-content: flex-end;
+  color: #9a9184;
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1), color 0.18s ease;
+}
+.poster-row-wrap:hover .poster-row-chevron { color: var(--paper); }
+.poster-row-wrap.is-open .poster-row-chevron {
+  transform: rotate(180deg);
+  color: var(--vermilion);
+}
+
+/* the coloured card: appears on hover, goes to the live thing */
+.poster-row-peek {
+  position: absolute;
+  right: 330px;
+  top: 50%;
+  width: 138px;
+  height: 80px;
+  border-radius: 3px;
+  transform: translateY(-50%) scale(0.86) rotate(-3deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  background: var(--peek, var(--vermilion));
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  z-index: 2;
+}
+.poster-row-wrap:hover .poster-row-peek,
+.poster-row-peek:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1) rotate(-3deg);
+}
+.poster-row-peek:hover {
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-50%) scale(1.05) rotate(-1deg);
+}
+.poster-row-peek:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
+.poster-peek-arrow { font-size: 12px; }
+
+/* the summary that unfolds in place */
+.poster-panel {
+  background: #fff;
+  border-top: 2px solid var(--poster-ink);
+  animation: poster-unfold 0.32s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+@keyframes poster-unfold {
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 1200px; opacity: 1; }
+}
+.poster-panel-inner { padding: 24px 30px 26px; }
+
+.poster-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 34px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--poster-rule);
+}
+.poster-stat-k {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a8175;
+}
+.poster-stat-v {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: 21px;
+  letter-spacing: -0.025em;
+  color: var(--poster-ink);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.poster-blurb {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #3b362f;
+  max-width: 64ch;
+}
+.poster-shots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 18px 0 20px;
+}
+.poster-shot { margin: 0; }
+.poster-shot img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  border: 2px solid var(--poster-ink);
+  border-radius: 3px;
+  background: #ece8e0;
+}
+.poster-shot figcaption {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8175;
+  margin-top: 6px;
+}
+.poster-deeper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--poster-ink);
+  color: var(--paper);
+  text-decoration: none;
+  padding: 11px 17px;
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  font-weight: 700;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+.poster-deeper:hover,
+.poster-deeper:focus {
+  background: var(--vermilion);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.poster-deeper:focus-visible { outline: 2px solid var(--vermilion); outline-offset: 2px; }
+
+
+/* --- header, restyled to match --- */
+.poster-shell .sticky-header {
+  background: var(--paper, #f2f0eb);
+  border-bottom: 3px solid #14120f;
+  box-shadow: none;
+}
+.poster-shell .big-brand {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+.poster-shell .nav-link {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #5d574d;
+}
+.poster-shell .nav-link:hover { color: #14120f; }
+.poster-shell .nav-item.active .nav-link,
+.poster-shell .nav-link.active {
+  color: #d94f04;
+  border-bottom-color: #d94f04;
+}
+
+@media (max-width: 767px) {
+  .poster {
+    margin: -20px -15px 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+  }
+  .poster-top { padding: 22px 18px 18px; }
+  .poster-meta { margin-top: 15px; gap: 5px 16px; font-size: 10.5px; }
+  .poster-band-img { height: 128px; }
+  .poster-intro { padding: 20px 18px; }
+  .poster-intro p { font-size: 14.5px; }
+  .poster-row {
+    grid-template-columns: 32px 1fr 22px;
+    gap: 11px;
+    padding: 15px 18px;
+  }
+  .poster-row-tag {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: left;
+    margin-top: 3px;
+  }
+  .poster-row-chevron {
+    grid-column: 3;
+    grid-row: 1;
+  }
+  /* No hover on a phone, so the live link becomes a button inside the summary */
+  .poster-row-peek {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    width: auto;
+    height: auto;
+    margin: 0 18px 16px;
+    padding: 11px 15px;
+    box-shadow: none;
+    border-radius: 3px;
+    display: none;
+  }
+  .poster-row-wrap.is-open .poster-row-peek { display: inline-flex; }
+  .poster-row-peek:hover { transform: none; }
+  .poster-panel-inner { padding: 20px 18px 18px; }
+  .poster-stats { gap: 10px 22px; }
+  .poster-stat-v { font-size: 18px; }
+  .poster-shots { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .poster-shot img { height: 108px; }
+  .poster-shot figcaption { font-size: 8.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-marquee-inner { animation: none; }
 }

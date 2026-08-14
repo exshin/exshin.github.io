@@ -11,7 +11,7 @@ const PROJECTS = {
     key: 'Activity Finder',
     title: 'Activity Finder',
     tagline: 'Natural-language search for Bay Area kids’ classes',
-    description: "Activity Finder searches 20,900 classes, camps and clubs across 25 Bay Area cities the way a parent would actually ask for them — \"swimming for my 7 year old after school under $200\" becomes real filters, and every inference the model makes shows up as a chip you can take off. It's built around the constraint that actually decides whether a family can go: you paint the week you're genuinely free onto a grid, and a course only matches if every one of its sessions fits. The shortlist is a calendar rather than a bookmark folder — total cost, hours per week, and where two classes collide. It aggregates and points back: every result links to the provider's own page, and nothing here claims a spot is available.",
+    description: "Activity Finder searches 20,900 classes, camps and clubs from 25 Bay Area cities. You type what you want the way you'd say it out loud, like \"swimming for my 7 year old after school under $200\", and a model turns that into filters you can see and pull off one at a time. The piece I spent the longest on is availability. You paint the hours you're free onto a grid, and a course only matches if every session fits inside them. Saving classes gives you a calendar with the total cost, the hours per week, and any collisions. Everything is crawled from the parks and rec departments that run the classes, and registration happens on their site, not mine.",
     techTags: ['React', 'Python', 'LLM'],
     projectColor: '#2f6f5e',
     thumb: { type: 'image', src: './img/af_thumb.png' },

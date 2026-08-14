@@ -18,30 +18,30 @@ const PRINCIPLES = [
   {
     key: 'interpret',
     area: 'Interpreter',
-    title: 'The model supplies meaning, never syntax.',
+    title: 'The model only returns values.',
     blurb:
-      'The LLM returns plain values — age 7, price ceiling 200 — and our code builds the SQL. That boundary is what makes a rules-based interpreter and a model-based one interchangeable: both must construct the identical query, or the same question answers differently depending on who parsed it.',
+      'It hands back plain numbers and strings, like age 7 or a $200 ceiling, and my code builds the query from those. Keeping that split is what lets a hand-written parser and a model sit behind the same endpoint. Both have to end up at the same query, or the same question gets two different answers depending on who read it.',
   },
   {
     key: 'geo',
     area: 'Geocoding',
-    title: 'A guessed coordinate is worse than none.',
+    title: 'A Hayward zip code resolved to Bavaria.',
     blurb:
-      'ZIP 94544 once cached as Bavaria. HTTP 200, no error raised, nothing in the logs — just testers reporting "I put in my zip and got nothing." Now a bounding-box check rejects any coordinate outside the Bay Area before it can be stored.',
+      'The geocoder handed back a German town for 94544 and cached it. Status 200, nothing logged, no error anywhere. What I got instead was testers telling me they typed their zip in and nothing came back. There is a bounding box check now that throws out any coordinate outside the Bay Area before it can be stored.',
   },
   {
     key: 'absence',
     area: 'Ingestion',
-    title: 'Absence is legal, so correctness is a distribution.',
+    title: 'Every data bug so far reported zero errors.',
     blurb:
-      'Every data defect this project has found reported zero errors. Nothing was ever malformed — a field was simply missing, or lived somewhere else. So health is measured as ratios, vocabularies and coverage percentages; an error count will happily tell you everything is fine while a third of the catalogue is gone.',
+      'Nothing was ever malformed. A field would just be missing, or sitting under a key I was not reading. So the health checks look at coverage ratios and value distributions instead of counting failures. An error count will tell you the crawl went fine while a third of the catalogue is missing.',
   },
   {
     key: 'tests',
     area: 'Testing',
-    title: 'A green suite proves nothing about a model-backed feature.',
+    title: 'A green suite said nothing about the model.',
     blurb:
-      'The test suite is offline by construction — every model call is injected — so passing says nothing about whether the real thing works. Five defects were caught only by starting the app, including an endpoint answering 200 with an empty body because its model was never registered.',
+      'Every model call in the tests is injected, so the suite runs offline and passing proves nothing about the features that make real calls. Five bugs turned up only by opening the app. One was an endpoint returning 200 with an empty body, because the model it wanted was never registered.',
   },
 ]
 
@@ -49,19 +49,19 @@ const DISCLOSURES = [
   {
     key: 'assumed',
     label: 'Assumed',
-    blurb: 'An inference the model made is chipped and badged, never folded in silently.',
+    blurb: 'The model inferred this. You did not type it.',
     color: '#e8834a',
   },
   {
     key: 'empty',
     label: 'Emptied by',
-    blurb: 'A search that finds nothing names the constraint that emptied it.',
+    blurb: 'When nothing comes back, it names the filter responsible.',
     color: '#2f6f5e',
   },
   {
     key: 'unpublished',
     label: 'Unpublished',
-    blurb: 'What a provider never published shows as unpublished — not as zero.',
+    blurb: 'A provider that never listed a price says so instead of showing a zero.',
     color: '#7a7a7a',
   },
 ]
@@ -99,10 +99,10 @@ function ActivityFinderHero({ onOpen }) {
   return (
     <div className="af-hero">
       <div className="af-hero-copy">
-        <div className="af-hero-quote">Say it the way you&rsquo;d say it out loud.</div>
+        <div className="af-hero-quote">Find a class that fits your week.</div>
         <div className="af-hero-sub">
-          Classes, camps and clubs across 25 Bay Area cities &mdash; searched by the week
-          you actually have.
+          Classes, camps and clubs from 25 Bay Area cities, searched by age, price, and
+          the hours you have free.
         </div>
       </div>
       <button
@@ -198,7 +198,7 @@ function ActivityFinderPipeline() {
       <div className="af-pipeline-note">
         <span className="af-pipeline-node af-pipeline-node--model">interpret</span>
         <span className="af-pipeline-note-text">
-          feeds <em>query</em> — English in, filter values out. It never sees SQL.
+          feeds <em>query</em>. English goes in, filter values come out. It never sees SQL.
         </span>
       </div>
     </div>
@@ -210,13 +210,13 @@ function ActivityFinderTech() {
     <section className="af-section af-section--tech" style={{ '--section-accent': '#14171F' }}>
       <div className="af-section-text">
         <div className="af-eyebrow">Under the hood</div>
-        <h4 className="af-section-title">Four things that turned out to matter.</h4>
+        <h4 className="af-section-title">Four things I got wrong first.</h4>
         <div className="af-section-divider" />
         <p className="af-section-body">
-          A Python ingestion pipeline and FastAPI service behind a React frontend, over a
-          SQLite catalogue. The interesting part isn&rsquo;t the stack &mdash; it&rsquo;s the
-          rules that came out of defects that <em>shipped</em>, each one a case where
-          nothing errored and the answer was still wrong.
+          Python for the crawl and the API, React on the front, SQLite for the catalogue.
+          The stack is boring. What took longer to learn was a handful of rules that came
+          out of bugs I <em>shipped</em>, where nothing threw an error and the answer was
+          still wrong.
         </p>
         <ActivityFinderPipeline />
       </div>
@@ -302,8 +302,8 @@ class ActivityFinderComponent extends React.Component {
         <ActivityFinderHero onOpen={this.openLightbox} />
 
         <ActivityFinderSection
-          eyebrow="Reading the query"
-          title="A sentence, not a keyword box."
+          eyebrow="Search"
+          title="Type the whole sentence."
           layout="stack"
           accent="#2f6f5e"
           onOpen={this.openLightbox}
@@ -311,22 +311,21 @@ class ActivityFinderComponent extends React.Component {
             {
               src: 'af_reading.png',
               alt: 'The query "swimming for my 7 year old after school under $200" broken into removable filter chips, with the after-school reading badged as assumed',
-              caption: 'Every inference is a chip you can take off',
+              caption: 'Each filter is a chip you can remove',
             },
           ]}
           extras={<DisclosureLegend />}
         >
-          Type <em>&ldquo;swimming for my 7 year old after school under $200&rdquo;</em> and a
-          model turns it into real filters. Every inference it makes becomes a chip you can
-          remove &mdash; and anything it <em>guessed</em> rather than read is badged
-          <em> assumed</em>, with the cost of that guess spelled out: turning
-          &ldquo;after school&rdquo; into weekdays 3:30&ndash;7pm quietly removed 651 results,
-          so the app says so and offers to put them back.
+          You type <em>&ldquo;swimming for my 7 year old after school under $200&rdquo;</em>{' '}
+          and a model turns that into filters. Each one shows up as a chip you can pull off.
+          If the model filled in something you never said, the chip gets marked as assumed
+          and the app tells you what the guess cost you. Reading &ldquo;after school&rdquo; as
+          weekdays 3:30 to 7pm dropped 651 results, so it offers to put them back.
         </ActivityFinderSection>
 
         <ActivityFinderSection
           eyebrow="Availability"
-          title="Paint the week you're actually free."
+          title="Paint in the hours you're free."
           layout="single-right"
           accent="#4a90d9"
           onOpen={this.openLightbox}
@@ -338,17 +337,16 @@ class ActivityFinderComponent extends React.Component {
             },
           ]}
         >
-          &ldquo;Free Tuesday and Thursday after 3:30&rdquo; is the constraint that actually
-          decides whether a family can go, and no provider&rsquo;s own search offers it. So
-          you paint your week onto a grid instead of describing it. A weekday you
-          didn&rsquo;t paint is treated as <em>unavailable</em>, not unconstrained &mdash; and
-          because every session of a course has to fit, a single meeting outside your week
-          rules the course out.
+          Most of the decision comes down to which afternoons are open, and none of the
+          providers let you search on that. So you paint your week onto a grid instead of
+          trying to describe it. Anything you leave blank counts as <em>unavailable</em>,
+          and a course has to fit entirely inside what you painted. One meeting outside
+          your hours rules the whole thing out.
         </ActivityFinderSection>
 
         <ActivityFinderSection
           eyebrow="Shortlist"
-          title="The shortlist is a week, not a list."
+          title="Save five classes and you get a calendar."
           layout="stack"
           accent="#8C66D9"
           onOpen={this.openLightbox}
@@ -356,20 +354,19 @@ class ActivityFinderComponent extends React.Component {
             {
               src: 'af_shortlist.png',
               alt: 'Shortlist view showing total cost, hours per week, run dates, collisions, term bars and a weekly calendar',
-              caption: 'Cost, hours, overlap — before you register',
+              caption: 'Cost, hours and overlap in one view',
             },
           ]}
         >
-          Saving five classes gives you a calendar, not a bookmark folder: what they
-          <em> cost</em> together, how many hours a week they eat, when each term actually
-          runs, and where two of them <em>collide</em>. Terms rarely line up, so two classes
-          sharing a Monday might overlap for one week rather than eight &mdash; the bars show
-          which.
+          The shortlist adds up what everything <em>costs</em> together, how many hours a
+          week it takes, and which classes land in the same slot. Terms almost never line
+          up, so two classes that share a Monday might only <em>collide</em> for one week
+          out of eight. The bars show you which weeks those are.
         </ActivityFinderSection>
 
         <ActivityFinderSection
           eyebrow="Aggregation"
-          title="It points back."
+          title="Registration happens somewhere else."
           layout="stack"
           accent="#e8834a"
           onOpen={this.openLightbox}
@@ -382,11 +379,10 @@ class ActivityFinderComponent extends React.Component {
           ]}
           extras={<CatalogueStats />}
         >
-          Everything is crawled from the parks-and-recreation departments that run it, and
-          every result links back to the provider&rsquo;s own page. Nothing here claims a spot
-          is <em>available</em> &mdash; availability lives on the provider&rsquo;s site and is
-          stale the moment it&rsquo;s crawled, so the app says where to go rather than
-          pretending to know.
+          Everything here is crawled from the parks and rec departments that run the
+          classes, and every result links back to their page. The app never tells you a
+          spot is <em>open</em>. That lives on the provider&rsquo;s site and goes stale the
+          moment I crawl it, so I send you there rather than guess.
         </ActivityFinderSection>
 
         <ActivityFinderTech />

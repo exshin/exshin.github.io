@@ -2911,18 +2911,39 @@ a:hover {
   font-size: 11.5px;
   letter-spacing: 0.17em;
   text-transform: uppercase;
-  animation: poster-slide 26s linear infinite;
+  animation: poster-slide 64s linear infinite;
 }
-.poster-marquee-dupe { display: inline; }
-.poster-marquee-inner span span,
-.poster-marquee-inner > span {
+.poster-tick {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   padding: 0 19px;
 }
-.poster-marquee-inner > span::after,
-.poster-marquee-inner span span::after {
+.poster-tick::after {
   content: '\25C6';
   padding-left: 19px;
   color: var(--vermilion);
+}
+/* the level is the loud part; the qualifier is the joke, so it stays quiet */
+.poster-tick-level {
+  color: var(--vermilion);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+.poster-tick-qual {
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+  color: #9a9184;
+  margin-left: -4px;
+}
+.poster-tick-badge {
+  border: 1px solid var(--vermilion);
+  color: var(--vermilion);
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
 }
 @keyframes poster-slide {
   from { transform: translateX(0); }

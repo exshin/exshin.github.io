@@ -2,14 +2,16 @@ import React from 'react'
 
 const IMG = './img/'
 
-/* The numbers that do the arguing. */
+/* Things built, then an honest self-assessment. */
 const TICKER = [
-  '1,000+ orders per minute',
-  'Sub-5-second order creation',
-  '99.9% data accuracy',
-  '800ms down to 80ms',
-  '20,900 classes indexed',
-  '9 years at Zendesk',
+  { text: 'Order processing integration service', badge: '0 → 1' },
+  { text: 'Async API service to integrate charge transactions' },
+  { text: 'Micro-service to destroy user data in compliance with GDPR' },
+  { text: 'ETL data pipeline ingesting candidate, company and jobs data' },
+  { text: 'Entity resolution service' },
+  { text: 'Claude Code', level: 'Master', qualifier: 'aspiring' },
+  { text: 'Ruby on Rails', level: 'Expert' },
+  { text: 'React / JavaScript', level: 'Tinkerer' },
 ]
 
 /*
@@ -106,8 +108,25 @@ const WORK = [
   },
 ]
 
+/* No Fragment on React 15, so the pieces go in as a keyed array. */
+function Tick({ item }) {
+  const bits = [
+    <span className="poster-tick-name" key="n">{item.text}</span>,
+  ]
+  if (item.level) {
+    bits.push(<span className="poster-tick-level" key="l">{item.level}</span>)
+  }
+  if (item.qualifier) {
+    bits.push(<span className="poster-tick-qual" key="q">({item.qualifier})</span>)
+  }
+  if (item.badge) {
+    bits.push(<span className="poster-tick-badge" key="b">{item.badge}</span>)
+  }
+  return <span className="poster-tick">{bits}</span>
+}
+
 function Ticker() {
-  const run = key => TICKER.map((t, i) => <span key={key + i}>{t}</span>)
+  const run = key => TICKER.map((item, i) => <Tick item={item} key={key + i} />)
   return (
     <div className="poster-marquee">
       <div className="poster-marquee-inner">
@@ -170,9 +189,8 @@ class AboutComponent extends React.Component {
             <em>Chinveeraphan</em>
           </h1>
           <div className="poster-meta">
-            <span>Senior Software Engineer</span>
+            <span>Product Driven Software Engineer</span>
             <span>San Francisco</span>
-            <span>Payments &amp; Platform</span>
           </div>
         </div>
 

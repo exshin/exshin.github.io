@@ -3492,36 +3492,36 @@ a:hover {
 
 .poster .playground-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-  gap: 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
   margin: 0;
+  padding: 18px 20px 20px;
   border-bottom: 3px solid var(--poster-ink);
 }
+/* separate tiles on the paper rather than one butted-together rail */
 .poster .playground-card-nav {
   opacity: 1;
-  border: 0;
-  border-right: 1px solid var(--poster-rule);
-  border-radius: 0;
+  border: 1px solid var(--poster-rule);
+  border-radius: 2px;
   background: var(--paper);
   box-shadow: none;
   transform: none;
   padding: 0;
-  transition: background 0.18s ease;
+  overflow: hidden;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
-.poster .playground-card-nav:last-child { border-right: 0; }
 .poster .playground-card-nav:hover {
-  transform: none;
-  box-shadow: none;
-  background: #e6e2d9;
+  transform: translateY(-2px);
+  border-color: var(--poster-ink);
+  background: var(--paper);
 }
 .poster .playground-card-nav .playground-thumb-img,
 .poster .playground-card-nav .playground-thumb-svg { filter: none; }
 .poster .playground-card-nav--selected {
   background: var(--poster-ink);
-  border: 0;
-  border-right: 1px solid var(--poster-ink);
+  border: 2px solid var(--poster-ink);
   transform: none;
-  box-shadow: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 .poster .playground-card-nav--selected::after { display: none; }
 .poster .playground-card-nav--selected .playground-card-body { background: transparent; }

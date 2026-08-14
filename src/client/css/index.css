@@ -1,11 +1,16 @@
 .big-brand {
-  font-size: 32px;
-  margin-top: 5px;
+  font-size: 26px;
+  margin-top: 0;
   margin-left: 40px;
   font-weight: 200;
-  display: block;
+  display: flex;
+  align-items: center;
   color: inherit;
   text-decoration: none;
+  line-height: 1.1;
+}
+.big-brand p {
+  margin: 0;
 }
 .big-brand:hover,
 .big-brand:focus {
@@ -17,13 +22,18 @@
   outline-offset: 4px;
 }
 .top-bar {
-  margin-bottom: 40px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
 }
 .content-view {
   margin-top: 20px;
 }
 .nav-content {
-  margin-bottom: 25px;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 100%;
 }
 .nav-icon {
   padding-top: 11px;
@@ -263,14 +273,24 @@ body {
   background: #fff;
   z-index: 100;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 9px 0;
+  align-items: center;
 }
 /* Anchored content must clear the sticky header rather than sit under it. */
 html {
-  scroll-padding-top: 108px;
+  scroll-padding-top: 76px;
 }
 @media (max-width: 767px) {
   html {
-    scroll-padding-top: 76px;
+    scroll-padding-top: 70px;
+  }
+  /* Keep the brand at the top when the menu expands below it */
+  .sticky-header {
+    align-items: flex-start;
+    padding: 7px 0;
+  }
+  .top-bar {
+    min-height: 44px;
   }
   /* Keep the name on one line so the header stays short on a phone */
   .big-brand {

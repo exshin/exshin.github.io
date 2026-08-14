@@ -268,7 +268,7 @@ class PlaygroundComponent extends React.Component {
     const ProjectComponent = project.Component
 
     return (
-      <div className="container-fluid playground-page">
+      <div className="container-fluid playground-page poster">
         <PlaygroundHeader />
         <PlaygroundGallery selected={this.state.contentView} onSelect={this.switchContentView} />
         <PlaygroundHero project={project} />

@@ -154,12 +154,8 @@ class App extends React.Component {
   render() {
     const { navOpen } = this.state
 
-    /* Only the About view is on the poster treatment so far, so the header
-       follows it rather than clashing with the unconverted pages. */
-    const shell = this.state.currentView === 'About' ? 'container-fluid poster-shell' : 'container-fluid'
-
     return (
-      <div className={shell}>
+      <div className="container-fluid poster-shell">
         <div className="sticky-header row">
           <div className="col-7 top-bar">
             <a

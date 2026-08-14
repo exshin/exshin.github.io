@@ -194,7 +194,7 @@ class ResumeComponent extends React.Component {
 
   render() {
     return (
-      <div className="resume-page">
+      <div className="poster resume-page">
         <ResumeHeader />
         {COMPANIES.map(company => (
           <ResumeCompanyGroup

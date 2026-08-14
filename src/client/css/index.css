@@ -3253,3 +3253,243 @@ a:hover {
 @media (prefers-reduced-motion: reduce) {
   .poster-marquee-inner { animation: none; }
 }
+
+/* ==========================================================================
+   Poster — Experience and Playground
+   Same paper card, same three colours, same hard rules as the landing page.
+   ========================================================================== */
+
+/* ---- shared headers ---- */
+.poster .resume-header,
+.poster .playground-header {
+  padding: 30px 30px 24px;
+  margin-bottom: 0;
+  border-bottom: 3px solid var(--poster-ink);
+}
+.poster .resume-title,
+.poster .playground-title {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: clamp(34px, 7.5vw, 72px);
+  line-height: 0.9;
+  letter-spacing: -0.042em;
+  text-transform: uppercase;
+  color: var(--poster-ink);
+  margin: 0;
+}
+.poster .resume-title-divider,
+.poster .playground-title-divider {
+  width: 74px;
+  height: 5px;
+  background: var(--vermilion);
+  margin: 16px 0 12px;
+  border: 0;
+}
+.poster .resume-subtitle,
+.poster .playground-subtitle {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--poster-muted);
+  margin: 0;
+}
+
+/* ---- Experience ---- */
+.poster.resume-page { padding: 0; }
+.poster .resume-company-group {
+  border-bottom: 3px solid var(--poster-ink);
+  padding: 0;
+  margin: 0;
+}
+.poster .resume-company-group:last-child { border-bottom: 0; }
+.poster .resume-company-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 30px;
+  background: var(--poster-ink);
+  color: var(--paper);
+  margin: 0;
+}
+.poster .resume-company-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 0;
+  border: 2px solid var(--paper);
+  background: var(--paper);
+  object-fit: contain;
+  padding: 4px;
+}
+.poster .resume-company-name {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: var(--paper);
+}
+.poster .resume-company-meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b8ada0;
+  margin-top: 3px;
+}
+
+.poster .resume-role-card {
+  border: 0;
+  border-bottom: 1px solid var(--poster-rule);
+  border-radius: 0;
+  background: transparent;
+  margin: 0;
+  padding: 16px 30px;
+  box-shadow: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.poster .resume-role-card:hover {
+  background: var(--poster-ink);
+  color: var(--paper);
+}
+.poster .resume-role-card:hover .resume-role-title-collapsed,
+.poster .resume-role-card:hover .resume-role-date-collapsed { color: var(--paper); }
+.poster .resume-role-card:hover .resume-role-chevron { color: var(--vermilion); }
+.poster .resume-role-card--expanded {
+  background: #fff;
+  border-left: 5px solid var(--vermilion);
+  padding-left: 25px;
+}
+.poster .resume-role-card--expanded:hover { background: #fff; color: inherit; }
+.poster .resume-role-title-expanded {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: clamp(16px, 2.4vw, 21px);
+  letter-spacing: -0.022em;
+  text-transform: uppercase;
+  color: var(--poster-ink);
+}
+.poster .resume-role-title-collapsed {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+.poster .resume-role-date-expanded,
+.poster .resume-role-date-collapsed {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-style: normal;
+  color: var(--poster-muted);
+}
+.poster .resume-tag {
+  background: transparent;
+  border: 1px solid var(--poster-ink);
+  border-radius: 0;
+  color: var(--poster-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+}
+.poster .resume-bullets li { color: #3b362f; }
+.poster .resume-bullets li::marker { color: var(--vermilion); }
+
+/* ---- Playground: the gallery is the index, detail sits below it ---- */
+.poster.playground-page { padding: 0; }
+.poster .playground-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 0;
+  margin: 0;
+  border-bottom: 3px solid var(--poster-ink);
+}
+.poster .playground-card-nav {
+  opacity: 1;
+  border: 0;
+  border-right: 1px solid var(--poster-rule);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+  transform: none;
+  padding: 0;
+  transition: background 0.18s ease;
+}
+.poster .playground-card-nav:last-child { border-right: 0; }
+.poster .playground-card-nav:hover {
+  transform: none;
+  box-shadow: none;
+  background: #e6e2d9;
+}
+.poster .playground-card-nav .playground-thumb-img,
+.poster .playground-card-nav .playground-thumb-svg { filter: none; }
+.poster .playground-card-nav--selected {
+  background: var(--poster-ink);
+  border: 0;
+  border-right: 1px solid var(--poster-ink);
+  transform: none;
+  box-shadow: none;
+}
+.poster .playground-card-nav--selected::after { display: none; }
+.poster .playground-card-nav--selected .playground-card-body { background: transparent; }
+.poster .playground-card-nav--selected .playground-card-title { color: var(--paper); }
+.poster .playground-card-nav--selected .playground-card-tagline { color: #b8ada0; }
+.poster .playground-card-nav--selected .playground-card-tech { color: var(--vermilion); }
+.poster .playground-card-nav--selected .playground-card-tech::after {
+  background: var(--vermilion);
+  color: #fff;
+}
+.poster .playground-card-title {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: 14px;
+  letter-spacing: -0.018em;
+  text-transform: uppercase;
+}
+.poster .playground-card-tagline { font-size: 12px; color: var(--poster-muted); }
+.poster .playground-card-tech {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+.poster .playground-thumb { padding-top: 58%; }
+
+.poster .playground-hero {
+  background: var(--paper);
+  border: 0;
+  border-bottom: 3px solid var(--poster-ink);
+  border-radius: 0;
+  padding: 26px 30px;
+  margin: 0;
+  box-shadow: none;
+}
+.poster .playground-hero::before { display: none; }
+.poster .playground-hero-title {
+  font-family: 'Archivo Black', ui-sans-serif, sans-serif;
+  font-size: clamp(24px, 4.4vw, 40px);
+  letter-spacing: -0.032em;
+  text-transform: uppercase;
+  color: var(--poster-ink);
+}
+.poster .playground-hero-pill {
+  background: transparent;
+  border: 1px solid var(--poster-ink);
+  border-radius: 0;
+  color: var(--poster-ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+}
+.poster .playground-hero-divider { background: var(--vermilion); opacity: 1; height: 3px; }
+.poster .playground-hero-description { color: #3b362f; font-size: 15px; }
+.poster .playground-content { padding: 26px 30px 30px; }
+
+@media (max-width: 767px) {
+  .poster .resume-header,
+  .poster .playground-header { padding: 20px 18px 16px; }
+  .poster .resume-company-header { padding: 14px 18px; }
+  .poster .resume-role-card { padding: 14px 18px; }
+  .poster .resume-role-card--expanded { padding-left: 14px; }
+  .poster .playground-hero { padding: 18px; }
+  .poster .playground-content { padding: 18px; }
+  .poster .playground-gallery { grid-template-columns: repeat(2, 1fr); }
+}

@@ -9,6 +9,7 @@ import PokePuzzlerComponent from './PokePuzzler/PokePuzzlerComponent.jsx'
 const PROJECTS = {
   'Activity Finder': {
     key: 'Activity Finder',
+    slug: 'activity-finder',
     title: 'Activity Finder',
     tagline: 'Natural-language search for Bay Area kids’ classes',
     description: "Activity Finder searches 20,900 classes, camps and clubs from 25 Bay Area cities. You type what you want the way you'd say it out loud, like \"swimming for my 7 year old after school under $200\", and a model turns that into filters you can see and pull off one at a time. The piece I spent the longest on is availability. You paint the hours you're free onto a grid, and a course only matches if every session fits inside them. Saving classes gives you a calendar with the total cost, the hours per week, and any collisions. Everything is crawled from the parks and rec departments that run the classes, and registration happens on their site, not mine.",
@@ -21,6 +22,7 @@ const PROJECTS = {
   },
   WordBlok: {
     key: 'WordBlok',
+    slug: 'wordblok',
     title: 'WordBlok',
     tagline: 'Polyomino + Scrabble word puzzle for iOS',
     description: "WordBlok is a polished iOS word puzzle I'm building that fuses Tetris-style piece placement with Scrabble-style word scoring. Drag polyomino-shaped pieces of letter tiles onto an 8×8 board; any time the placed tiles form a real dictionary word, it scores — with a punishing length multiplier (a 7-letter word is worth 16× a 3-letter word's base value). Letters persist after scoring, so each turn quietly sets up the next. Wildcards, bombs, and blockers add strategic specials. Built natively in SwiftUI with an event-driven engine layer and a pure scorer.",
@@ -32,6 +34,7 @@ const PROJECTS = {
   },
   Somnia: {
     key: 'Somnia',
+    slug: 'somnia',
     title: 'Somnia',
     tagline: 'Turn-based match-3 RPG for iOS',
     description: 'Somnia is a turn-based match-3 RPG I\'m building for iOS. You play a Drifter — someone who slips into a real, layered dream world whenever they sleep — and travel its six regions with a team of Reveries: native creatures tied to the elements Ember, Tide, Stone, Drift, Dawn, and Dusk. Battles play out as tile-matching puzzles that fuel each Reverie\'s skills. Areas branch into nodes (combat, dialogue, rest, hidden rooms), so every night threads exploration, story, and team-building together.',
@@ -43,6 +46,7 @@ const PROJECTS = {
   },
   'Pixel Drawer': {
     key: 'Pixel Drawer',
+    slug: 'pixel-drawer',
     title: 'Pixel Drawer',
     tagline: 'Pixel art editor',
     description: "I'm planning to create a short animated story with pixel like graphics, and so I built this tool to help create my pixel drawings. I'm planning to add the animation component to it next. As of now, you can save and load your own pixel drawings. Give it a shot!",
@@ -54,6 +58,7 @@ const PROJECTS = {
   },
   TicTacFour: {
     key: 'TicTacFour',
+    slug: 'tictacfour',
     title: 'TicTacFour',
     tagline: 'A bigger tic-tac-toe with simple AI',
     description: 'I wanted to build a simple game, but wanted a something a little more complex than just the tictactoe that I thought of. Designing and building this game was fun. It gave me a chance to work on a simple AI and further develop my React skillset.',
@@ -65,6 +70,7 @@ const PROJECTS = {
   },
   PokePuzzler: {
     key: 'PokePuzzler',
+    slug: 'poke-puzzler',
     title: 'Poke Puzzler',
     tagline: 'Match-3 prototype (archive)',
     description: "No longer actively working on this one — keeping it up as an archive. The original idea was a Pokemon-inspired Match-3 iOS game: I love match-3 games and was really into Pokemon growing up, so I built the base gameplay loop and a few iOS animations from scratch before shelving it.",
@@ -81,7 +87,7 @@ const PROJECT_ORDER = ['WordBlok', 'Activity Finder', 'Somnia', 'Pixel Drawer', 
 function PlaygroundHeader() {
   return (
     <div className="playground-header">
-      <h2 className="playground-title">Playground</h2>
+      <h1 className="playground-title">Playground</h1>
       <div className="playground-title-divider"></div>
       <p className="playground-subtitle">Things I'm tinkering with at the moment.</p>
     </div>
@@ -220,18 +226,41 @@ function PlaygroundHero({ project }) {
   )
 }
 
+const KEY_FOR_SLUG = PROJECT_ORDER.reduce((acc, key) => {
+  acc[PROJECTS[key].slug] = key
+  return acc
+}, {})
+
 class PlaygroundComponent extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      contentView: 'WordBlok',
+      contentView: KEY_FOR_SLUG[props.initialProject] || 'WordBlok',
     }
     this.switchContentView = this.switchContentView.bind(this)
   }
 
+  componentDidMount() {
+    this.reportProject(this.state.contentView)
+  }
+
+  componentWillReceiveProps(next) {
+    const key = KEY_FOR_SLUG[next.initialProject]
+    if (key && key !== this.state.contentView) {
+      this.setState({ contentView: key })
+    }
+  }
+
+  reportProject(key) {
+    if (this.props.onProjectChange) {
+      this.props.onProjectChange(PROJECTS[key].slug)
+    }
+  }
+
   switchContentView(content) {
     this.setState({ contentView: content })
+    this.reportProject(content)
   }
 
   render() {

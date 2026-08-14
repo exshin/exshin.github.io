@@ -97,7 +97,7 @@ const COMPANIES = [
 function ResumeHeader() {
   return (
     <div className="resume-header">
-      <h2 className="resume-title">Experience</h2>
+      <h1 className="resume-title">Experience</h1>
       <div className="resume-title-divider"></div>
       <p className="resume-subtitle">A decade of building things, mostly behind the scenes.</p>
     </div>
@@ -137,7 +137,16 @@ function ResumeRoleCard({ role, isExpanded, onSelect }) {
     >
       <div className="resume-role-card-collapsed">
         <div className="resume-role-card-collapsed-left">
-          <span className="resume-role-icon" aria-hidden="true">+</span>
+          <svg className="resume-role-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path
+              d="M6 3.5 10.5 8 6 12.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
           <span className="resume-role-title-collapsed">{role.title}</span>
         </div>
         <span className="resume-role-date-collapsed">{role.dateLabel}</span>

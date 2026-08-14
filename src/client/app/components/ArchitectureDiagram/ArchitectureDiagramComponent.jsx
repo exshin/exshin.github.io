@@ -489,7 +489,7 @@ class ArchitectureDiagramComponent extends React.Component {
     const { passwordInput, passwordError } = this.state
     return (
       <div className="arch-password-gate">
-        <h3 className="arch-password-heading">System Design</h3>
+        <h1 className="arch-password-heading">System Design</h1>
         <p className="arch-password-prompt">Enter password to continue.</p>
         <form onSubmit={this.handlePasswordSubmit} className="arch-password-form">
           <input

@@ -94,7 +94,8 @@ const WORK = [
     title: 'Experience',
     tag: 'Zendesk · Riviera Partners',
     peek: 'Read it',
-    peekColor: '#14120f',
+    /* not the ink colour, or it vanishes against the inverted row */
+    peekColor: '#d94f04',
     peekHref: '#experience',
     external: false,
     stats: [

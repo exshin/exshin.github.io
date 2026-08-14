@@ -56,52 +56,87 @@
   border-radius: 3px;
 }
 
-/* Mobile menu, replacing Bootstrap's collapse plugin */
+/* Toggler: Bootstrap's default is ~54px with a background-image icon.
+   Ours is an inline SVG at a sane size. */
+.navbar-toggler {
+  padding: 5px;
+  font-size: 1rem;
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #14120f;
+  cursor: pointer;
+}
+.navbar-toggler:hover { background: rgba(0, 0, 0, 0.05); }
+.navbar-toggler:focus { outline: none; }
+.navbar-toggler:focus-visible { outline: 2px solid #d94f04; outline-offset: 2px; }
+.nav-toggle-icon { width: 26px; height: 26px; display: block; }
+
+/* Mobile menu: a full-width panel under the header rather than a column
+   squeezed into the right third of the row. */
 @media (max-width: 991px) {
-  .nav-content {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    padding: 0;
+  /* Bootstrap grid columns are position: relative, which would anchor the
+     absolute panel to the column instead of the whole header. */
+  .sticky-header > .top-bar { position: static; }
+  .nav-content { position: static; display: block; padding: 0; }
+  .navbar-toggler-right {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    margin: 0;
   }
   .navbar-collapse.nav-open {
     display: block;
-    width: 100%;
-    flex-basis: 100%;
-    padding: 6px 0 10px;
-    border-top: 1px solid #ececec;
-    margin-top: 8px;
-  }
-  /* Bootstrap positions the toggler absolutely, so pin it to the top or it
-     drifts to the bottom of the nav once the menu opens. */
-  .navbar-toggler-right {
-    top: 4px;
+    position: absolute;
+    top: 100%;
+    left: 0;
     right: 0;
+    background: #f2f0eb;
+    border-top: 3px solid #14120f;
+    border-bottom: 3px solid #14120f;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+    padding: 0;
+    margin: 0;
+    z-index: 200;
   }
-  /* block, not column flex, so the social icons can sit on one row */
   .navbar-collapse.nav-open .navbar-nav {
     display: block;
     float: none !important;
+    margin: 0;
+    padding: 0;
   }
-  .navbar-collapse.nav-open .navbar-nav .nav-item > .nav-link {
+  .navbar-collapse.nav-open .navbar-nav > .nav-item > .nav-link {
     display: block;
-    padding: 10px 4px;
-    font-size: 16px;
+    padding: 15px 20px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #14120f;
+    border-bottom: 1px solid #cfc9bd;
   }
-  /* Social icons sit on one row rather than four stacked lines */
-  .navbar-collapse.nav-open .nav-item.vertical-line {
-    border: 0;
-    border-top: 1px solid #ececec;
-    height: 0;
-    margin: 6px 0;
-    width: 100%;
+  .navbar-collapse.nav-open .navbar-nav > .nav-item > .nav-link:hover,
+  .navbar-collapse.nav-open .navbar-nav > .nav-item > .nav-link:active {
+    background: #14120f;
+    color: #f2f0eb;
   }
-  .navbar-collapse.nav-open .navbar-nav .nav-item--social {
-    display: inline-block;
+  .navbar-collapse.nav-open .navbar-nav > .nav-item.active > .nav-link { color: #d94f04; }
+  .navbar-collapse.nav-open .nav-item.vertical-line { display: none; }
+  .navbar-collapse.nav-open .nav-item--social { display: inline-block; border: 0; }
+  .navbar-collapse.nav-open .nav-item--social:first-of-type { padding-left: 10px; }
+  /* needs to match the row rule's specificity to drop its border */
+  .navbar-collapse.nav-open .navbar-nav > .nav-item--social > .nav-link {
+    display: block;
+    padding: 15px 12px;
+    border-bottom: 0;
   }
-  .navbar-collapse.nav-open .nav-icon {
-    display: inline-block;
-    padding: 8px 14px 8px 4px;
-  }
+  /* the row border is the divider here; an underline on top of it is noise.
+     It has to come off the li: ancestor text-decoration paints through
+     descendants and cannot be cancelled on the child. */
+  .navbar-collapse.nav-open .navbar-nav > .nav-item.underline { text-decoration: none; }
+  .navbar-collapse.nav-open .nav-icon-svg { width: 20px; height: 20px; }
 }
 .img-circle {
     border-radius: 50%;
@@ -3207,6 +3242,12 @@ a:hover {
 
 
 /* --- header, restyled to match --- */
+/* Legacy rules set colour with var(--accent) !important, so the token is the
+   only clean place to retire the old blue. */
+.poster-shell {
+  --accent: #d94f04;
+  --accent-light: #fbe9dd;
+}
 .poster-shell .sticky-header {
   background: var(--paper, #f2f0eb);
   border-bottom: 3px solid #14120f;
@@ -3234,8 +3275,17 @@ a:hover {
 }
 
 @media (max-width: 767px) {
+  /* edge to edge: drop both nested container paddings instead of fighting
+     them with negative margins */
+  .poster-shell.container-fluid,
+  .content-area.container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* the row's -15px would drag the brand flush against the screen edge */
+  .sticky-header.row { margin-left: 0; margin-right: 0; }
   .poster {
-    margin: -20px -15px 0;
+    margin: -20px 0 0;
     border-left: 0;
     border-right: 0;
     border-radius: 0;

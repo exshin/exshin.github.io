@@ -185,7 +185,15 @@ class App extends React.Component {
                 aria-controls="navbarNav"
                 aria-label={navOpen ? 'Close navigation' : 'Open navigation'}
               >
-                <span className="navbar-toggler-icon"></span>
+                <svg className="nav-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path
+                    d={navOpen ? 'M6 6 18 18M18 6 6 18' : 'M3 6h18M3 12h18M3 18h18'}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                  />
+                </svg>
               </button>
 
               <div

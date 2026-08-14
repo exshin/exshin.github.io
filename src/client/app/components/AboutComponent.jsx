@@ -61,8 +61,8 @@ const WORK = [
     blurb: 'Type what you want the way you would say it out loud, and a model turns it into filters you can see and pull off one at a time. You paint the hours you are free onto a grid, and a course only matches if every one of its sessions fits inside them.',
     shots: [
       { src: 'af_thumb.png', label: 'Ask in a sentence' },
-      { src: 'af_reading.png', label: 'Every guess shown' },
-      { src: 'af_week_grid.png', label: 'Your week' },
+      { src: 'af_reading.png', label: 'Smart Proposals' },
+      { src: 'af_week_grid.png', label: 'Match your week' },
     ],
     writeup: '#playground/activity-finder',
   },

@@ -58,7 +58,7 @@ const WORK = [
       ['Cities', '25'],
       ['Status', 'Live'],
     ],
-    blurb: 'Type what you want the way you would say it out loud, and a model turns it into filters you can see and pull off one at a time. You paint the hours you are free onto a grid, and a course only matches if every one of its sessions fits inside them.',
+    blurb: 'Type what you want the way you would say it out loud, and a model turns it into filters you can see and pull off one at a time. When a search comes back too broad, it proposes specific ways to narrow it down and shows how many results each one would leave. It also matches your schedule against what is actually available, so you only see the classes you could really get to.',
     shots: [
       { src: 'af_thumb.png', label: 'Ask in a sentence' },
       { src: 'af_reading.png', label: 'Smart Proposals' },

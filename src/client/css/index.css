@@ -824,10 +824,16 @@ a:hover {
 .playground-card-nav--selected .playground-card-title {
   font-weight: 700;
 }
-/* "Viewing" flag so selection does not rest on colour alone */
-.playground-card-nav--selected .playground-card-tech::after {
+/* "Viewing" flag so selection does not rest on colour alone.
+   Absolutely positioned: floated inside the tech line it wrapped for the
+   longest label and stretched every tile in the row. */
+.playground-card-nav--selected::before {
   content: 'Viewing';
-  float: right;
+  position: absolute;
+  top: 8px;
+  /* left, not right: the archive pill already owns the top-right corner */
+  left: 8px;
+  z-index: 3;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -836,7 +842,6 @@ a:hover {
   background: #1a1a1a;
   padding: 2px 7px;
   border-radius: 999px;
-  margin-top: -2px;
 }
 .playground-card-nav--archived {
   opacity: 0.6;
@@ -3501,7 +3506,7 @@ a:hover {
 /* separate tiles on the paper rather than one butted-together rail */
 .poster .playground-card-nav {
   opacity: 1;
-  border: 1px solid var(--poster-rule);
+  border: 2px solid #b9b1a4;
   border-radius: 2px;
   background: var(--paper);
   box-shadow: none;
@@ -3519,7 +3524,7 @@ a:hover {
 .poster .playground-card-nav .playground-thumb-svg { filter: none; }
 .poster .playground-card-nav--selected {
   background: var(--poster-ink);
-  border: 2px solid var(--poster-ink);
+  border-color: var(--poster-ink);
   transform: none;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }

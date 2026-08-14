@@ -104,6 +104,34 @@ function ActivityFinderHero({ onOpen }) {
           Classes, camps and clubs from 25 Bay Area cities, searched by age, price, and
           the hours you have free.
         </div>
+        <a
+          className="af-hero-cta"
+          href="https://activity-finder.fly.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="af-hero-cta-label">Try it</span>
+          <span className="af-hero-cta-host">activity-finder.fly.dev</span>
+          <svg
+            className="af-hero-cta-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M14 4h6v6M20 4l-8.5 8.5M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"
+            />
+          </svg>
+        </a>
+        <div className="af-hero-note">
+          It sleeps when nobody is using it, so the first search takes a few seconds to
+          wake up.
+        </div>
       </div>
       <button
         type="button"

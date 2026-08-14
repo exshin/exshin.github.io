@@ -26,7 +26,7 @@ const PROJECTS = {
     description: "WordBlok is a polished iOS word puzzle I'm building that fuses Tetris-style piece placement with Scrabble-style word scoring. Drag polyomino-shaped pieces of letter tiles onto an 8×8 board; any time the placed tiles form a real dictionary word, it scores — with a punishing length multiplier (a 7-letter word is worth 16× a 3-letter word's base value). Letters persist after scoring, so each turn quietly sets up the next. Wildcards, bombs, and blockers add strategic specials. Built natively in SwiftUI with an event-driven engine layer and a pure scorer.",
     techTags: ['SwiftUI', 'iOS'],
     projectColor: '#F2C200',
-    thumb: { type: 'image', src: './img/wordblok_title.png' },
+    thumb: { type: 'image', src: './img/wordblok_thumb.png' },
     archived: false,
     Component: WordBlokComponent,
   },

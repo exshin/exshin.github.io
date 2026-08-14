@@ -3380,7 +3380,14 @@ a:hover {
 }
 
 /* ---- Experience ---- */
-.poster.resume-page { padding: 0; }
+/* The base rules cap these at 960px and the poster card bleeds to the
+   container edges, which left them 180px narrower than About and pinned
+   left rather than centred. */
+.poster.resume-page,
+.poster.playground-page {
+  max-width: none;
+  padding: 0;
+}
 .poster .resume-company-group {
   border-bottom: 3px solid var(--poster-ink);
   padding: 0;
@@ -3482,7 +3489,7 @@ a:hover {
 .poster .resume-bullets li::marker { color: var(--vermilion); }
 
 /* ---- Playground: the gallery is the index, detail sits below it ---- */
-.poster.playground-page { padding: 0; }
+
 .poster .playground-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
